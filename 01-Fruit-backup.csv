@@ -1,0 +1,101 @@
+,0,1,# of Shots 0
+0,data/fruits-images-dataset-object-detection/Train File/Train File/19_Banana.jpg,Banana,Banana
+1,data/fruits-images-dataset-object-detection/Train File/Train File/11_Papaya.jpg,Papaya,Papaya
+2,data/fruits-images-dataset-object-detection/Train File/Train File/20_Apple.jpg,Apple,Apple
+3,data/fruits-images-dataset-object-detection/Train File/Train File/22_Litchi.jpg,Litchi,Litchi
+4,data/fruits-images-dataset-object-detection/Train File/Train File/27_Litchi.jpg,Litchi,Litchi
+5,data/fruits-images-dataset-object-detection/Train File/Train File/20_Jackfruit.jpg,Jackfruit,Jackfruit
+6,data/fruits-images-dataset-object-detection/Train File/Train File/18_HogPlum.jpg,Hog Plum,Hog Plum
+7,data/fruits-images-dataset-object-detection/Train File/Train File/13_Banana.jpg,Banana,Banana
+8,data/fruits-images-dataset-object-detection/Train File/Train File/06_Grapes.jpeg,Grapes,Grapes
+9,data/fruits-images-dataset-object-detection/Train File/Train File/14_Guava.jpg,Guava,Guava
+10,data/fruits-images-dataset-object-detection/Train File/Train File/09_Grapes.jpg,Grapes,Grapes
+11,data/fruits-images-dataset-object-detection/Train File/Train File/25_Jackfruit.jpg,Jackfruit,Jackfruit
+12,data/fruits-images-dataset-object-detection/Train File/Train File/12_Apple.jpg,Apple,Apple
+13,data/fruits-images-dataset-object-detection/Train File/Train File/16_Jackfruit.jpg,Jackfruit,Jackfruit
+14,data/fruits-images-dataset-object-detection/Train File/Train File/23_Mango.jpg,Mango,Mango
+15,data/fruits-images-dataset-object-detection/Train File/Train File/03_Guava.jpg,Guava,Guava
+16,data/fruits-images-dataset-object-detection/Train File/Train File/18_Apple.jpg,Apple,Apple
+17,data/fruits-images-dataset-object-detection/Train File/Train File/04_ Apple.jpg,Apple,Apple
+18,data/fruits-images-dataset-object-detection/Train File/Train File/32_Grapes.jpg,Grapes,Grapes
+19,data/fruits-images-dataset-object-detection/Train File/Train File/05_Jackfruit.jpg,Jackfruit,Jackfruit
+20,data/fruits-images-dataset-object-detection/Train File/Train File/13_Papaya.jpg,Papaya,Papaya
+21,data/fruits-images-dataset-object-detection/Train File/Train File/06_Banana.jpg,Banana,Banana
+22,data/fruits-images-dataset-object-detection/Train File/Train File/14_HogPlum.jpg,Hog Plum,Hog Plum
+23,data/fruits-images-dataset-object-detection/Train File/Train File/02_Lichi.jpg,Litchi,Litchi
+24,data/fruits-images-dataset-object-detection/Train File/Train File/25_Orange.jpg,Orange,Orange
+25,data/fruits-images-dataset-object-detection/Train File/Train File/01_Grapes.jpg,Grapes,Grapes
+26,data/fruits-images-dataset-object-detection/Train File/Train File/11_Litchi.jpg,Litchi,Litchi
+27,data/fruits-images-dataset-object-detection/Train File/Train File/16_Mango.jpg,Mango,Mango
+28,data/fruits-images-dataset-object-detection/Train File/Train File/08_Guava.jpg,Guava,Guava
+29,data/fruits-images-dataset-object-detection/Train File/Train File/13_Apple.jpg,Apple,Apple
+30,data/fruits-images-dataset-object-detection/Train File/Train File/30_Grapes.jpg,Grapes,Grapes
+31,data/fruits-images-dataset-object-detection/Train File/Train File/19_Litchi.jpg,Litchi,Litchi
+32,data/fruits-images-dataset-object-detection/Train File/Train File/12_Banana.jpg,Banana,Banana
+33,data/fruits-images-dataset-object-detection/Train File/Train File/22_HogPlum.jpg,Hog Plum,Hog Plum
+34,data/fruits-images-dataset-object-detection/Train File/Train File/11_Mango.jpg,Mango,Mango
+35,data/fruits-images-dataset-object-detection/Train File/Train File/17_Guava.jpg,Guava,Guava
+36,data/fruits-images-dataset-object-detection/Train File/Train File/11_Orange.jpg,Orange,Orange
+37,data/fruits-images-dataset-object-detection/Train File/Train File/18_Orange.jpg,Orange,Orange
+38,data/fruits-images-dataset-object-detection/Train File/Train File/29_Jackfruit.jpg,Jackfruit,Jackfruit
+39,data/fruits-images-dataset-object-detection/Train File/Train File/11_Grapes.jpg,Grapes,Grapes
+40,data/fruits-images-dataset-object-detection/Train File/Train File/01_Lichi.jpg,Litchi,Litchi
+41,data/fruits-images-dataset-object-detection/Train File/Train File/03_Jackfruit.jpg,Jackfruit,Jackfruit
+42,data/fruits-images-dataset-object-detection/Train File/Train File/02_Guava.jpeg,Guava,Guava
+43,data/fruits-images-dataset-object-detection/Train File/Train File/12_Mango.jpg,Mango,Mango
+44,data/fruits-images-dataset-object-detection/Train File/Train File/23_HogPlum.jpg,Hog Plum,Hog Plum
+45,data/fruits-images-dataset-object-detection/Train File/Train File/25_Grapes.jpg,Grapes,Grapes
+46,data/fruits-images-dataset-object-detection/Train File/Train File/05_Banana.jpg,Banana,Banana
+47,data/fruits-images-dataset-object-detection/Train File/Train File/32_HogPlum.jpg,Hog Plum,Hog Plum
+48,data/fruits-images-dataset-object-detection/Train File/Train File/10_Orange.jpeg,Orange,Orange
+49,data/fruits-images-dataset-object-detection/Train File/Train File/16_Grapes.jpg,Grapes,Grapes
+50,data/fruits-images-dataset-object-detection/Train File/Train File/31_HogPlum.jpg,Hog Plum,Hog Plum
+51,data/fruits-images-dataset-object-detection/Train File/Train File/23_Guava.jpg,Guava,Guava
+52,data/fruits-images-dataset-object-detection/Train File/Train File/19_Grapes.jpg,Grapes,Grapes
+53,data/fruits-images-dataset-object-detection/Train File/Train File/17_Jackfruit.jpg,Jackfruit,Jackfruit
+54,data/fruits-images-dataset-object-detection/Train File/Train File/28_Guava.jpg,Guava,Guava
+55,data/fruits-images-dataset-object-detection/Train File/Train File/05_ Apple.jpg,Apple,Apple
+56,data/fruits-images-dataset-object-detection/Train File/Train File/07_Guava.jpeg,Guava,Guava
+57,data/fruits-images-dataset-object-detection/Train File/Train File/01_Orange.jpg,Orange,Orange
+58,data/fruits-images-dataset-object-detection/Train File/Train File/18_Jackfruit.jpg,Jackfruit,Jackfruit
+59,data/fruits-images-dataset-object-detection/Train File/Train File/10_Banana.jpg,Banana,Banana
+60,data/fruits-images-dataset-object-detection/Train File/Train File/18_Papaya.jpg,Papaya,Papaya
+61,data/fruits-images-dataset-object-detection/Train File/Train File/32_Mango.jpg,Mango,Mango
+62,data/fruits-images-dataset-object-detection/Train File/Train File/24_Papaya.jpg,Papaya,Papaya
+63,data/fruits-images-dataset-object-detection/Train File/Train File/05_Lichi.jpg,Litchi,Litchi
+64,data/fruits-images-dataset-object-detection/Train File/Train File/01_Papaya.jpeg,Papaya,Apple
+65,data/fruits-images-dataset-object-detection/Train File/Train File/32_Orange.jpg,Orange,Orange
+66,data/fruits-images-dataset-object-detection/Train File/Train File/26_Litchi.jpg,Litchi,Litchi
+67,data/fruits-images-dataset-object-detection/Train File/Train File/15_Orange.jpg,Orange,Orange
+68,data/fruits-images-dataset-object-detection/Train File/Train File/07_Orange.jpg,Orange,Orange
+69,data/fruits-images-dataset-object-detection/Train File/Train File/10_Mango.jpg,Mango,Mango
+70,data/fruits-images-dataset-object-detection/Train File/Train File/25_Apple.jpg,Apple,Apple
+71,data/fruits-images-dataset-object-detection/Train File/Train File/21_Litchi.jpg,Litchi,Litchi
+72,data/fruits-images-dataset-object-detection/Train File/Train File/19_Papaya.jpg,Papaya,Papaya
+73,data/fruits-images-dataset-object-detection/Train File/Train File/18_Litchi.jpg,Litchi,Litchi
+74,data/fruits-images-dataset-object-detection/Train File/Train File/14_Mango.jpg,Mango,Mango
+75,data/fruits-images-dataset-object-detection/Train File/Train File/27_Papaya.jpg,Papaya,Papaya
+76,data/fruits-images-dataset-object-detection/Train File/Train File/24_Apple.jpg,Apple,Apple
+77,data/fruits-images-dataset-object-detection/Train File/Train File/08_Jackfruit.jpg,Jackfruit,Jackfruit
+78,data/fruits-images-dataset-object-detection/Train File/Train File/27_Mango.jpg,Mango,Mango
+79,data/fruits-images-dataset-object-detection/Train File/Train File/06_Papaya.jpeg,Papaya,Papaya
+80,data/fruits-images-dataset-object-detection/Train File/Train File/21_Orange.jpg,Orange,Orange
+81,data/fruits-images-dataset-object-detection/Train File/Train File/25_Banana.jpg,Banana,Banana
+82,data/fruits-images-dataset-object-detection/Train File/Train File/26_Jackfruit.jpg,Jackfruit,Jackfruit
+83,data/fruits-images-dataset-object-detection/Train File/Train File/07_Hog Pulm.jpg,Hog Plum,Hog Plum
+84,data/fruits-images-dataset-object-detection/Train File/Train File/06_Guava.jpeg,Guava,Guava
+85,data/fruits-images-dataset-object-detection/Train File/Train File/31_Papaya.jpg,Papaya,Papaya
+86,data/fruits-images-dataset-object-detection/Train File/Train File/17_HogPlum.jpg,Hog Plum,Hog Plum
+87,data/fruits-images-dataset-object-detection/Train File/Train File/20_Guava.jpg,Guava,Guava
+88,data/fruits-images-dataset-object-detection/Train File/Train File/08_Hog Pulm.jpg,Hog Plum,Hog Plum
+89,data/fruits-images-dataset-object-detection/Train File/Train File/16_Banana.jpg,Banana,Banana
+90,data/fruits-images-dataset-object-detection/Train File/Train File/29_Mango.jpg,Mango,Mango
+91,data/fruits-images-dataset-object-detection/Train File/Train File/30_Apple.jpg,Apple,Apple
+92,data/fruits-images-dataset-object-detection/Train File/Train File/29_Banana.jpg,Banana,Banana
+93,data/fruits-images-dataset-object-detection/Train File/Train File/07_Banana.jpg,Banana,Banana
+94,data/fruits-images-dataset-object-detection/Train File/Train File/02_Hog Pulm.jpg,Hog Plum,Orange
+95,data/fruits-images-dataset-object-detection/Train File/Train File/08_Orange.jpg,Orange,Orange
+96,data/fruits-images-dataset-object-detection/Train File/Train File/27_Apple.jpg,Apple,Apple
+97,data/fruits-images-dataset-object-detection/Train File/Train File/27_Grapes.jpg,Grapes,Grapes
+98,data/fruits-images-dataset-object-detection/Train File/Train File/28_Mango.jpg,Mango,Mango
+99,data/fruits-images-dataset-object-detection/Train File/Train File/09_Papaya.jpeg,Papaya,Papaya
