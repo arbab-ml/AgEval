@@ -1,0 +1,101 @@
+,0,1,# of Shots 0
+0,data/crop-disease/Black Spot/c6a64929-4caa-4f3e-9f12-17b88aa37077.jpg,Black Spot,Black Spot
+1,data/crop-disease/Cedar Apple Rust/9312bf36-3af8-41a7-a3fe-2fd84909c3af.jpg,Cedar Apple Rust,Cedar Apple Rust
+2,data/crop-disease/Apple Scab/789f4e7d-7ab6-49ad-8770-a85fa9630100.jpg,Apple Scab,Apple Scab
+3,data/crop-disease/Fire Blight/f8966383-189c-416e-b074-6b8181cef14c.jpg,Fire Blight,Fire Blight
+4,data/crop-disease/Botrytis/7a24576c-cc6b-48ee-a1bc-3390c331000c.jpg,Botrytis,Gray Mold
+5,data/crop-disease/Mosaic Virus/e746b460-ac9c-472a-8fe3-6f69cd919e7c.jpg,Mosaic Virus,Mosaic Virus
+6,data/crop-disease/Verticillium/65bfa54d-dc8a-48bf-ae4d-8a2562a6ae99.jpg,Verticillium,Clubroot
+7,data/crop-disease/Black Spot/2325d334-2e15-4fc7-9440-1f771b92bed2.jpg,Black Spot,Black Spot
+8,data/crop-disease/Anthracnose/ebfb45af-29f7-4890-9e5e-1c092ba38296.jpg,Anthracnose,Anthracnose
+9,data/crop-disease/Clubroot/fe588d28-6d67-47f1-8418-da06d2ef63e4.jpg,Clubroot,Clubroot
+10,data/crop-disease/Blossom End Rot/fe132f23-0faf-46a6-9a91-26f265b46063.jpg,Blossom End Rot,Blossom End Rot
+11,data/crop-disease/Leaf Spots/93e64ba3-5b25-447c-bd9d-02e60f9dbe5e.jpg,Leaf Spots,Leaf Spots
+12,data/crop-disease/Apple Scab/b6eebe19-a78f-4118-bf78-48432802b78a.jpg,Apple Scab,Apple Scab
+13,data/crop-disease/Leaf Spots/e16c6626-a9cd-4d6b-a4ed-9e8b2c47eb85.jpg,Leaf Spots,Apple Scab
+14,data/crop-disease/Blight/a7c904b3-c892-4b2e-8d86-559586fb7bda.jpg,Blight,I don't see any fruits in the image.
+15,data/crop-disease/Clubroot/134d7d6c-b1b0-4bd2-b9f5-82181e574f50.png,Clubroot,Clubroot
+16,data/crop-disease/Crown Gall/f638748b-3840-4af7-b534-f02ccafce123.jpg,Crown Gall,Crown Gall
+17,data/crop-disease/Crown Gall/af4f4d40-dd70-42e9-9f55-d52d3b50b751.jpg,Crown Gall,Crown Gall
+18,data/crop-disease/Anthracnose/a27a9b07-f191-4d23-8d28-758ba3103526.jpg,Anthracnose,Leaf Spots
+19,data/crop-disease/Leaf Spots/31f144ab-7d4f-4d41-862f-99f351bfa141.jpg,Leaf Spots,Leaf Spots
+20,data/crop-disease/Gray Mold/89d10d47-6f41-47f0-81eb-a10779c76618.jpg,Gray Mold,Gray Mold
+21,data/crop-disease/Downy Mildew/8db90f89-fa0b-43b3-a634-50985eda272d.jpg,Downy Mildew,Mosaic Virus
+22,data/crop-disease/Powdery Mildew/1c6fceb6-1639-4b2a-a422-08f7a6f71904.png,Powdery Mildew,Powdery Mildew
+23,data/crop-disease/Botrytis/faa669b3-d3c6-4162-844e-65d1aa6ff2b6.jpg,Botrytis,Gray Mold
+24,data/crop-disease/Nematodes/febfc71f-c350-4d0f-bfde-9f944158938b.jpg,Nematodes,Nematodes
+25,data/crop-disease/Blossom End Rot/6fc37b4e-f951-4be4-894c-d966fd363db9.jpg,Blossom End Rot,Blossom End Rot
+26,data/crop-disease/Botrytis/b7c8f915-a69c-4271-b88e-1137de3a3052.jpg,Botrytis,Blight
+27,data/crop-disease/Brown Rot/f270ce2e-77d4-4886-8932-61bb93cf71a2.jpg,Brown Rot,Blight
+28,data/crop-disease/Canker/f3d516ab-969b-464b-8505-3733210175a5.jpg,Canker,Canker
+29,data/crop-disease/Apple Scab/7ca87ded-c7c4-4013-9f56-b111a5087f76.jpg,Apple Scab,Cedar Apple Rust
+30,data/crop-disease/Anthracnose/cd88ce56-51e1-40f9-a67c-2bc87de75b9d.jpg,Anthracnose,Leaf Spots
+31,data/crop-disease/Fire Blight/adc2d200-a58b-4ea3-8a9b-70c7dd4d497c.jpg,Fire Blight,Fire Blight
+32,data/crop-disease/Downy Mildew/46646d8a-f204-4be2-9203-ebd8af176915.jpg,Downy Mildew,Mosaic Virus
+33,data/crop-disease/Powdery Mildew/2fb7bdaa-4b91-4e1a-b238-e0b55fb0ea48.jpg,Powdery Mildew,Powdery Mildew
+34,data/crop-disease/Blight/130bfd10-845b-45c2-829d-cc45cb005e09.jpg,Blight,Anthracnose
+35,data/crop-disease/Canker/aa7629e7-ce60-4799-8cf8-31c1a2184179.png,Canker,Canker
+36,data/crop-disease/Nematodes/a813eaaf-4f95-47a8-a228-5d27609a8bfb.jpg,Nematodes,Nematodes
+37,data/crop-disease/Nematodes/b9e1d0fa-6690-42d8-aa7a-9594a2cd96f5.jpg,Nematodes,Nematodes
+38,data/crop-disease/Mosaic Virus/b0657d00-762d-4239-bb24-fe6dd6cfb813.jpg,Mosaic Virus,Mosaic Virus
+39,data/crop-disease/Blossom End Rot/212e2917-33f0-417c-ac65-d5ac8532cee6.jpg,Blossom End Rot,Blossom End Rot
+40,data/crop-disease/Fire Blight/773a2c07-1907-4020-80b3-9b63c9ccc774.jpg,Fire Blight,Fire Blight
+41,data/crop-disease/Leaf Spots/a01c318d-c13a-45c5-a437-c33c4b9b8c2b.jpg,Leaf Spots,Anthracnose
+42,data/crop-disease/Canker/19509255-8d91-4c49-87f9-ca843756ac49.jpg,Canker,Blight
+43,data/crop-disease/Brown Rot/8b36084c-a847-4451-89be-6786b37a7b35.jpg,Brown Rot,Brown Rot
+44,data/crop-disease/Powdery Mildew/ec9dcb70-8e13-4250-9a76-d7d9383c9422.jpg,Powdery Mildew,Powdery Mildew
+45,data/crop-disease/Blossom End Rot/4ae3ccce-2607-453a-9ad8-c66c10046b6f.jpg,Blossom End Rot,Blossom End Rot
+46,data/crop-disease/Black Spot/f8f7a561-9dbe-4d69-9e36-690429e6045e.jpg,Black Spot,This image does not depict any fruit or related plant disease categories.
+47,data/crop-disease/Powdery Mildew/5a49656f-8560-4ebd-9cde-c5b691c6f905.jpg,Powdery Mildew,Powdery Mildew
+48,data/crop-disease/Fusarium/11b4ded9-2f38-4a76-8376-5e06b585f889.jpg,Fusarium,Powdery Mildew
+49,data/crop-disease/Anthracnose/7d065e08-a8a3-4f7e-a635-72ea510b5366.jpg,Anthracnose,Anthracnose
+50,data/crop-disease/Verticillium/eedc5a47-796c-4b15-b2af-db9b7cd98ae0.jpg,Verticillium,Black Spot
+51,data/crop-disease/Clubroot/09cbc71b-35d9-4336-a45e-3a07d48c916f.jpg,Clubroot,Crown Gall
+52,data/crop-disease/Blossom End Rot/b393a2bb-8ee6-47e9-865f-8ce29414241d.jpg,Blossom End Rot,Blossom End Rot
+53,data/crop-disease/Mosaic Virus/394f2891-5c99-4f1c-b0d5-baef9fa01d0d.jpg,Mosaic Virus,Mosaic Virus
+54,data/crop-disease/Canker/af72ab76-66b5-4500-b33a-9a318b2b44c0.jpg,Canker,Leaf Spots
+55,data/crop-disease/Crown Gall/9104676c-5035-444d-a668-d104f08ca188.jpg,Crown Gall,Crown Gall
+56,data/crop-disease/Canker/a36f50f8-33b4-47ca-87d9-a00be0a19145.jpg,Canker,I cannot provide a prediction as the image does not contain a fruit from which I could identify a disease class. The image provided is of two bottles containing medicinal liquids.
+57,data/crop-disease/Fusarium/9d9f0f65-742d-4875-b977-785021ae8988.png,Fusarium,Fusarium
+58,data/crop-disease/Mosaic Virus/ca94d448-9551-4432-80c0-50018f4027a7.jpg,Mosaic Virus,Mosaic Virus
+59,data/crop-disease/Downy Mildew/e0598ba1-e43f-4255-a23b-6ac4faa36576.jpg,Downy Mildew,Leaf Spots
+60,data/crop-disease/Gray Mold/dbec35df-fe3d-4f97-b62d-d3d1b44d57f9.jpg,Gray Mold,I cannot determine the class from this image
+61,data/crop-disease/Brown Rot/3326394a-343e-44e2-b448-65fa57a530fd.jpg,Brown Rot,Canker
+62,data/crop-disease/Cedar Apple Rust/aff4705d-ef87-4051-ad00-cdf27085267c.jpg,Cedar Apple Rust,Cedar Apple Rust
+63,data/crop-disease/Botrytis/9699aa63-531f-4370-9eb2-bec17bb8b810.jpg,Botrytis,Gray Mold
+64,data/crop-disease/Cedar Apple Rust/9e9b82fe-ccd0-41bf-859f-a2c8f3a25059.jpg,Cedar Apple Rust,Apple Scab
+65,data/crop-disease/Nematodes/fa6688ea-ea6f-4bb8-9f5d-e3ee70d2f2ad.png,Nematodes,Nematodes
+66,data/crop-disease/Fire Blight/e47bd51e-4251-4922-8bb6-391659f5f365.jpg,Fire Blight,Canker
+67,data/crop-disease/Nematodes/8228fbea-ca07-4f28-85d8-8be08cb1e7d1.jpg,Nematodes,Nematodes
+68,data/crop-disease/Fusarium/0e22c0e3-043f-48fc-9f0e-64ede15711f5.jpg,Fusarium,Gray Mold
+69,data/crop-disease/Brown Rot/3f94f06b-418b-460b-83ca-695c010ccd9d.jpg,Brown Rot,Fire Blight
+70,data/crop-disease/Crown Gall/b1fb751f-5dba-41aa-be60-c1748220afbd.jpg,Crown Gall,Crown Gall
+71,data/crop-disease/Botrytis/11c52ff2-922e-4da1-b221-57426e3b94e3.jpg,Botrytis,Gray Mold
+72,data/crop-disease/Gray Mold/35190e5b-1e19-400b-b954-928face3dbaf.jpg,Gray Mold,Gray Mold
+73,data/crop-disease/Fire Blight/cc4d1560-52a9-4518-abd5-cc3745269852.jpg,Fire Blight,Fire Blight
+74,data/crop-disease/Brown Rot/bfba3c1a-06e1-4de9-a095-2cc000d59e4d.jpg,Brown Rot,Canker
+75,data/crop-disease/Gray Mold/a91dd2cd-2429-4167-8a66-672d2d2a041f.jpg,Gray Mold,Verticillium
+76,data/crop-disease/Crown Gall/3b9d0103-f4e7-4633-859d-772ed693d213.jpg,Crown Gall,Crown Gall
+77,data/crop-disease/Leaf Spots/1907ed70-10c5-4261-9ef1-4b29a16e096b.jpg,Leaf Spots,Leaf Spots
+78,data/crop-disease/Blight/58a4848f-4329-4e46-857b-c8bd972c3f4a.jpg,Blight,Blight
+79,data/crop-disease/Gray Mold/a5761e6e-93f0-40ca-99c3-c41c8b0faa68.jpg,Gray Mold,Gray Mold
+80,data/crop-disease/Fusarium/ef28aae5-5949-411b-9335-d4e4e1a07b2c.jpg,Fusarium,Fusarium
+81,data/crop-disease/Black Spot/5877e5bd-af0d-4ad6-8103-95e1b13863c8.jpg,Black Spot,N/A
+82,data/crop-disease/Mosaic Virus/9e557ea9-9736-4024-b873-582fb21f0b27.jpg,Mosaic Virus,Anthracnose
+83,data/crop-disease/Powdery Mildew/362ef643-f25e-49c2-af9c-72e088fb5416.jpg,Powdery Mildew,Powdery Mildew
+84,data/crop-disease/Clubroot/aa983179-47da-4198-967e-3f99ccdd6273.jpg,Clubroot,Clubroot
+85,data/crop-disease/Cedar Apple Rust/a9fa46c5-f601-444a-8deb-a95781b27d2c.jpg,Cedar Apple Rust,Cedar Apple Rust
+86,data/crop-disease/Verticillium/638399bf-76bd-4f32-9781-cab70c4c8590.jpg,Verticillium,Verticillium
+87,data/crop-disease/Clubroot/6a8443e1-383a-42b7-85c0-bcdb0d1838be.jpg,Clubroot,Clubroot
+88,data/crop-disease/Verticillium/0750059b-4c2f-4dd0-809e-4d8f8f20ec67.jpg,Verticillium,Blight
+89,data/crop-disease/Downy Mildew/7a7864ba-ce38-4d66-acbe-6724a47d78ca.jpg,Downy Mildew,Leaf Spots
+90,data/crop-disease/Blight/83f142e4-abb9-4016-8d43-bbad2421bf84.jpg,Blight,Blight
+91,data/crop-disease/Apple Scab/850c9300-237f-4c88-bdaf-a7c8b41c1234.jpg,Apple Scab,Apple Scab
+92,data/crop-disease/Downy Mildew/3fa24f3f-c3b6-474e-82a1-d2328145f83d.jpg,Downy Mildew,Powdery Mildew
+93,data/crop-disease/Black Spot/a33ff7d9-85c9-4564-87d5-4e94b683aa7a.jpg,Black Spot,None
+94,data/crop-disease/Verticillium/43ab4d9f-cbe1-4aaa-9723-b5581c47033b.jpg,Verticillium,Blight
+95,data/crop-disease/Fusarium/a3600c7e-f23c-457e-ab92-3c4f4ddf5810.jpg,Fusarium,Anthracnose
+96,data/crop-disease/Apple Scab/7be327e0-d982-4f63-859f-4519e4434908.jpg,Apple Scab,Apple Scab
+97,data/crop-disease/Anthracnose/3a90a675-bacc-45ff-bf95-0ece0fb1c010.jpg,Anthracnose,Leaf Spots
+98,data/crop-disease/Blight/342d263b-00ee-4dd4-8c94-45032698d59b.jpg,Blight,Blight
+99,data/crop-disease/Cedar Apple Rust/520365e2-048a-4a37-95bf-109025241bd9.jpg,Cedar Apple Rust,Cedar Apple Rust
