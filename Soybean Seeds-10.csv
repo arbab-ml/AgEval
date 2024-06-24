@@ -1,0 +1,11 @@
+,0,1,# of Shots 0,# of Shots 1,# of Shots 2,# of Shots 4,# of Shots 8
+0,data/Soybean Seeds/Intact/1008.jpg,Intact,Intact,Intact,Intact,Intact,Intact
+1,data/Soybean Seeds/Skin-damaged/973.jpg,Skin-damaged,Broken,Broken,Skin-damaged,Skin-damaged,Skin-damaged
+2,data/Soybean Seeds/Immature/594.jpg,Immature,Skin-damaged,Skin-damaged,Intact,Skin-damaged,Immature soybeans
+3,data/Soybean Seeds/Skin-damaged/999.jpg,Skin-damaged,Broken,Broken,Broken,Skin-damaged,Skin-damaged
+4,data/Soybean Seeds/Spotted/706.jpg,Spotted,Spotted,Spotted,Spotted,Spotted,Spotted
+5,data/Soybean Seeds/Broken/876.jpg,Broken,Skin-damaged,Spotted,Skin-damaged,Broken,Broken
+6,data/Soybean Seeds/Intact/828.jpg,Intact,Broken,Skin-damaged,Intact,Intact,Broken
+7,data/Soybean Seeds/Immature/741.jpg,Immature,Skin-damaged,Skin-damaged,Spotted,Skin-damaged,Skin-damaged
+8,data/Soybean Seeds/Broken/786.jpg,Broken,Broken,Broken,Broken,Skin-damaged,Broken
+9,data/Soybean Seeds/Spotted/528.jpg,Spotted,Spotted,Spotted,Spotted,Spotted,Spotted
