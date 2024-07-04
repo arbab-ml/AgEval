@@ -1,0 +1,103 @@
+,0,1,# of Shots 0,Example Paths 0,Example Categories 0
+0,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/30/24420.jpg,wheat blossom midge,NA,NA,NA
+1,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/67/46477.jpg,Lycorma delicatula,NA,NA,NA
+2,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/62/43298.jpg,oides decempunctata,NA,NA,NA
+3,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/47/32965.jpg,tarnished plant bug,NA,NA,NA
+4,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/42/29824.jpg,beet weevil,NA,NA,NA
+5,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/40/29284.jpg,Beet spot flies,aphids,[],[]
+6,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/90/65063.jpg,Toxoptera aurantii,aphids,[],[]
+7,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/45/30801.jpg,flax budworm,Tetradacus c Bactrocera minax,[],[]
+8,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/10/07219.jpg,rice water weevil,NA,NA,NA
+9,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/0/00414.jpg,rice leaf roller,rice leaf roller,[],[]
+10,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/18/12399.jpg,black cutworm,aphis citricola Vander Goot,[],[]
+11,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/31/24664.jpg,penthaleus major,NA,[],[]
+12,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/97/68298.jpg,Chlumetia transversa,Ampelophaga,[],[]
+13,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/85/62626.jpg,Bactrocera tsuneonis,Engraftinam,[],[]
+14,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/76/59314.jpg,Icerya purchasi Maskell,NA,[],[]
+15,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/4/03137.jpg,yellow rice borer,Xylotrechus,[],[]
+16,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/79/60745.jpg,Chrysomphalus aonidum,Rice Gall Midge,[],[]
+17,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/33/25154.jpg,wheat phloeothrips,NA,NA,NA
+18,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/12/07986.jpg,grain spreader thrips,Cicadella viridis,[],[]
+19,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/26/21900.jpg,peach borer,Cicadella viridis,[],[]
+20,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/100/69409.jpg,Sternochetus frigidus,NA,NA,NA
+21,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/53/39009.jpg,odontothrips loti,NA,NA,NA
+22,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/22/15145.jpg,corn borer,NA,NA,NA
+23,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/68/50011.jpg,Xylotrechus,Cerodonta denticornis,[],[]
+24,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/44/30725.jpg,alfalfa weevil,NA,[],[]
+25,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/98/68379.jpg,Mango flat beak leafhopper,colmerus vitis,[],[]
+26,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/15/10913.jpg,mole cricket,grasshopper,[],[]
+27,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/73/58415.jpg,Papilio xuthus,Adristyrannus,[],[]
+28,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/39/28741.jpg,beet army worm,Papilio xuthus,[],[]
+29,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/9/06554.jpg,small brown plant hopper,Rice Stemfly,[],[]
+30,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/84/62093.jpg,Dacus dorsalis(Hendel),Aphis citricola Vander Goot,[],[]
+31,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/11/07449.jpg,rice leafhopper,NA,NA,NA
+32,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/101/69529.jpg,Cicadellidae,Mango flat beak leafhopper,[],[]
+33,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/55/40034.jpg,alfalfa seed chalcid,aphids,[],[]
+34,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/28/23168.jpg,green bug,aphids,[],[]
+35,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/64/43626.jpg,Pseudococcus comstocki Kuwana,NA,NA,NA
+36,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/5/03490.jpg,rice gall midge,Korean mosquito,[],[]
+37,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/78/60558.jpg,Ceroplastes rubens,NA,NA,NA
+38,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/65/43831.jpg,parathrene regalis,red spider,[],[]
+39,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/35/25842.jpg,cerodonta denticornis,NA,NA,NA
+40,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/16/11573.jpg,wireworm,Cicadella viridis,[],[]
+41,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/91/65384.jpg,Aphis citricola Vander Goot,aphids,[],[]
+42,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/34/25574.jpg,wheat sawfly,Beet fly,[],[]
+43,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/7/04375.jpg,brown plant hopper,NA,NA,NA
+44,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/43/30115.jpg,sericaorient alismots chulsky,NA,NA,NA
+45,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/72/58192.jpg,Erythroneura apicalis,cabbage army worm,[],[]
+46,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/27/22989.jpg,english grain aphid,Locustoidea,[],[]
+47,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/19/12911.jpg,large cutworm,Rice Stemfly,[],[]
+48,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/83/62008.jpg,Tetradacus c Bactrocera minax,Corn borer,[],[]
+49,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/25/21487.jpg,Potosiabre vitarsis,NA,NA,NA
+50,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/77/59985.jpg,Unaspis yanonensis,aphids,[],[]
+51,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/49/34898.jpg,lytta polita,Lycorma delicatula,[],[]
+52,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/13/08343.jpg,rice shell pest,Blister Beetle,[],[]
+53,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/24/19019.jpg,aphids,NA,NA,NA
+54,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/3/02103.jpg,asiatic rice borer,Potosiabre vitarsis,[],[]
+55,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/17/11858.jpg,white margined moth,Rice Leafhopper,[],[]
+56,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/38/26953.jpg,cabbage army worm,NA,NA,NA
+57,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/8/05489.jpg,white backed plant hopper,bird cherry-oataphid,[],[]
+58,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/80/60873.jpg,Parlatoria zizyphus Lucus,budworm,[],[]
+59,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/6/04277.jpg,Rice Stemfly,NA,NA,NA
+60,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/66/44469.jpg,Ampelophaga,NA,NA,NA
+61,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/36/25866.jpg,beet fly,NA,NA,NA
+62,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/89/64753.jpg,Toxoptera citricidus,Brown plant hopper,[],[]
+63,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/56/40317.jpg,Pieris canidia,NA,NA,NA
+64,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/95/67542.jpg,Salurnis marginella Guerr,Aphis citricola Vander Goot,[],[]
+65,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/54/39240.jpg,Thrips,grasshopper,[],[]
+66,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/50/35848.jpg,legume blister beetle,NA,NA,NA
+67,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/69/51400.jpg,Cicadella viridis,aphids,[],[]
+68,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/46/32032.jpg,alfalfa plant bug,green leaf bug,[],[]
+69,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/70/55207.jpg,Miridae,NA,NA,NA
+70,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/61/42974.jpg,Brevipoalpus lewisi McGregor,Locustoidea,[],[]
+71,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/99/68662.jpg,Rhytidodera bowrinii white,NA,NA,NA
+72,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/81/60942.jpg,Nipaecoccus vastalor,Potosi bre vitarsis,[],[]
+73,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/41/29750.jpg,meadow moth,red spider,[],[]
+74,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/58/41158.jpg,Limacodidae,Paradoxopsilla paradoxa,[],[]
+75,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/48/34400.jpg,Locustoidea,NA,NA,NA
+76,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/88/64465.jpg,Phyllocnistis citrella Stainton,Corn borer,[],[]
+77,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/57/40678.jpg,Apolygus lucorum,NA,NA,NA
+78,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/75/59151.jpg,Phyllocoptes oleiverus ashmead,Cicadella viridis,[],[]
+79,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/32/24879.jpg,longlegged spider mite,bird cherry-oat aphid,[],[]
+80,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/96/68032.jpg,Deporaus marginatus Pascoe,NA,NA,NA
+81,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/59/42703.jpg,Viteus vitifoliae,Mango flat beak leafhopper,[],[]
+82,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/63/43391.jpg,Polyphagotars onemus latus,rice gall midge,[],[]
+83,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/94/66994.jpg,Lawana imitata Melichar,tarnished plant bug,[],[]
+84,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/37/26097.jpg,flea beetle,Locustoidea,[],[]
+85,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/29/23775.jpg,bird cherry-oataphid,Thrips,[],[]
+86,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/1/01306.jpg,rice leaf caterpillar,Rice Stemfly,[],[]
+87,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/52/38748.jpg,therioaphis maculata Buckton,Paddy stem maggot,[],[]
+88,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/21/13994.jpg,red spider,NA,NA,NA
+89,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/2/01731.jpg,paddy stem maggot,rice leafhopper,[],[]
+90,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/23/16030.jpg,army worm,NA,[],[]
+91,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/87/64197.jpg,Adristyrannus,Beet army worm,[],[]
+92,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/93/66423.jpg,Dasineura sp,Rice Stemfly,[],[]
+93,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/74/58828.jpg,Panonchus citri McGregor,rice leafroller,[],[]
+94,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/86/62726.jpg,Prodenia litura,Bird cherry-oat aphid,[],[]
+95,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/82/61699.jpg,Aleurocanthus spiniferus,tarnished plant bug,[],[]
+96,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/20/13577.jpg,yellow cutworm,Rhizobius dignatus,[],[]
+97,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/60/42835.jpg,Colomerus vitis,I don't have the ability to classify organisms or identify specific species. I can provide general information and answer your questions but not identify organisms in the image.,[],[]
+98,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/71/57726.jpg,Trialeurodes vaporariorum,NA,NA,NA
+99,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/14/08842.jpg,grub,NA,NA,NA
+100,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/92/66257.jpg,Scirtothrips dorsalis Hood,Rice leaf roller,[],[]
+101,/Users/muhammadarbabarshad/Downloads/AgEval-datasets/ip02-dataset/classification/train/51/37726.jpg,blister beetle,NA,NA,NA
