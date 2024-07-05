@@ -1,9 +1,0 @@
-,0,1,# of Shots 0,Example Paths 0,Example Categories 0,# of Shots 2,Example Paths 2,Example Categories 2
-0,data/Soybean Seeds/Broken/786.jpg,Broken,Intact,[],[],Intact,"[""data/Soybean Seeds/Broken/876.jpg"", ""data/Soybean Seeds/Spotted/706.jpg""]","[""Broken"", ""Spotted""]"
-1,data/Soybean Seeds/Skin-damaged/973.jpg,Skin-damaged,Intact,[],[],Intact,"[""data/Soybean Seeds/Skin-damaged/999.jpg"", ""data/Soybean Seeds/Broken/876.jpg""]","[""Skin-damaged"", ""Broken""]"
-2,data/Soybean Seeds/Broken/876.jpg,Broken,Spotted,[],[],Skin-damaged,"[""data/Soybean Seeds/Intact/828.jpg"", ""data/Soybean Seeds/Skin-damaged/999.jpg""]","[""Intact"", ""Skin-damaged""]"
-3,data/Soybean Seeds/Spotted/706.jpg,Spotted,Intact,[],[],Skin-damaged,"[""data/Soybean Seeds/Broken/786.jpg"", ""data/Soybean Seeds/Intact/828.jpg""]","[""Broken"", ""Intact""]"
-4,data/Soybean Seeds/Intact/1008.jpg,Intact,Intact,[],[],Intact,"[""data/Soybean Seeds/Spotted/706.jpg"", ""data/Soybean Seeds/Skin-damaged/973.jpg""]","[""Spotted"", ""Skin-damaged""]"
-5,data/Soybean Seeds/Skin-damaged/999.jpg,Skin-damaged,Skin-damaged,[],[],Broken,"[""data/Soybean Seeds/Broken/786.jpg"", ""data/Soybean Seeds/Spotted/528.jpg""]","[""Broken"", ""Spotted""]"
-6,data/Soybean Seeds/Intact/828.jpg,Intact,Intact,[],[],Intact,"[""data/Soybean Seeds/Broken/876.jpg"", ""data/Soybean Seeds/Spotted/706.jpg""]","[""Broken"", ""Spotted""]"
-7,data/Soybean Seeds/Spotted/528.jpg,Spotted,Skin-damaged,[],[],Spotted,"[""data/Soybean Seeds/Intact/1008.jpg"", ""data/Soybean Seeds/Skin-damaged/999.jpg""]","[""Intact"", ""Skin-damaged""]"
