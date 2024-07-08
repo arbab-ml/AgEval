@@ -1,0 +1,4 @@
+,Identification (I),Identification (I),Identification (I),Identification (I),Identification (I),Identification (I),Identification (I),Classification (C),Classification (C),Quantification (Q)
+,F1 Score,F1 Score,F1 Score,F1 Score,F1 Score,F1 Score,F1 Score,MAE,MAE,MAE
+,Crop Type,Crop Type,Disease Type,Disease Type,Pest Type,Pest Type,Disease Stage,Disease Stage,Leaf Health,Pest Count
+,Durum Wheat,Soybean Seeds,Mango L

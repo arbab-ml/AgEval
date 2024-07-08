@@ -1,0 +1,10 @@
+,Identification (I),Identification (I),Identification (I),Identification (I),Identification (I),Identification (I),Identification (I),Classification (C),Classification (C),Quantification (Q)
+,F1 Score,F1 Score,F1 Score,F1 Score,F1 Score,F1 Score,F1 Score,MAE,MAE,MAE
+,Crop Type,Crop Type,Disease Type,Disease Type,Pest Type,Pest Type,Disease Stage,Disease Stage,Leaf Health,Pest Count
+,Durum Wheat,Soybean Seeds,Mango Leaf Disease,Bean Leaf Lesions,DeepWeeds,IP02,SBRD,Yellow Rust 19,FUSARIUM 22,InsectCount
+Model,,,,,,,,,,
+GPT-4o,59.24,23.96,62.74,80.26,24.21,19.61,25.06,1.0,1.3,
+LLaVA v1.6 34B,30.45,28.19,15.59,51.21,8.73,0.0,5.56,1.73,1.23,
+Gemini-flash-1.5,46.18,26.12,55.71,73.33,39.14,17.81,16.3,1.7,0.87,
+Claude-3-haiku,41.27,36.41,17.59,54.73,6.95,,12.06,1.73,0.83,
+Claude-3-sonnet,39.25,29.44,18.07,48.29,7.77,,22.22,1.67,,
