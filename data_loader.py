@@ -1,7 +1,8 @@
 import os
 import pandas as pd
 from sklearn.utils import shuffle
-
+from PIL import Image
+import numpy as np
 def load_and_prepare_data_SBRD(total_samples_to_check):
     base_directory = '/Users/muhammadarbabarshad/Downloads/AgEval-datasets/severity-based-rice-disease/train'
     expected_classes = ['Healthy', 'Mild Bacterial Blight', 'Mild Blast', 'Mild Brownspot', 'Mild Tungro', 'Severe Bacterial Blight', 'Severe Blast', 'Severe Brownspot', 'Severe Tungro']
@@ -375,4 +376,4 @@ def load_and_prepare_data_InsectCount(total_samples_to_check):
     
     print(f"Loaded {len(shuffled_data)} samples from {base_directory}")
     print(f"Label range: {shuffled_data[1].min()} to {shuffled_data[1].max()}")
-    return shuffled_data, [shuffled_data[1].min(), shuffled_data[1].max()], "InsectCount"
+    return shuffled_data, [shuffled_data[1].min()
