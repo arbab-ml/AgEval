@@ -376,4 +376,56 @@ def load_and_prepare_data_InsectCount(total_samples_to_check):
     
     print(f"Loaded {len(shuffled_data)} samples from {base_directory}")
     print(f"Label range: {shuffled_data[1].min()} to {shuffled_data[1].max()}")
-    return shuffled_data, [shuffled_data[1].min()
+    return shuffled_data, [shuffled_data[1].min(), shuffled_data[1].max()], "InsectCount"
+
+
+def load_and_prepare_data_DiseaseQuantify(total_samples_to_check):
+    base_directory = '/Users/muhammadarbabarshad/Downloads/AgEval-datasets/leaf-disease-quantification/data/data'
+    images_dir = os.path.join(base_directory, 'images')
+    masks_dir = os.path.join(base_directory, 'masks')
+    
+    file_paths = []
+    labels = []
+    for filename in os.listdir(images_dir):
+        if filename.lower().endswith(('.jpg', '.jpeg', '.png')):
+            image_path = os.path.join(images_dir, filename)
+            mask_path = os.path.join(masks_dir, filename.replace('.jpg', '.png'))
+            
+            if os.path.exists(mask_path):
+                # Open the mask image
+                with Image.open(mask_path) as mask:
+                    # Convert to numpy array
+                    mask_array = np.array(mask)
+                    
+                    
+                    # Check if the image is RGB
+                    if len(mask_array.shape) == 3:
+                        # Identify red pixels (R > 0, G = 0, B = 0)
+                        affected_pixels = (mask_array[:,:,0] > 0) & (mask_array[:,:,1] == 0) & (mask_array[:,:,2] == 0)
+                    else:
+                        # For grayscale images, consider any non-zero pixel as affected
+                        affected_pixels = mask_array > 0
+                    
+                    # Calculate percentage of affected area
+                    total_pixels = mask_array.shape[0] * mask_array.shape[1]
+                    percentage_affected = int((np.sum(affected_pixels) / total_pixels) * 100)
+                    
+                file_paths.append(image_path)
+                labels.append(percentage_affected)
+
+    data = pd.DataFrame({0: file_paths, 1: labels})
+    
+    # Use a fixed random state for deterministic sampling
+    random_state = 42
+    
+    # Sample the data
+    if len(data) > total_samples_to_check:
+        sampled_data = data.sample(n=total_samples_to_check, random_state=random_state)
+    else:
+        sampled_data = data
+        print(f"Warning: Not enough samples. Using all {len(data)} available samples.")
+    
+    # Shuffle the sampled data
+    shuffled_data = shuffle(sampled_data, random_state=random_state).reset_index(drop=True)
+
+    return shuffled_data, [shuffled_data[1].min(), shuffled_data[1].max()], "PlantDoc"
