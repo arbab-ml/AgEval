@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.utils import shuffle
 from PIL import Image
 import numpy as np
+# import openpyxl
 def load_and_prepare_data_SBRD(total_samples_to_check):
     base_directory = '/Users/muhammadarbabarshad/Downloads/AgEval-datasets/severity-based-rice-disease/train'
     expected_classes = ['Healthy', 'Mild Bacterial Blight', 'Mild Blast', 'Mild Brownspot', 'Mild Tungro', 'Severe Bacterial Blight', 'Severe Blast', 'Severe Brownspot', 'Severe Tungro']
@@ -429,3 +430,62 @@ def load_and_prepare_data_DiseaseQuantify(total_samples_to_check):
     shuffled_data = shuffle(sampled_data, random_state=random_state).reset_index(drop=True)
 
     return shuffled_data, [shuffled_data[1].min(), shuffled_data[1].max()], "PlantDoc"
+
+
+
+
+def load_and_prepare_data_IDC(total_samples_to_check):
+    base_directory = '/Users/muhammadarbabarshad/Downloads/AgEval-datasets/IDC_data'
+    labels_file = '/Users/muhammadarbabarshad/Downloads/AgEval-datasets/IDC_data/labels/Timepoint 2 IDC.xlsx'
+    
+    # Read the Excel file
+    df = pd.read_excel(labels_file)
+    
+    file_paths = []
+    labels = []
+    
+    # Iterate through the dataframe
+    for index, row in df.iterrows():
+        plot_number = str(row['Plot#'])
+        rating = row['Field Visual rating']
+        # if after converting the rating to integer it is not a integer then skip it
+        try:
+            rating = int(rating)
+        except:
+            continue
+        # Construct the filename
+        filename = f"{plot_number}-p.jpg"
+        file_path = os.path.join(base_directory, filename)
+        
+        # Check if the file exists
+        if os.path.exists(file_path):
+            file_paths.append(file_path)
+            labels.append(rating)
+    
+    data = pd.DataFrame({0: file_paths, 1: labels})
+    
+    # Get unique labels
+    expected_classes = sorted(data[1].unique())
+    samples_per_class = int(total_samples_to_check / len(expected_classes))
+    
+    # Use a fixed random state for deterministic sampling
+    random_state = 42
+    
+    sampled_data = pd.DataFrame(columns=[0, 1])
+    for cls in expected_classes:
+        class_data = data[data[1] == cls]
+        if len(class_data) >= samples_per_class:
+            class_sample = class_data.sample(n=samples_per_class, random_state=random_state)
+        else:
+            class_sample = class_data
+            print(f"Warning: Not enough samples for class {cls}. Using all {len(class_data)} available samples.")
+        sampled_data = pd.concat([sampled_data, class_sample], ignore_index=True)
+    
+    # Shuffle the sampled data
+    shuffled_data = shuffle(sampled_data, random_state=random_state).reset_index(drop=True)
+    
+    print(f"Loaded {len(shuffled_data)} samples from {base_directory}")
+    print(f"Label range: {shuffled_data[1].min()} to {shuffled_data[1].max()}")
+    print(f"Samples per class: {samples_per_class}")
+    
+    return shuffled_data, expected_classes, "IDC"
