@@ -445,8 +445,4 @@ async def main():
             all_data_results.to_csv(output_file)
             print(f"Results saved to {output_file}")
 
-        print(f"Completed processing for dataset: {output_file_name}\n")
-
-
-if __name__ == "__main__":
-    asyncio.run(main()) 
+        print(f

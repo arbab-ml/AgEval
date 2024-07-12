@@ -1,11 +1,11 @@
-,Identification (I),Identification (I),Identification (I),Identification (I),Identification (I),Identification (I),Identification (I),Classification (C),Classification (C),Quantification (Q),Quantification (Q)
-,F1 Score,F1 Score,F1 Score,F1 Score,F1 Score,F1 Score,F1 Score,NMAE,NMAE,NMAE,NMAE
-,Crop Type,Crop Type,Disease Type,Disease Type,Pest Type,Pest Type,Disease Stage,Disease Stage,Leaf Health,Pest Count,Disease Quantification
-,Durum Wheat,Soybean Seeds,Mango Leaf Disease,Bean Leaf Lesions,DeepWeeds,IP02,SBRD,Yellow Rust 19,FUSARIUM 22,InsectCount,PlantDoc
-Model,,,,,,,,,,,
-GPT-4o,78.02,42.88,65.15,80.31,39.59,18.97,57.3,16.0,21.67,11.56,14.46
-LLaVA v1.6 34B,44.74,23.3,19.32,31.34,0.0,0.0,16.97,33.33,34.0,20.56,37.9
-Claude-3.5-sonnet,78.02,58.45,46.43,73.63,12.31,,21.9,16.67,20.83,13.56,16.84
-Gemini-flash-1.5,65.28,34.31,55.21,58.48,31.31,21.9,29.72,30.0,27.5,16.0,46.55
-Claude-3-haiku,33.9,29.14,36.34,53.01,13.87,,11.11,36.0,30.0,21.33,22.66
-Claude-3-sonnet,67.36,31.81,24.77,44.45,3.3,,10.27,17.33,,,
+,Identification (I),Identification (I),Identification (I),Identification (I),Identification (I),Identification (I),Identification (I),Classification (C),Classification (C),Classification (C),Quantification (Q),Quantification (Q)
+,F1,F1,F1,F1,F1,F1,F1,NMAE,NMAE,NMAE,NMAE,NMAE
+,Seed Morphology,Seed Morphology,Foliar Stress,Foliar Stress,Foliar Stress,Invasive Species,Invasive Species,Disease Severity,Stress Tolerance,Stress Tolerance,Pest,Disease
+,Durum Wheat,Soybean Seeds,Mango Leaf Disease,Bean Leaf Lesions,Soybean Diseases,Dangerous Insects,DeepWeeds,Yellow Rust 19,IDC,FUSARIUM 22,InsectCount,PlantDoc
+Model,,,,,,,,,,,,
+Gemini-pro-1.5,74.03,37.37,52.81,74.66,23.23,83.69,47.23,20.0,23.72,20.5,20.64,12.29
+GPT-4o,85.19,38.35,63.11,72.72,59.26,82.18,39.87,20.0,18.11,22.5,7.57,13.12
+LLaVA v1.6 34B,35.72,19.15,15.89,38.72,13.38,23.6,5.42,36.46,47.35,32.0,16.13,29.51
+Claude-3.5-sonnet,77.76,48.68,49.23,73.55,8.23,84.2,23.59,16.46,19.9,20.0,10.05,13.92
+Gemini-flash-1.5,61.04,30.19,47.14,62.79,13.58,78.62,33.76,24.38,21.17,26.0,9.18,13.92
+Claude-3-haiku,32.99,30.23,28.17,58.08,4.56,54.51,14.15,40.83,21.02,28.25,16.71,15.9
