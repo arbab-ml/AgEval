@@ -2,3 +2,16 @@
 data/*
 data
 .env
+bean-leaf-lesions-classification/
+deepweeds/
+Durum_Wheat_Dataset/
+fusarium-wilt-disease-in-chickpea-dataset/
+ip02-dataset/
+leaf-disease-segmentation-with-trainvalid-split/
+mango-leaf-dataset/
+mango-leaf-disease-dataset/
+soyabean-seeds_Dataset/
+yellowrust19-yellow-rust-disease-in-wheat/
+Severity_Based_Rice_Leaf_Diseases_Dataset/
+
+
