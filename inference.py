@@ -28,7 +28,7 @@ global vision_prompt
 
 #claude-3-sonnet-20240229
 all_vendors_models=[
-    {"vendor": "openai", "model": "gpt-4o-2024-05-13", "model_name": "GPT-4o"}, #  done -ip2 -2datasets
+    # {"vendor": "openai", "model": "gpt-4o-2024-05-13", "model_name": "GPT-4o"}, #  done -ip2 -2datasets
     {"vendor": "anthropic", "model": "claude-3-5-sonnet-20240620", "model_name": "Claude-3.5-sonnet"}, #done -ip2 -2datasets
     {"vendor": "anthropic", "model": "claude-3-haiku-20240307", "model_name": "Claude-3-haiku"}, #done -ip2 - 2datasets
     {"vendor": "openrouter", "model": "liuhaotian/llava-yi-34b", "model_name": "LLaVA v1.6 34B"}, #done -ip2 - 2datasets
@@ -58,7 +58,7 @@ disease_count_prompt="""
     The response should start with {{ and contain only a JSON object (as specified above) and no other text.
     """
 idc_prompt="""
-    Analyze this image of a soybean canopy to determine the iron deficiency chlorosis (IDC) severity rating. The images are of soybean plants exhibiting various levels of IDC symptoms, ranging from healthy green plants to those with severe chlorosis and necrosis. Evaluate the extent of yellowing and browning in the canopy. Provide your answer in the following JSON format:
+    Analyze this image of a 142613114soybean canopy to determine the iron deficiency chlorosis (IDC) severity rating. The images are of soybean plants exhibiting various levels of IDC symptoms, ranging from healthy green plants to those with severe chlorosis and necrosis. Evaluate the extent of yellowing and browning in the canopy. Provide your answer in the following JSON format:
     {{"prediction": "number"}}
     Replace "number" with your best estimate of the IDC severity rating based on your analysis of the image.
     The number should be entered exactly as a whole number (without any symbols) in a range of {expected_classes}. Higher value means more severity.
@@ -80,8 +80,8 @@ datasets = [
     # {"loader": load_and_prepare_data_FUSARIUM22, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt},
     # {"loader": load_and_prepare_data_InsectCount, "samples": 100, "shots": universal_shots,  "vision_prompt": insect_count_prompt}, 
     # {"loader": load_and_prepare_data_DiseaseQuantify, "samples": 100, "shots": universal_shots,  "vision_prompt": disease_count_prompt},
-    {"loader": load_and_prepare_data_IDC, "samples": 100, "shots": universal_shots,  "vision_prompt": idc_prompt},
-    {"loader": load_and_prepare_data_Soybean_PNAS, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt}, 
+    # {"loader": load_and_prepare_data_IDC, "samples": 100, "shots": universal_shots,  "vision_prompt": idc_prompt},
+    # {"loader": load_and_prepare_data_Soybean_PNAS, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt}, 
 ]
 
 
@@ -400,6 +400,11 @@ async def main():
         shots = dataset["shots"]
         
         all_data, expected_classes, output_file_name = loader(total_samples_to_check)
+        #print the output_filename and length of expected classes along with those expected classes legibally
+        print(f"Dataset Name: {output_file_name}")
+        print(f"Number of classes / unique labels: {len(expected_classes)}")
+        print(f"Expected classes: {expected_classes}")
+        print("----------------------------")
         vision_prompt=dataset["vision_prompt"].format(expected_classes=expected_classes)
 
         print(f"\nProcessing dataset: {output_file_name}")
