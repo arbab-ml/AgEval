@@ -58,7 +58,7 @@ disease_count_prompt="""
     The response should start with {{ and contain only a JSON object (as specified above) and no other text.
     """
 idc_prompt="""
-    Analyze this image of a 142613114soybean canopy to determine the iron deficiency chlorosis (IDC) severity rating. The images are of soybean plants exhibiting various levels of IDC symptoms, ranging from healthy green plants to those with severe chlorosis and necrosis. Evaluate the extent of yellowing and browning in the canopy. Provide your answer in the following JSON format:
+    Analyze this image of a soybean canopy to determine the iron deficiency chlorosis (IDC) severity rating. The images are of soybean plants exhibiting various levels of IDC symptoms, ranging from healthy green plants to those with severe chlorosis and necrosis. Evaluate the extent of yellowing and browning in the canopy. Provide your answer in the following JSON format:
     {{"prediction": "number"}}
     Replace "number" with your best estimate of the IDC severity rating based on your analysis of the image.
     The number should be entered exactly as a whole number (without any symbols) in a range of {expected_classes}. Higher value means more severity.
