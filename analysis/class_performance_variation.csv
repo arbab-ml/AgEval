@@ -1,0 +1,61 @@
+Model,Dataset,0-shot CV,8-shot CV
+Claude-3-haiku,Bean Leaf Lesions,59.96,64.66
+Claude-3-haiku,Dangerous Insects,73.61,72.45
+Claude-3-haiku,DeepWeeds,89.49,43.39
+Claude-3-haiku,Durum Wheat,52.89,29.28
+Claude-3-haiku,FUSARIUM 22,85.63,35.31
+Claude-3-haiku,IDC,0.0,0.0
+Claude-3-haiku,Mango Leaf Disease,89.36,71.07
+Claude-3-haiku,Soybean Diseases,76.19,84.61
+Claude-3-haiku,Soybean Seeds,53.16,40.76
+Claude-3-haiku,Yellow Rust 19,40.27,58.62
+Claude-3.5-sonnet,Bean Leaf Lesions,31.32,7.88
+Claude-3.5-sonnet,Dangerous Insects,25.58,25.23
+Claude-3.5-sonnet,DeepWeeds,81.34,46.79
+Claude-3.5-sonnet,Durum Wheat,74.83,8.43
+Claude-3.5-sonnet,FUSARIUM 22,47.74,28.21
+Claude-3.5-sonnet,IDC,0.0,16.03
+Claude-3.5-sonnet,Mango Leaf Disease,56.84,35.71
+Claude-3.5-sonnet,Soybean Diseases,134.0,68.64
+Claude-3.5-sonnet,Soybean Seeds,53.89,31.3
+Claude-3.5-sonnet,Yellow Rust 19,64.78,41.79
+GPT-4o,Bean Leaf Lesions,23.97,5.95
+GPT-4o,Dangerous Insects,26.08,23.56
+GPT-4o,DeepWeeds,68.19,28.79
+GPT-4o,Durum Wheat,75.24,3.01
+GPT-4o,FUSARIUM 22,74.54,32.84
+GPT-4o,IDC,48.32,34.86
+GPT-4o,Mango Leaf Disease,54.93,18.35
+GPT-4o,Soybean Diseases,282.84,72.52
+GPT-4o,Soybean Seeds,63.62,29.99
+GPT-4o,Yellow Rust 19,85.42,25.84
+Gemini-flash-1.5,Bean Leaf Lesions,23.41,19.13
+Gemini-flash-1.5,Dangerous Insects,31.38,28.82
+Gemini-flash-1.5,DeepWeeds,69.21,44.32
+Gemini-flash-1.5,Durum Wheat,64.39,13.94
+Gemini-flash-1.5,FUSARIUM 22,74.82,19.29
+Gemini-flash-1.5,IDC,60.78,14.31
+Gemini-flash-1.5,Mango Leaf Disease,84.12,42.76
+Gemini-flash-1.5,Soybean Diseases,117.13,86.44
+Gemini-flash-1.5,Soybean Seeds,64.86,36.54
+Gemini-flash-1.5,Yellow Rust 19,123.7,53.52
+Gemini-pro-1.5,Bean Leaf Lesions,17.55,17.42
+Gemini-pro-1.5,Dangerous Insects,31.45,32.86
+Gemini-pro-1.5,DeepWeeds,65.79,49.06
+Gemini-pro-1.5,Durum Wheat,74.83,16.74
+Gemini-pro-1.5,FUSARIUM 22,86.98,21.29
+Gemini-pro-1.5,IDC,0.0,0.0
+Gemini-pro-1.5,Mango Leaf Disease,73.04,39.87
+Gemini-pro-1.5,Soybean Diseases,103.73,94.23
+Gemini-pro-1.5,Soybean Seeds,50.31,28.85
+Gemini-pro-1.5,Yellow Rust 19,96.33,36.23
+LLaVA v1.6 34B,Bean Leaf Lesions,42.23,28.8
+LLaVA v1.6 34B,Dangerous Insects,110.73,126.84
+LLaVA v1.6 34B,DeepWeeds,105.2,85.23
+LLaVA v1.6 34B,Durum Wheat,25.02,15.1
+LLaVA v1.6 34B,FUSARIUM 22,30.46,0.0
+LLaVA v1.6 34B,IDC,0.0,0.0
+LLaVA v1.6 34B,Mango Leaf Disease,95.22,58.68
+LLaVA v1.6 34B,Soybean Diseases,105.44,81.59
+LLaVA v1.6 34B,Soybean Seeds,60.56,27.68
+LLaVA v1.6 34B,Yellow Rust 19,47.01,53.92
