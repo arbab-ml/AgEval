@@ -2,40 +2,44 @@ import requests
 from bs4 import BeautifulSoup
 import os
 
-# URL of the Dryad dataset page
-dryad_url = "https://datadryad.org/stash/dataset/doi:10.5061/dryad.905qftttm"
-
-# Directory to save the downloaded files
-download_dir = "dryad_data"
-os.makedirs(download_dir, exist_ok=True)
-
-def get_file_links(dryad_url):
-    response = requests.get(dryad_url)
+def get_dryad_files(base_url):
+    response = requests.get(base_url)
+    response.raise_for_status()  # Check if the request was successful
     soup = BeautifulSoup(response.text, 'html.parser')
     
-    # Find all links to data files
+    # Find all file download links
     file_links = []
-    for a_tag in soup.find_all('a', class_='btn btn-default btn-xs'):
-        href = a_tag.get('href')
-        if href and 'download' in href:
-            file_links.append(href)
+    for link in soup.find_all('a', href=True):
+        href = link['href']
+        if 'stash/downloads/file_stream' in href:
+            # Construct the full URL
+            full_url = requests.compat.urljoin(base_url, href)
+            file_links.append(full_url)
     
     return file_links
 
-def download_files(file_links, download_dir):
-    for link in file_links:
-        file_name = os.path.join(download_dir, link.split('/')[-1])
-        response = requests.get(link, stream=True)
-        
-        with open(file_name, 'wb') as file:
-            for chunk in response.iter_content(chunk_size=8192):
-                file.write(chunk)
-        print(f"Downloaded: {file_name}")
+def download_file(url, output_path):
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+    }
+    response = requests.get(url, headers=headers, stream=True)
+    response.raise_for_status()  # Check if the request was successful
 
-if __name__ == "__main__":
-    file_links = get_file_links(dryad_url)
-    if file_links:
-        download_files(file_links, download_dir)
-        print("All files downloaded successfully.")
-    else:
-        print("No files found for download.")
+    with open(output_path, 'wb') as file:
+        for chunk in response.iter_content(chunk_size=8192):
+            file.write(chunk)
+    print(f"Downloaded {output_path}")
+
+# Dryad dataset URL
+dataset_url = "https://datadryad.org/stash/dataset/doi:10.5061/dryad.905qftttm"
+
+# Get the file links
+file_links = get_dryad_files(dataset_url)
+
+# Create a directory to store the downloaded files
+os.makedirs("dryad_files", exist_ok=True)
+
+# Download each file
+for i, file_link in enumerate(file_links):
+    file_name = f"dryad_files/dryad_file_{i + 1}.zip"
+    download_file(file_link, file_name)
