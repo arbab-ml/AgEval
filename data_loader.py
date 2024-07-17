@@ -681,7 +681,7 @@ def load_and_prepare_data_Soybean_Dangerous_Insects(total_samples_to_check):
     else:
         print(f"Dataset already exists at {download_path}. Skipping download.")
     
-    base_directory =os.path.join(download_path,'Fruit Flies')
+    base_directory =os.path.join(download_path,'farm_insects')
     
     expected_classes = [ 'Africanized Honey Bees', 'Aphids', 'Armyworms', 'Brown Marmorated Stink Bugs', 'Cabbage Loopers', 'Citrus Canker', 'Colorado Potato Beetles', 'Corn Borers', 'Corn Earworms', 'Fall Armyworms', 'Fruit Flies', 'Spider Mites', 'Thrips', 'Tomato Hornworms', 'Western Corn Rootworms' ]
     rename_folders(base_directory, expected_classes)
@@ -852,6 +852,7 @@ def load_and_prepare_data_Soybean_PNAS(total_samples_to_check):
     }
 
     rename_folders_dict(base_directory, soybean_stress_dict )
+    print(os.listdir(base_directory))
     samples_per_class = int(total_samples_to_check / len(expected_classes))
     file_paths = []
     labels = []
