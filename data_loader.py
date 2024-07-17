@@ -10,7 +10,11 @@ import zipfile
 import shutil
 from tqdm import tqdm
 import difflib
+import requests
+from tqdm import tqdm
 
+
+# Utility functions
 def download_with_progress(dataset_name, path="."):
     api = KaggleApi()
     api.authenticate()
@@ -61,11 +65,46 @@ def convert_tiff_to_jpg(file_path):
             print(f"Error converting {file_path}: {str(e)}")
             return file_path
     return file_path
+def download_file(url, filename):
+    response = requests.get(url, stream=True)
+    total_size = int(response.headers.get('content-length', 0))
+    block_size = 1024  # 1 KB
+    
+    with open(filename, 'wb') as file, tqdm(
+        desc=filename,
+        total=total_size,
+        unit='iB',
+        unit_scale=True,
+        unit_divisor=1024,
+    ) as progress_bar:
+        for data in response.iter_content(block_size):
+            size = file.write(data)
+            progress_bar.update(size)
 
+def get_file_urls(record_id):
+    metadata_url = f"https://zenodo.org/api/records/{record_id}"
+    response = requests.get(metadata_url)
+    if response.status_code == 200:
+        data = response.json()
+        return [(file['links']['self'], file['key']) for file in data.get('files', [])]
+    else:
+        print(f"Error fetching metadata. Status code: {response.status_code}")
+        return []
+
+def extract_zip(zip_path, extract_path):
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        # Get the total number of files in the zip
+        total_files = len(zip_ref.infolist())
+        
+        # Extract all files with a progress bar
+        for file in tqdm(iterable=zip_ref.infolist(), total=total_files, desc="Extracting"):
+            zip_ref.extract(member=file, path=extract_path)
+
+# Load and prepare data functions
 def load_and_prepare_data_SBRD(total_samples_to_check):
     # Dataset details
     dataset_name = "isaacritharson/severity-based-rice-leaf-diseases-dataset"
-    download_path = "./Severity_Based_Rice_Leaf_Diseases_Dataset"
+    download_path = "./data/Severity_Based_Rice_Leaf_Diseases_Dataset"
 
     # Check if the dataset already exists
     if not os.path.exists(download_path):
@@ -120,7 +159,7 @@ def load_and_prepare_data_SBRD(total_samples_to_check):
 def load_and_prepare_data_DurumWheat(total_samples_to_check):
       # Dataset details
     dataset_name = "muratkokludataset/durum-wheat-dataset"
-    download_path = "./Durum_Wheat_Dataset"
+    download_path = "./data/Durum_Wheat_Dataset"
 
     # Check if the dataset already exists
     if not os.path.exists(download_path):
@@ -187,7 +226,7 @@ def load_and_prepare_data_soybean_seeds(total_samples_to_check):
 
      # Dataset details
     dataset_name = "warcoder/soyabean-seeds"
-    download_path = "./soyabean-seeds_Dataset"
+    download_path = "./data/soyabean-seeds_Dataset"
 
     # Check if the dataset already exists
     if not os.path.exists(download_path):
@@ -239,7 +278,7 @@ def load_and_prepare_data_mango_leaf(total_samples_to_check):
       
     # Dataset details
     dataset_name = "aryashah2k/mango-leaf-disease-dataset"
-    download_path = "./mango-leaf-disease-dataset"
+    download_path = "./data/mango-leaf-disease-dataset"
 
     # Check if the dataset already exists
     if not os.path.exists(download_path):
@@ -291,7 +330,7 @@ def load_and_prepare_data_DeepWeeds(total_samples_to_check):
 
     # Dataset details
     dataset_name = "imsparsh/deepweeds"
-    download_path = "./deepweeds"
+    download_path = "./data/deepweeds"
 
     # Check if the dataset already exists
     if not os.path.exists(download_path):
@@ -337,7 +376,7 @@ def load_and_prepare_data_DeepWeeds(total_samples_to_check):
 def load_and_prepare_data_IP02(total_samples_to_check):
     
     dataset_name = "rtlmhjbn/ip02-dataset"
-    download_path = "./ip02-dataset"
+    download_path = "./data/ip02-dataset"
 
     # Check if the dataset already exists
     if not os.path.exists(download_path):
@@ -401,7 +440,7 @@ def load_and_prepare_data_IP02(total_samples_to_check):
 def load_and_prepare_data_bean_leaf(total_samples_to_check):
     # Dataset details
     dataset_name = "marquis03/bean-leaf-lesions-classification"
-    download_path = "./bean-leaf-lesions-classification"
+    download_path = "./data/bean-leaf-lesions-classification"
 
     # Check if the dataset already exists
     if not os.path.exists(download_path):
@@ -450,7 +489,7 @@ def load_and_prepare_data_bean_leaf(total_samples_to_check):
 
 def load_and_prepare_data_YellowRust(total_samples_to_check):
     dataset_name = "tolgahayit/yellowrust19-yellow-rust-disease-in-wheat"
-    download_path = "./yellowrust19-yellow-rust-disease-in-wheat"
+    download_path = "./data/yellowrust19-yellow-rust-disease-in-wheat"
 
     # Check if the dataset already exists
     if not os.path.exists(download_path):
@@ -511,7 +550,7 @@ def load_and_prepare_data_YellowRust(total_samples_to_check):
 
 def load_and_prepare_data_FUSARIUM22(total_samples_to_check):
     dataset_name = "tolgahayit/fusarium-wilt-disease-in-chickpea-dataset"
-    download_path = "./fusarium-wilt-disease-in-chickpea-dataset"
+    download_path = "./data/fusarium-wilt-disease-in-chickpea-dataset"
 
     if not os.path.exists(download_path):
         # Download the dataset with progress
@@ -569,7 +608,7 @@ def load_and_prepare_data_FUSARIUM22(total_samples_to_check):
 def load_and_prepare_data_DiseaseQuantify(total_samples_to_check):
 
     dataset_name = "sovitrath/leaf-disease-segmentation-with-trainvalid-split"
-    download_path = "./leaf-disease-segmentation-with-trainvalid-split"
+    download_path = "./data/leaf-disease-segmentation-with-trainvalid-split"
 
     if not os.path.exists(download_path):
         # Download the dataset with progress
@@ -633,7 +672,7 @@ def load_and_prepare_data_Soybean_Dangerous_Insects(total_samples_to_check):
 
     # Dataset details
     dataset_name = "tarundalal/dangerous-insects-dataset"
-    download_path = "./farm_insects"
+    download_path = "./data/farm_insects"
 
     # Check if the dataset already exists
     if not os.path.exists(download_path):
@@ -679,50 +718,11 @@ def load_and_prepare_data_Soybean_Dangerous_Insects(total_samples_to_check):
     print(f"Loaded {len(sampled_data)} samples from {base_directory}")
     return shuffle(sampled_data, random_state=random_state).reset_index(drop=True), expected_classes, "Dangerous Insects"
 
-# Download the file from Zenodo
-
-import requests
-from tqdm import tqdm
-
-def download_file(url, filename):
-    response = requests.get(url, stream=True)
-    total_size = int(response.headers.get('content-length', 0))
-    block_size = 1024  # 1 KB
-    
-    with open(filename, 'wb') as file, tqdm(
-        desc=filename,
-        total=total_size,
-        unit='iB',
-        unit_scale=True,
-        unit_divisor=1024,
-    ) as progress_bar:
-        for data in response.iter_content(block_size):
-            size = file.write(data)
-            progress_bar.update(size)
-
-def get_file_urls(record_id):
-    metadata_url = f"https://zenodo.org/api/records/{record_id}"
-    response = requests.get(metadata_url)
-    if response.status_code == 200:
-        data = response.json()
-        return [(file['links']['self'], file['key']) for file in data.get('files', [])]
-    else:
-        print(f"Error fetching metadata. Status code: {response.status_code}")
-        return []
-
-def extract_zip(zip_path, extract_path):
-    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-        # Get the total number of files in the zip
-        total_files = len(zip_ref.infolist())
-        
-        # Extract all files with a progress bar
-        for file in tqdm(iterable=zip_ref.infolist(), total=total_files, desc="Extracting"):
-            zip_ref.extract(member=file, path=extract_path)
 
 def load_and_prepare_data_IDC(total_samples_to_check):
     record_id = "12740714"
     # Create a directory to store the downloaded files
-    download_path = "IDC_data"
+    download_path = "./data/IDC_data"
     
     # Store the current working directory
     original_dir = os.getcwd()
@@ -811,7 +811,7 @@ def load_and_prepare_data_Soybean_PNAS(total_samples_to_check):
 
     record_id = "12747481"
     # Create a directory to store the downloaded files
-    download_path = "Soybean-PNAS"
+    download_path = "./data/Soybean-PNAS"
     
     # Store the current working directory
     original_dir = os.getcwd()
@@ -835,7 +835,7 @@ def load_and_prepare_data_Soybean_PNAS(total_samples_to_check):
         print(f"Dataset already exists at {download_path}. Skipping download.")      
    
 
-    base_directory = 'Soybean-PNAS/Training Samples'
+    base_directory = './data/Soybean-PNAS/Training Samples'
 
     expected_classes = ['Bacterial Blight','Bacterial Pustule','Frogeye Leaf Spot', 'Healthy' , 'Herbicide Injury' , 'Iron Deficiency Chlorosis', 'Potassium Deficiency','Septoria Brown Spot', 'Sudden Death Syndrome' ]
     
@@ -888,7 +888,7 @@ def load_and_prepare_data_Soybean_PNAS(total_samples_to_check):
 def load_and_prepare_data_InsectCount(total_samples_to_check):
     record_id = "12747496"
     # Create a directory to store the downloaded files
-    download_path = "insectcount"
+    download_path = "./data/insectcount"
     
     # Store the current working directory
     original_dir = os.getcwd()
@@ -918,7 +918,7 @@ def load_and_prepare_data_InsectCount(total_samples_to_check):
     
     os.chdir(original_dir)
 
-    base_directory = 'insectcount'
+    base_directory = './data/insectcount'
     images_dir = os.path.join(base_directory, 'images')
     labels_dir = os.path.join(base_directory, 'labels')
     
@@ -954,5 +954,3 @@ def load_and_prepare_data_InsectCount(total_samples_to_check):
     print(f"Loaded {len(shuffled_data)} samples from {base_directory}")
     print(f"Label range: {shuffled_data[1].min()} to {shuffled_data[1].max()}")
     return shuffled_data, [shuffled_data[1].min(), shuffled_data[1].max()], "InsectCount"
-
-
