@@ -1,4 +1,4 @@
-# AgEval Benchmark Companion Repository
+# AgEval Benchmark
 
 This repository contains the companion code for the AgEval benchmark datasets, focusing on plant stress identification, classification, and quantification. It includes 12 subsets of data used in the benchmark.
 
@@ -6,7 +6,7 @@ This repository contains the companion code for the AgEval benchmark datasets, f
 
 The main components of this repository are:
 
-1. `inference.py`: Script for evaluating models on the AgAgEval Benchmark Companion RepositoryEval datasets.
+1. `inference.py`: Script for evaluating models on the AgEval Benchmark datasets.
 2. `data_loader.py`: Functions for downloading and preparing the benchmark datasets.
 
 To replicate the results presented in the paper, run `inference.py` to evaluate no-context or few-shot in-context learning on the datasets.
