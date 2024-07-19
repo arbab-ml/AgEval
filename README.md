@@ -2,6 +2,9 @@
 
 This repository contains the companion code for the AgEval benchmark datasets, focusing on plant stress identification, classification, and quantification. It includes 12 subsets of data used in the benchmark.
 
+
+![Overview of Benchmark](Overview.png "Title")
+
 ## Overview
 
 The main components of this repository are:
