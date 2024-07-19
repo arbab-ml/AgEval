@@ -1,0 +1,10 @@
+aiohttp==3.9.5
+anthropic==0.31.2
+kaggle==1.6.14
+nest_asyncio==1.6.0
+numpy==2.0.0
+pandas==2.2.2
+Pillow==10.4.0
+Requests==2.32.3
+scikit_learn==1.5.1
+tqdm==4.66.4
