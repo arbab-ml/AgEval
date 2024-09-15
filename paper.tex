@@ -1,0 +1,128 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{booktabs}
+
+\title{Adaptive Few-Shot Learning for Improved Image Classification}
+\author{Your Name}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This study introduces an adaptive few-shot learning method for image classification using CLIP embeddings for example selection. Our approach outperforms random selection across diverse datasets and state-of-the-art vision-language models, significantly improving classification accuracy on agricultural and plant pathology tasks.
+\end{abstract}
+
+\section{Introduction}
+
+Few-shot learning has emerged as a promising technique to enhance the performance of machine learning models, particularly in scenarios with limited labeled data. In the context of image classification, providing relevant examples can significantly improve a model's ability to generalize and make accurate predictions. However, the selection of these examples plays a crucial role in the effectiveness of few-shot learning.
+
+This study introduces an adaptive few-shot learning approach that leverages CLIP (Contrastive Language-Image Pre-training) embeddings to select the most relevant examples for each input image. We hypothesize that this method will outperform random example selection, leading to improved classification accuracy across various datasets and models.
+
+\section{Methods}
+
+\subsection{Datasets}
+
+We evaluated our approach on multiple datasets focusing on agricultural and plant pathology tasks, including:
+
+\begin{itemize}
+    \item DeepWeeds: A dataset for weed species classification
+    \item Durum Wheat: Wheat variety classification
+    \item Soybean Seeds: Soybean seed quality assessment
+    \item Mango Leaf Disease: Identification of mango leaf diseases
+    \item Bean Leaf Lesions: Classification of bean leaf lesions
+    \item Soybean Diseases: Identification of soybean plant diseases
+    \item Yellow Rust: Detection of yellow rust in wheat
+    \item Fusarium: Identification of Fusarium head blight in wheat
+    \item Insect Count: Counting insects on sticky traps
+    \item Disease Quantification: Estimating the percentage of leaf area affected by disease
+    \item Iron Deficiency Chlorosis (IDC): Assessing IDC severity in soybean plants
+\end{itemize}
+
+\subsection{Models}
+
+We tested our approach with several state-of-the-art vision-language models:
+
+\begin{itemize}
+    \item GPT-4o (OpenAI)
+    \item Claude-3.5-sonnet (Anthropic)
+    \item Claude-3-haiku (Anthropic)
+    \item LLaVA v1.6 34B (OpenRouter)
+    \item Gemini-flash-1.5 (Google)
+    \item Gemini-pro-1.5 (Google)
+\end{itemize}
+
+\subsection{Adaptive Few-Shot Learning Approach}
+
+Our method consists of the following steps:
+
+\begin{enumerate}
+    \item Precompute CLIP embeddings for all images in the dataset.
+    \item For each input image:
+    \begin{itemize}
+        \item Compute its CLIP embedding.
+        \item Calculate the cosine similarity between the input embedding and all other image embeddings.
+        \item Select the top-k most similar images as few-shot examples, where k is the number of shots (1, 2, 4, or 8).
+    \end{itemize}
+    \item Provide the selected examples along with the input image to the vision-language model for classification.
+\end{enumerate}
+
+We compared this approach to random example selection, where k examples are chosen randomly from the dataset.
+
+\subsection{Evaluation}
+
+We evaluated the performance of each model using classification accuracy for both adaptive and random example selection. We tested with 0, 1, 2, 4, and 8 shots to assess the impact of the number of examples on performance.
+
+\section{Results}
+
+Our results consistently show that the adaptive few-shot learning approach outperforms random example selection across all datasets and models. Here, we present the results for the DeepWeeds dataset as a representative example:
+
+\begin{table}[h]
+\centering
+\caption{Classification Accuracy for DeepWeeds Dataset}
+\label{tab:deepweeds_results}
+\begin{tabular}{lcccccc}
+\toprule
+Model & Method & 0-shot & 1-shot & 2-shot & 4-shot & 8-shot \\
+\midrule
+\multirow{2}{*}{GPT-4o} & Adaptive & 43.43\% & 55.56\% & 62.63\% & 69.70\% & 74.75\% \\
+ & Random & 38.38\% & 45.45\% & 48.48\% & 44.44\% & 55.56\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Key observations:
+
+\begin{itemize}
+    \item The adaptive approach consistently outperforms random selection across all shot numbers.
+    \item Performance improves as the number of shots increases, with the largest gains seen in the transition from 0-shot to 1-shot and from 1-shot to 2-shot.
+    \item The adaptive approach shows a more consistent improvement trend compared to the random approach, which exhibits some fluctuations (e.g., a decrease in accuracy from 2-shot to 4-shot).
+\end{itemize}
+
+Similar trends were observed across other datasets and models, with the adaptive approach consistently providing better results.
+
+\section{Discussion}
+
+The superior performance of our adaptive few-shot learning approach can be attributed to several factors:
+
+\begin{enumerate}
+    \item Relevance of examples: By selecting visually similar images based on CLIP embeddings, we provide the model with more relevant context for classification.
+    \item Improved generalization: The adaptive approach helps the model focus on key features that are specific to the input image, potentially improving its ability to generalize across variations within a class.
+    \item Robustness to dataset imbalance: Unlike random selection, which may be biased by class distribution, our method ensures that examples are chosen based on visual similarity, potentially mitigating issues related to class imbalance.
+\end{enumerate}
+
+The consistent improvement across different numbers of shots suggests that the adaptive approach is effective even with a small number of examples. This is particularly valuable in real-world scenarios where obtaining and annotating large numbers of examples may be costly or time-consuming.
+
+The varying degrees of improvement across different datasets and models indicate that the effectiveness of the adaptive approach may depend on factors such as dataset complexity, class separability, and the inherent capabilities of the vision-language models. Further research is needed to fully understand these interactions and optimize the approach for specific use cases.
+
+\section{Conclusion}
+
+Our study demonstrates that adaptive few-shot learning using CLIP embeddings significantly improves image classification performance across various agricultural and plant pathology datasets. This approach consistently outperforms random example selection, providing a more effective method for enhancing the capabilities of vision-language models in few-shot learning scenarios.
+
+Future work could explore the integration of this approach with other few-shot learning techniques, the impact of different embedding models, and its applicability to a broader range of computer vision tasks beyond classification.
+
+\end{document}

@@ -1,0 +1,20 @@
+Project: Adaptive Few-Shot Learning for Image Classification
+
+1. Main implementation: @inference.py
+
+2. Objective: Enhance model performance by providing smart few-shot examples
+
+3. Method:
+   a. Analyze the current input image
+   b. Select similar examples from the training set
+   c. Use these similar examples as few-shot prompts
+
+4. Rationale: Similar examples improve model performance more effectively than random ones
+
+5. Implementation steps:
+   a. Utilize CLIP embeddings from @get_embeddingp.py as the similarity metric for images
+   b. Create an efficient indexing system for a curated set of example images
+   c. Integrate adaptive example selection into @inference.py using CLIP embeddings
+   d. Evaluate and compare performance with random few-shot selection
+
+6. Expected outcome: Improved accuracy and generalization in image classification tasks

@@ -1,0 +1,151 @@
+Total samples: 99
+Columns: ['Unnamed: 0', '0', '1', 'Embedding # of Shots 8', 'Embedding Example Paths 8', 'Embedding Example Categories 8', 'Embedding Same Category Count 8', 'Random # of Shots 8', 'Random Example Paths 8', 'Random Example Categories 8', 'Random Same Category Count 8', 'Random # of Shots 4', 'Random Example Paths 4', 'Random Example Categories 4', 'Random Same Category Count 4', 'Embedding # of Shots 4', 'Embedding Example Paths 4', 'Embedding Example Categories 4', 'Embedding Same Category Count 4', 'Embedding # of Shots 2', 'Embedding Example Paths 2', 'Embedding Example Categories 2', 'Embedding Same Category Count 2', 'Random # of Shots 2', 'Random Example Paths 2', 'Random Example Categories 2', 'Random Same Category Count 2', 'Random # of Shots 1', 'Random Example Paths 1', 'Random Example Categories 1', 'Random Same Category Count 1', 'Embedding # of Shots 1', 'Embedding Example Paths 1', 'Embedding Example Categories 1', 'Embedding Same Category Count 1', 'Random # of Shots 0', 'Random Example Paths 0', 'Random Example Categories 0', 'Random Same Category Count 0', 'Embedding # of Shots 0', 'Embedding Example Paths 0', 'Embedding Example Categories 0', 'Embedding Same Category Count 0']
+
+--- Analysis for 0-shot ---
+Number of mismatched predictions (Embedding): 56
+Overall accuracy (Embedding): 43.43%
+Embedding retrieval: Average same category count: 0.00
+Number of mismatched predictions (Random): 61
+Overall accuracy (Random): 38.38%
+Random retrieval: Average same category count: 0.00
+
+--- Analysis for 1-shot ---
+Number of mismatched predictions (Embedding): 44
+Overall accuracy (Embedding): 55.56%
+Embedding retrieval: Average same category count: 0.53
+Number of mismatched predictions (Random): 54
+Overall accuracy (Random): 45.45%
+Random retrieval: Average same category count: 0.10
+
+--- Analysis for 2-shot ---
+Number of mismatched predictions (Embedding): 37
+Overall accuracy (Embedding): 62.63%
+Embedding retrieval: Average same category count: 0.95
+Number of mismatched predictions (Random): 51
+Overall accuracy (Random): 48.48%
+Random retrieval: Average same category count: 0.21
+
+--- Analysis for 4-shot ---
+Number of mismatched predictions (Embedding): 30
+Overall accuracy (Embedding): 69.70%
+Embedding retrieval: Average same category count: 1.64
+Number of mismatched predictions (Random): 55
+Overall accuracy (Random): 44.44%
+Random retrieval: Average same category count: 0.47
+
+--- Analysis for 8-shot ---
+Number of mismatched predictions (Embedding): 25
+Overall accuracy (Embedding): 74.75%
+Embedding retrieval: Average same category count: 2.61
+Number of mismatched predictions (Random): 44
+Overall accuracy (Random): 55.56%
+Random retrieval: Average same category count: 0.83
+
+Distribution of true labels:
+1
+Prickly acacia    0.111111
+Snake weed        0.111111
+Parkinsonia       0.111111
+Lantana           0.111111
+Rubber vine       0.111111
+Chinee apple      0.111111
+Negative          0.111111
+Parthenium        0.111111
+Siam weed         0.111111
+Name: proportion, dtype: float64
+
+Missing values:
+Unnamed: 0                         0
+0                                  0
+1                                  0
+Embedding # of Shots 8             0
+Embedding Example Paths 8          0
+Embedding Example Categories 8     0
+Embedding Same Category Count 8    0
+Random # of Shots 8                0
+Random Example Paths 8             0
+Random Example Categories 8        0
+Random Same Category Count 8       0
+Random # of Shots 4                0
+Random Example Paths 4             0
+Random Example Categories 4        0
+Random Same Category Count 4       0
+Embedding # of Shots 4             0
+Embedding Example Paths 4          0
+Embedding Example Categories 4     0
+Embedding Same Category Count 4    0
+Embedding # of Shots 2             0
+Embedding Example Paths 2          0
+Embedding Example Categories 2     0
+Embedding Same Category Count 2    0
+Random # of Shots 2                0
+Random Example Paths 2             0
+Random Example Categories 2        0
+Random Same Category Count 2       0
+Random # of Shots 1                0
+Random Example Paths 1             0
+Random Example Categories 1        0
+Random Same Category Count 1       0
+Embedding # of Shots 1             0
+Embedding Example Paths 1          0
+Embedding Example Categories 1     0
+Embedding Same Category Count 1    0
+Random # of Shots 0                0
+Random Example Paths 0             0
+Random Example Categories 0        0
+Random Same Category Count 0       0
+Embedding # of Shots 0             0
+Embedding Example Paths 0          0
+Embedding Example Categories 0     0
+Embedding Same Category Count 0    0
+dtype: int64
+
+Sample rows:
+   Unnamed: 0                                              0               1 Embedding # of Shots 8                          Embedding Example Paths 8  ... Random Same Category Count 0  Embedding # of Shots 0 Embedding Example Paths 0 Embedding Example Categories 0 Embedding Same Category Count 0
+0           0  ./data/deepweeds/images/20170728-152004-1.jpg  Prickly acacia         Prickly acacia  ['./data/deepweeds/images/20170727-124521-1.jp...  ...                          0.0                Negative                        []                             []                             0.0
+1           1  ./data/deepweeds/images/20170210-142422-0.jpg      Snake weed             Snake weed  ['./data/deepweeds/images/20170210-142647-0.jp...  ...                          0.0             Rubber vine                        []                             []                             0.0
+2           2  ./data/deepweeds/images/20170920-130439-2.jpg     Parkinsonia            Parkinsonia  ['./data/deepweeds/images/20170920-172144-1.jp...  ...                          0.0             Parkinsonia                        []                             []                             0.0
+3           3  ./data/deepweeds/images/20170714-120648-3.jpg         Lantana                Lantana  ['./data/deepweeds/images/20170714-140705-1.jp...  ...                          0.0                 Lantana                        []                             []                             0.0
+4           4  ./data/deepweeds/images/20170920-172144-1.jpg     Parkinsonia            Parkinsonia  ['./data/deepweeds/images/20170920-130439-2.jp...  ...                          0.0             Parkinsonia                        []                             []                             0.0
+
+[5 rows x 43 columns]
+
+Unique values in Embedding # of Shots 0:
+['Negative' 'Rubber vine' 'Parkinsonia' 'Lantana' 'Snake weed'
+ 'Chinee apple' 'Parthenium' 'Prickly acacia' 'Siam weed']
+
+Unique values in Random # of Shots 0:
+['Negative' 'Rubber vine' 'Parkinsonia' 'Lantana' 'Snake weed'
+ 'Chinee apple' 'Parthenium' 'Siam weed' 'Prickly acacia']
+
+Unique values in Embedding # of Shots 1:
+['Prickly acacia' 'Snake weed' 'Lantana' 'Parkinsonia' 'Rubber vine'
+ 'Negative' 'Chinee apple' 'Parthenium' 'Siam weed']
+
+Unique values in Random # of Shots 1:
+['Negative' 'Rubber vine' 'Parkinsonia' 'Lantana' 'Siam weed' 'Snake weed'
+ 'Chinee apple' 'Parthenium' 'Prickly acacia' 'Laurie vine']
+
+Unique values in Embedding # of Shots 2:
+['Prickly acacia' 'Snake weed' 'Parkinsonia' 'Rubber vine' 'Parthenium'
+ 'Chinee apple' 'Negative' 'Siam weed' 'Lantana']
+
+Unique values in Random # of Shots 2:
+['Prickly acacia' 'Rubber vine' 'Parkinsonia' 'Lantana' 'Negative'
+ 'Parthenium' 'Chinee apple' 'Snake weed' 'Siam weed']
+
+Unique values in Embedding # of Shots 4:
+['Prickly acacia' 'Snake weed' 'Parkinsonia' 'Lantana' 'Rubber vine'
+ 'Parthenium' 'Chinee apple' 'Negative' 'Siam weed' 'Sn**ake weed']
+
+Unique values in Random # of Shots 4:
+['Negative' 'Rubber vine' 'Parkinsonia' 'Lantana' 'Siam weed'
+ 'Chinee apple' 'Snake weed' 'Parthenium' 'Prickly acacia']
+
+Unique values in Embedding # of Shots 8:
+['Prickly acacia' 'Snake weed' 'Parkinsonia' 'Lantana' 'Rubber vine'
+ 'Siam weed' 'Chinee apple' 'Negative' 'Parthenium']
+
+Unique values in Random # of Shots 8:
+['Parkinsonia' 'Rubber vine' 'Siam weed' 'Negative' 'Chinee apple'
+ 'Parthenium' 'Snake weed' 'Lantana' 'Prickly acacia']

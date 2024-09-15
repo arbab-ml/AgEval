@@ -1,4 +1,5 @@
 
+
 # total_samples_to_check = 10
 # vendor, model, model_name =all_vendors_models[0].values() # index 2 is gemini, 3 is llava
 
@@ -29,11 +30,11 @@ global vision_prompt
 #claude-3-sonnet-20240229
 all_vendors_models=[
     {"vendor": "openai", "model": "gpt-4o-2024-05-13", "model_name": "GPT-4o"}, #  done
-    {"vendor": "anthropic", "model": "claude-3-5-sonnet-20240620", "model_name": "Claude-3.5-sonnet"}, #done 
-    {"vendor": "anthropic", "model": "claude-3-haiku-20240307", "model_name": "Claude-3-haiku"}, #done 
-    {"vendor": "openrouter", "model": "liuhaotian/llava-yi-34b", "model_name": "LLaVA v1.6 34B"}, #done 
-    {"vendor": "google", "model": "gemini-1.5-flash-latest", "model_name": "Gemini-flash-1.5"}, #done
-    {"vendor": "google", "model": "gemini-1.5-pro", "model_name": "Gemini-pro-1.5"},#done 
+    # {"vendor": "anthropic", "model": "claude-3-5-sonnet-20240620", "model_name": "Claude-3.5-sonnet"}, #done 
+    # {"vendor": "anthropic", "model": "claude-3-haiku-20240307", "model_name": "Claude-3-haiku"}, #done 
+    # {"vendor": "openrouter", "model": "liuhaotian/llava-yi-34b", "model_name": "LLaVA v1.6 34B"}, #done
+    # {"vendor": "google", "model": "gemini-1.5-flash-latest", "model_name": "Gemini-flash-1.5"}, #done
+    # {"vendor": "google", "model": "gemini-1.5-pro", "model_name": "Gemini-pro-1.5"},#done 
 ]
 
 universal_prompt = """
@@ -67,13 +68,14 @@ idc_prompt="""
 
 
 universal_shots= [8, 4, 2, 1, 0]
+# only 1 and 0 shots
 
 datasets = [
     # {"loader": load_and_prepare_data_SBRD, "samples": 100, "shots": universal_shots, "vision_prompt": universal_prompt},
     # {"loader": load_and_prepare_data_DurumWheat, "samples": 100, "shots": universal_shots, "vision_prompt": universal_prompt},
     # {"loader": load_and_prepare_data_soybean_seeds, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt},
-    # {"loader": load_and_prepare_data_mango_leaf, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt},
-    # {"loader": load_and_prepare_data_DeepWeeds, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt},
+    # {"loader": load_and_prepare_data_mango_leaf, "samples": 50, "shots": universal_shots,  "vision_prompt": universal_prompt},
+    {"loader": load_and_prepare_data_DeepWeeds, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt},
     # # {"loader": load_and_prepare_data_IP02, "samples": 105, "shots": universal_shots,  "vision_prompt": universal_prompt}, # implement resizing for this data and run every model again
     # {"loader": load_and_prepare_data_bean_leaf, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt},
     # {"loader": load_and_prepare_data_YellowRust, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt},
@@ -82,7 +84,7 @@ datasets = [
     # {"loader": load_and_prepare_data_DiseaseQuantify, "samples": 100, "shots": universal_shots,  "vision_prompt": disease_count_prompt},
     # {"loader": load_and_prepare_data_IDC, "samples": 100, "shots": universal_shots,  "vision_prompt": idc_prompt},
     # {"loader": load_and_prepare_data_Soybean_PNAS, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt}, 
-    {"loader": load_and_prepare_data_Soybean_Dangerous_Insects, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt}, 
+    # {"loader": load_and_prepare_data_Soybean_Dangerous_Insects, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt}, 
 
 ]
 
@@ -321,7 +323,26 @@ class ProgressBar:
 
 ################################################################################################################################################################
 
-async def process_image(api, i, number_of_shots, all_data_results, all_data, progress_bar):
+# Add this import at the top of the file
+from get_embeddingp import get_image_embedding
+
+# Remove the previously added CLIP-related imports and functions
+
+# Modify the precompute_embeddings function
+def precompute_embeddings(all_data):
+    embeddings = {}
+    print("Precomputing CLIP embeddings...")
+    for idx, row in tqdm(all_data.iterrows(), total=len(all_data), desc="Computing embeddings"):
+        image_path = row[0]
+        embedding = get_image_embedding(image_path)
+        if isinstance(embedding, dict) and "error" in embedding:
+            print(f"Error computing embedding for {image_path}: {embedding['error']}")
+        else:
+            embeddings[idx] = embedding
+    return embeddings
+
+# Modify the process_image function
+async def process_image(api, i, number_of_shots, all_data_results, all_data, progress_bar, embeddings, use_embedding=True):
     try:
         image_path = all_data[0][i]
         image_base64 = load_image(image_path)
@@ -331,34 +352,66 @@ async def process_image(api, i, number_of_shots, all_data_results, all_data, pro
         examples = []
         example_paths = []
         example_categories = []
-        num_rows = len(all_data)
-        random_indices = random.sample([idx for idx in range(num_rows) if idx != i], number_of_shots)
+        
+        if use_embedding:
+            # Use adaptive example selection
+            input_embedding = get_image_embedding(image_path)
+            if isinstance(input_embedding, dict) and "error" in input_embedding:
+                raise ValueError(f"Failed to compute embedding for {image_path}: {input_embedding['error']}")
+            
+            similarities = []
+            for idx, embedding in embeddings.items():
+                if idx != i:  # Exclude the current image
+                    similarity = np.dot(input_embedding, embedding) / (np.linalg.norm(input_embedding) * np.linalg.norm(embedding))
+                    similarities.append((idx, similarity))
+            
+            similarities.sort(key=lambda x: x[1], reverse=True)
+            similar_indices = [idx for idx, _ in similarities[:number_of_shots]]
+        else:
+            # Random selection
+            similar_indices = random.sample([idx for idx in range(len(all_data)) if idx != i], number_of_shots)
 
-        for j in random_indices:
+        # Count examples from the same category
+        same_category_count = 0
+        input_category = all_data.at[i, 1]
+
+        for j in similar_indices:
             example_image_path = all_data[0][j]
+            example_category = all_data.at[j, 1]
             example_image_base64 = load_image(example_image_path)
-            if example_image_base64 is not None:
-                if isinstance(api, GPTAPI) or isinstance(api, OpenRouterAPI):
-                    examples.append({"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{example_image_base64}", "detail": "high"}})
-                elif isinstance(api, ClaudeAPI):
-                    examples.append({
-                        "type": "image",
-                        "source": {
-                            "type": "base64",
-                            "media_type": "image/jpeg",
-                            "data": example_image_base64
-                        }
-                    })
-                elif isinstance(api, GeminiAPI):
-                    examples.append({"image_url": {"url": f"data:image/jpeg;base64,{example_image_base64}"}})
-                else:
-                    raise ValueError(f"Unsupported API type: {type(api)}")
+            
+            if example_image_base64 is None:
+                print(f"Failed to load example image: {example_image_path}")
+                continue
 
-                examples.append({"type": "text", "text": f'{{"prediction": "{all_data.at[j, 1]}"}}' })
-                example_paths.append(example_image_path)
-                example_categories.append(all_data.at[j, 1])
+            if example_category == input_category:
+                same_category_count += 1
 
-        prediction = await api.get_image_information({"image": image_base64, "examples": examples, "prompt": vision_prompt})
+            if isinstance(api, GPTAPI) or isinstance(api, OpenRouterAPI):
+                examples.append({"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{example_image_base64}", "detail": "high"}})
+            elif isinstance(api, ClaudeAPI):
+                examples.append({
+                    "type": "image",
+                    "source": {
+                        "type": "base64",
+                        "media_type": "image/jpeg",
+                        "data": example_image_base64
+                    }
+                })
+            elif isinstance(api, GeminiAPI):
+                examples.append({"image_url": {"url": f"data:image/jpeg;base64,{example_image_base64}"}})
+            else:
+                raise ValueError(f"Unsupported API type: {type(api)}")
+
+            examples.append({"type": "text", "text": f'{{"prediction": "{example_category}"}}' })
+            example_paths.append(example_image_path)
+            example_categories.append(example_category)
+
+        prediction = await api.get_image_information({
+            "image": image_base64, 
+            "examples": examples, 
+            "prompt": vision_prompt
+        })
         
         try:
             extracted_json = extract_json(prediction)
@@ -367,33 +420,35 @@ async def process_image(api, i, number_of_shots, all_data_results, all_data, pro
             print(f"Error parsing JSON for image {image_path}. API response: {prediction}. Error: {str(e)}")
             parsed_prediction = 'NA'
 
-
-        all_data_results.at[i, f"# of Shots {number_of_shots}"] = parsed_prediction
-        all_data_results.at[i, f"Example Paths {number_of_shots}"] = str(example_paths) # removed json.dump from here. 
-        all_data_results.at[i, f"Example Categories {number_of_shots}"] = str(example_categories)
+        prefix = "Embedding" if use_embedding else "Random"
+        all_data_results.at[i, f"{prefix} # of Shots {number_of_shots}"] = parsed_prediction
+        all_data_results.at[i, f"{prefix} Example Paths {number_of_shots}"] = str(example_paths)
+        all_data_results.at[i, f"{prefix} Example Categories {number_of_shots}"] = str(example_categories)
+        all_data_results.at[i, f"{prefix} Same Category Count {number_of_shots}"] = same_category_count
 
     except Exception as e:
         print(f"Error processing {all_data[0][i]}: {str(e)}")
-        all_data_results.at[i, f"# of Shots {number_of_shots}"] = 'NA'
-        all_data_results.at[i, f"Example Paths {number_of_shots}"] = 'NA'
-        all_data_results.at[i, f"Example Categories {number_of_shots}"] = 'NA'
+        prefix = "Embedding" if use_embedding else "Random"
+        all_data_results.at[i, f"{prefix} # of Shots {number_of_shots}"] = 'NA'
+        all_data_results.at[i, f"{prefix} Example Paths {number_of_shots}"] = 'NA'
+        all_data_results.at[i, f"{prefix} Example Categories {number_of_shots}"] = 'NA'
+        all_data_results.at[i, f"{prefix} Same Category Count {number_of_shots}"] = 'NA'
     finally:
         progress_bar.update()
 
-async def process_images_for_shots(api, number_of_shots, all_data_results, all_data):
-    progress_bar = ProgressBar(len(all_data))
+async def process_images_for_shots(api, number_of_shots, all_data_results, all_data, embeddings):
+    progress_bar = ProgressBar(len(all_data) * 2)  # *2 because we're processing each image twice (embedding and random)
     tasks = []
     for i in range(len(all_data)):
-        task = asyncio.ensure_future(process_image(api, i, number_of_shots, all_data_results, all_data, progress_bar))
-        tasks.append(task)
+        task_embedding = asyncio.ensure_future(process_image(api, i, number_of_shots, all_data_results, all_data, progress_bar, embeddings, use_embedding=True))
+        task_random = asyncio.ensure_future(process_image(api, i, number_of_shots, all_data_results, all_data, progress_bar, embeddings, use_embedding=False))
+        tasks.extend([task_embedding, task_random])
     
     await asyncio.gather(*tasks)
     progress_bar.close()
 
+# In the main function, update the accuracy calculation and logging
 async def main():
-
-
-
     global vision_prompt
 
     for dataset in datasets:
@@ -402,15 +457,17 @@ async def main():
         shots = dataset["shots"]
         
         all_data, expected_classes, output_file_name = loader(total_samples_to_check)
-        #print the output_filename and length of expected classes along with those expected classes legibally
         print(f"Dataset Name: {output_file_name}")
         print(f"Number of classes / unique labels: {len(expected_classes)}")
         print(f"Expected classes: {expected_classes}")
+        print(f"Class distribution: {all_data[1].value_counts()}")
         print("----------------------------")
-        vision_prompt=dataset["vision_prompt"].format(expected_classes=expected_classes)
+        vision_prompt = dataset["vision_prompt"].format(expected_classes=expected_classes)
 
         print(f"\nProcessing dataset: {output_file_name}")
 
+        embeddings = precompute_embeddings(all_data)
+        
         for vendor_model in all_vendors_models:
             vendor = vendor_model["vendor"]
             model = vendor_model["model"]
@@ -434,19 +491,34 @@ async def main():
 
             for number_of_shots in shots:
                 print(f"Running with {number_of_shots} shots")
-                await process_images_for_shots(api, number_of_shots, all_data_results, all_data)
+                await process_images_for_shots(api, number_of_shots, all_data_results, all_data, embeddings)
 
-            # Create the results directory structure
+                embedding_accuracy = calculate_accuracy(all_data_results, f"Embedding # of Shots {number_of_shots}")
+                random_accuracy = calculate_accuracy(all_data_results, f"Random # of Shots {number_of_shots}")
+                print(f"Accuracy for {number_of_shots}-shot (Embedding): {embedding_accuracy:.2f}")
+                print(f"Accuracy for {number_of_shots}-shot (Random): {random_accuracy:.2f}")
+
+                # Detailed logging
+                print("\nDetailed results:")
+                for i in range(len(all_data)):
+                    true_label = all_data.at[i, 1]
+                    embedding_prediction = all_data_results.at[i, f"Embedding # of Shots {number_of_shots}"]
+                    random_prediction = all_data_results.at[i, f"Random # of Shots {number_of_shots}"]
+                    print(f"Image {i}: True: {true_label}, Embedding Prediction: {embedding_prediction}, Random Prediction: {random_prediction}")
+
             results_dir = os.path.join("results", model_name)
             os.makedirs(results_dir, exist_ok=True)
-
-            # Save the results file
             output_file = os.path.join(results_dir, f"{output_file_name}.csv")
             all_data_results.to_csv(output_file)
             print(f"Results saved to {output_file}")
 
         print(f"Completed processing for dataset: {output_file_name}\n")
 
+# Update the calculate_accuracy function
+def calculate_accuracy(all_data_results, column_name):
+    correct = sum(all_data_results['1'] == all_data_results[column_name])
+    total = len(all_data_results)
+    return correct / total if total > 0 else 0
 
 if __name__ == "__main__":
     asyncio.run(main()) 
