@@ -10,110 +10,98 @@ plt.style.use('ggplot')
 def calc_accuracy(true_labels, predicted_labels):
     return (true_labels == predicted_labels).mean()
 
-# Function to process a single CSV file
-def process_csv(file_path):
-    # Read the CSV file
-    df = pd.read_csv(file_path)
-    
-    # Print basic information about the dataset
-    print(f"\nProcessing: {os.path.basename(file_path)}")
-    print(f"Total samples: {len(df)}")
-    print(f"Columns: {df.columns.tolist()}")
-
-    # Initialize a list to store results
+# Function to process CSV files for a specific model
+def process_model_csvs(model_folder):
     results = []
+    
+    for encoder_folder in os.listdir(model_folder):
+        encoder_path = os.path.join(model_folder, encoder_folder)
+        if os.path.isdir(encoder_path):
+            for file_name in os.listdir(encoder_path):
+                if file_name.endswith('.csv'):
+                    file_path = os.path.join(encoder_path, file_name)
+                    df = pd.read_csv(file_path)
+                    
+                    print(f"\nProcessing: {encoder_folder}/{file_name}")
+                    print(f"Total samples: {len(df)}")
+                    print(f"Columns: {df.columns.tolist()}")
 
-    # Calculate accuracy for all shot counts
-    shot_counts = [0, 1, 2, 4, 8]
-    for shots in shot_counts:
-        for method in ['Embedding', 'Random']:
-            column_name = f"{method} # of Shots {shots}"
-            
-            # Check for any mismatched predictions
-            mismatched_count = (df['1'] != df[column_name]).sum()
-            
-            # Calculate accuracy
-            accuracy = calc_accuracy(df['1'], df[column_name])
-            
-            # Calculate average same category count
-            same_category_count = df[f"{method} Same Category Count {shots}"].mean()
-            
-            # Store results
-            results.append({
-                'Shots': shots,
-                'Method': method,
-                'Mismatched_Count': mismatched_count,
-                'Accuracy': accuracy,
-                'Avg_Same_Category_Count': same_category_count
-            })
+                    shot_counts = [0, 1, 2, 4, 8]
+                    for shots in shot_counts:
+                        for method in ['Embedding', 'Random']:
+                            column_name = f"{method} # of Shots {shots}"
+                            
+                            mismatched_count = (df['1'] != df[column_name]).sum()
+                            accuracy = calc_accuracy(df['1'], df[column_name])
+                            same_category_count = df[f"{method} Same Category Count {shots}"].mean()
+                            
+                            results.append({
+                                'Encoder': encoder_folder,
+                                'Dataset': os.path.splitext(file_name)[0],
+                                'Shots': shots,
+                                'Method': method,
+                                'Mismatched_Count': mismatched_count,
+                                'Accuracy': accuracy,
+                                'Avg_Same_Category_Count': same_category_count
+                            })
 
-    # Create a DataFrame from the results
-    results_df = pd.DataFrame(results)
-
-    # Generate plots
-    generate_plots(results_df, os.path.basename(file_path))
-
-    # Additional analysis
-    print("\nDistribution of true labels:")
-    print(df['1'].value_counts(normalize=True))
-
-    # Check for any missing values
-    print("\nMissing values:")
-    print(df.isnull().sum())
-
-    return results_df
+    return pd.DataFrame(results)
 
 # Function to generate plots
-def generate_plots(results_df, file_name):
+def generate_plots(results_df, model_name):
     plots_folder = os.path.join('results_analysis', 'plots')
     os.makedirs(plots_folder, exist_ok=True)
 
     # Plot 1: Accuracy vs Number of Shots
-    plt.figure(figsize=(10, 6))
-    for method in ['Embedding', 'Random']:
-        method_data = results_df[results_df['Method'] == method]
-        plt.plot(method_data['Shots'], method_data['Accuracy'], marker='o', label=method)
+    plt.figure(figsize=(12, 8))
+    for encoder in results_df['Encoder'].unique():
+        for method in ['Embedding', 'Random']:
+            data = results_df[(results_df['Encoder'] == encoder) & (results_df['Method'] == method)]
+            plt.plot(data['Shots'], data['Accuracy'], marker='o', label=f'{encoder} - {method}')
 
     plt.xlabel('Number of Shots')
     plt.ylabel('Accuracy')
-    plt.title(f'Accuracy vs Number of Shots - {file_name}')
-    plt.legend()
+    plt.title(f'Accuracy vs Number of Shots - {model_name}')
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.tight_layout()
-    plt.savefig(os.path.join(plots_folder, f'accuracy_vs_shots_{file_name}.png'))
+    plt.savefig(os.path.join(plots_folder, f'accuracy_vs_shots_{model_name}.png'))
     plt.close()
 
     # Plot 2: Average Same Category Count vs Number of Shots
-    plt.figure(figsize=(10, 6))
-    for method in ['Embedding', 'Random']:
-        method_data = results_df[results_df['Method'] == method]
-        plt.plot(method_data['Shots'], method_data['Avg_Same_Category_Count'], marker='o', label=method)
+    plt.figure(figsize=(12, 8))
+    for encoder in results_df['Encoder'].unique():
+        for method in ['Embedding', 'Random']:
+            data = results_df[(results_df['Encoder'] == encoder) & (results_df['Method'] == method)]
+            plt.plot(data['Shots'], data['Avg_Same_Category_Count'], marker='o', label=f'{encoder} - {method}')
 
     plt.xlabel('Number of Shots')
     plt.ylabel('Average Same Category Count')
-    plt.title(f'Average Same Category Count vs Number of Shots - {file_name}')
-    plt.legend()
+    plt.title(f'Average Same Category Count vs Number of Shots - {model_name}')
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.tight_layout()
-    plt.savefig(os.path.join(plots_folder, f'avg_same_category_count_vs_shots_{file_name}.png'))
+    plt.savefig(os.path.join(plots_folder, f'avg_same_category_count_vs_shots_{model_name}.png'))
     plt.close()
 
-    print(f"Plots saved for {file_name} in the '{plots_folder}' folder.")
+    print(f"Plots saved for {model_name} in the '{plots_folder}' folder.")
 
 # Main execution
 if __name__ == "__main__":
-    input_folder = 'results/GPT-4o'
-    results_folder = 'results_analysis'
-    os.makedirs(results_folder, exist_ok=True)
+    results_folder = 'results'
+    analysis_folder = 'results_analysis'
+    os.makedirs(analysis_folder, exist_ok=True)
 
-    # Process each CSV file in the input folder
-    for file_name in os.listdir(input_folder):
-        if file_name.endswith('.csv'):
-            file_path = os.path.join(input_folder, file_name)
-            results_df = process_csv(file_path)
+    for model_name in os.listdir(results_folder):
+        model_folder = os.path.join(results_folder, model_name)
+        if os.path.isdir(model_folder):
+            print(f"\nProcessing model: {model_name}")
+            results_df = process_model_csvs(model_folder)
             
-            # Save individual results CSV
-            dataset_name = os.path.splitext(file_name)[0]
-            individual_results_path = os.path.join(results_folder, f'{dataset_name}_accuracy_results.csv')
-            results_df.to_csv(individual_results_path, index=False)
-            print(f"Results for {dataset_name} saved in '{individual_results_path}'")
+            # Save combined results CSV for the model
+            combined_results_path = os.path.join(analysis_folder, f'{model_name}_combined_results.csv')
+            results_df.to_csv(combined_results_path, index=False)
+            print(f"Combined results for {model_name} saved in '{combined_results_path}'")
+            
+            # Generate plots for the model
+            generate_plots(results_df, model_name)
 
-    print(f"\nAll individual results saved in '{results_folder}' folder.")
+    print(f"\nAll results and plots saved in '{analysis_folder}' folder.")

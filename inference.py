@@ -24,12 +24,6 @@ import nest_asyncio
 from tqdm import tqdm
 import re
 from data_loader import load_and_prepare_data_SBRD, load_and_prepare_data_DurumWheat, load_and_prepare_data_soybean_seeds, load_and_prepare_data_mango_leaf, load_and_prepare_data_DeepWeeds, load_and_prepare_data_IP02, load_and_prepare_data_bean_leaf, load_and_prepare_data_YellowRust, load_and_prepare_data_FUSARIUM22, load_and_prepare_data_InsectCount, load_and_prepare_data_DiseaseQuantify, load_and_prepare_data_IDC, load_and_prepare_data_Soybean_PNAS, load_and_prepare_data_Soybean_Dangerous_Insects
-import clip
-import torch
-import torch.nn.functional as F
-import timm
-from torchvision import transforms
-
 nest_asyncio.apply()
 global vision_prompt
 
@@ -330,17 +324,17 @@ class ProgressBar:
 ################################################################################################################################################################
 
 # Add this import at the top of the file
-from get_embeddingp import get_image_embedding
+from get_embeddingp import get_image_embedding, AVAILABLE_ENCODERS
 
 # Remove the previously added CLIP-related imports and functions
 
 # Modify the precompute_embeddings function
-def precompute_embeddings(all_data):
+def precompute_embeddings(all_data, encoder):
     embeddings = {}
-    print("Precomputing ViT embeddings...")
+    print(f"Precomputing {encoder} embeddings...")
     for idx, row in tqdm(all_data.iterrows(), total=len(all_data), desc="Computing embeddings"):
         image_path = row[0]
-        embedding = get_image_embedding(image_path, model_type="vit")
+        embedding = get_image_embedding(image_path, model_type=encoder)
         if isinstance(embedding, dict) and "error" in embedding:
             print(f"Error computing embedding for {image_path}: {embedding['error']}")
         else:
@@ -348,7 +342,7 @@ def precompute_embeddings(all_data):
     return embeddings
 
 # Modify the process_image function
-async def process_image(api, i, number_of_shots, all_data_results, all_data, progress_bar, embeddings, use_embedding=True):
+async def process_image(api, i, number_of_shots, all_data_results, all_data, progress_bar, embeddings, use_embedding=True, encoder="vit"):
     try:
         image_path = all_data[0][i]
         image_base64 = load_image(image_path)
@@ -361,7 +355,7 @@ async def process_image(api, i, number_of_shots, all_data_results, all_data, pro
         
         if use_embedding:
             # Use adaptive example selection
-            input_embedding = get_image_embedding(image_path, model_type="vit")
+            input_embedding = get_image_embedding(image_path, model_type=encoder)
             if isinstance(input_embedding, dict) and "error" in input_embedding:
                 raise ValueError(f"Failed to compute embedding for {image_path}: {input_embedding['error']}")
             
@@ -442,18 +436,18 @@ async def process_image(api, i, number_of_shots, all_data_results, all_data, pro
     finally:
         progress_bar.update()
 
-async def process_images_for_shots(api, number_of_shots, all_data_results, all_data, embeddings):
-    progress_bar = ProgressBar(len(all_data) * 2)  # *2 because we're processing each image twice (embedding and random)
+async def process_images_for_shots(api, number_of_shots, all_data_results, all_data, embeddings, encoder):
+    progress_bar = ProgressBar(len(all_data) * 2)
     tasks = []
     for i in range(len(all_data)):
-        task_embedding = asyncio.ensure_future(process_image(api, i, number_of_shots, all_data_results, all_data, progress_bar, embeddings, use_embedding=True))
-        task_random = asyncio.ensure_future(process_image(api, i, number_of_shots, all_data_results, all_data, progress_bar, embeddings, use_embedding=False))
+        task_embedding = asyncio.ensure_future(process_image(api, i, number_of_shots, all_data_results, all_data, progress_bar, embeddings, use_embedding=True, encoder=encoder))
+        task_random = asyncio.ensure_future(process_image(api, i, number_of_shots, all_data_results, all_data, progress_bar, embeddings, use_embedding=False, encoder=encoder))
         tasks.extend([task_embedding, task_random])
     
     await asyncio.gather(*tasks)
     progress_bar.close()
 
-# In the main function, update the accuracy calculation and logging
+# Update the main function
 async def main():
     global vision_prompt
 
@@ -470,53 +464,53 @@ async def main():
         print("----------------------------")
         vision_prompt = dataset["vision_prompt"].format(expected_classes=expected_classes)
 
-        print(f"\nProcessing dataset: {output_file_name}")
+        for encoder in AVAILABLE_ENCODERS:
+            print(f"\nProcessing dataset: {output_file_name} with encoder: {encoder}")
+            embeddings = precompute_embeddings(all_data, encoder)
+            
+            for vendor_model in all_vendors_models:
+                vendor = vendor_model["vendor"]
+                model = vendor_model["model"]
+                model_name = vendor_model["model_name"]
 
-        embeddings = precompute_embeddings(all_data)
-        
-        for vendor_model in all_vendors_models:
-            vendor = vendor_model["vendor"]
-            model = vendor_model["model"]
-            model_name = vendor_model["model_name"]
+                print(f"Running model: {model_name}")
 
-            print(f"Running model: {model_name}")
+                if vendor == "openai":
+                    api = GPTAPI(api_key=os.getenv("OPENAI_API_KEY"), model=model)
+                elif vendor == "anthropic":
+                    api = ClaudeAPI(api_key=os.getenv("ANTHROPIC_API_KEY"), model=model)
+                elif vendor == "openrouter":
+                    api = OpenRouterAPI(api_key=os.getenv("OPENROUTER_API_KEY"), model=model)
+                elif vendor == "google":
+                    api = GeminiAPI(api_key=os.getenv("GOOGLE_API_KEY"), model=model)
+                else:
+                    raise ValueError(f"Unsupported model type: {vendor}")
 
-            if vendor == "openai":
-                api = GPTAPI(api_key=os.getenv("OPENAI_API_KEY"), model=model)
-            elif vendor == "anthropic":
-                api = ClaudeAPI(api_key=os.getenv("ANTHROPIC_API_KEY"), model=model)
-            elif vendor == "openrouter":
-                api = OpenRouterAPI(api_key=os.getenv("OPENROUTER_API_KEY"), model=model)
-            elif vendor == "google":
-                api = GeminiAPI(api_key=os.getenv("GOOGLE_API_KEY"), model=model)
-            else:
-                raise ValueError(f"Unsupported model type: {vendor}")
+                all_data_results = all_data.copy(deep=True)
+                all_data_results.columns = all_data_results.columns.map(str)
 
-            all_data_results = all_data.copy(deep=True)
-            all_data_results.columns = all_data_results.columns.map(str)
+                for number_of_shots in shots:
+                    print(f"Running with {number_of_shots} shots")
+                    await process_images_for_shots(api, number_of_shots, all_data_results, all_data, embeddings, encoder)
 
-            for number_of_shots in shots:
-                print(f"Running with {number_of_shots} shots")
-                await process_images_for_shots(api, number_of_shots, all_data_results, all_data, embeddings)
+                    embedding_accuracy = calculate_accuracy(all_data_results, f"Embedding # of Shots {number_of_shots}")
+                    random_accuracy = calculate_accuracy(all_data_results, f"Random # of Shots {number_of_shots}")
+                    print(f"Accuracy for {number_of_shots}-shot (Embedding): {embedding_accuracy:.2f}")
+                    print(f"Accuracy for {number_of_shots}-shot (Random): {random_accuracy:.2f}")
 
-                embedding_accuracy = calculate_accuracy(all_data_results, f"Embedding # of Shots {number_of_shots}")
-                random_accuracy = calculate_accuracy(all_data_results, f"Random # of Shots {number_of_shots}")
-                print(f"Accuracy for {number_of_shots}-shot (Embedding): {embedding_accuracy:.2f}")
-                print(f"Accuracy for {number_of_shots}-shot (Random): {random_accuracy:.2f}")
+                    # Detailed logging
+                    print("\nDetailed results:")
+                    for i in range(len(all_data)):
+                        true_label = all_data.at[i, 1]
+                        embedding_prediction = all_data_results.at[i, f"Embedding # of Shots {number_of_shots}"]
+                        random_prediction = all_data_results.at[i, f"Random # of Shots {number_of_shots}"]
+                        print(f"Image {i}: True: {true_label}, Embedding Prediction: {embedding_prediction}, Random Prediction: {random_prediction}")
 
-                # Detailed logging
-                print("\nDetailed results:")
-                for i in range(len(all_data)):
-                    true_label = all_data.at[i, 1]
-                    embedding_prediction = all_data_results.at[i, f"Embedding # of Shots {number_of_shots}"]
-                    random_prediction = all_data_results.at[i, f"Random # of Shots {number_of_shots}"]
-                    print(f"Image {i}: True: {true_label}, Embedding Prediction: {embedding_prediction}, Random Prediction: {random_prediction}")
-
-            results_dir = os.path.join("results", model_name)
-            os.makedirs(results_dir, exist_ok=True)
-            output_file = os.path.join(results_dir, f"{output_file_name}.csv")
-            all_data_results.to_csv(output_file)
-            print(f"Results saved to {output_file}")
+                results_dir = os.path.join("results", model_name, encoder)
+                os.makedirs(results_dir, exist_ok=True)
+                output_file = os.path.join(results_dir, f"{output_file_name}.csv")
+                all_data_results.to_csv(output_file)
+                print(f"Results saved to {output_file}")
 
         print(f"Completed processing for dataset: {output_file_name}\n")
 
@@ -527,4 +521,4 @@ def calculate_accuracy(all_data_results, column_name):
     return correct / total if total > 0 else 0
 
 if __name__ == "__main__":
-    asyncio.run(main()) 
+    asyncio.run(main())

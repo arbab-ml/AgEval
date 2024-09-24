@@ -5,10 +5,11 @@ from typing import List, Union
 from PIL import Image
 import io
 import torch
-from transformers import CLIPProcessor, CLIPModel, AutoImageProcessor, ViTModel
+from transformers import CLIPProcessor, CLIPModel, AutoImageProcessor, ViTModel, ResNetModel, ResNetConfig, AutoFeatureExtractor
 
+AVAILABLE_ENCODERS = ["vit", "clip", "resnet"]
 # CLIP model setup
-CLIP_MODEL_NAME = "openai/clip-vit-base-patch32"
+CLIP_MODEL_NAME = "openai/clip-vit-base-patch16"
 clip_processor = CLIPProcessor.from_pretrained(CLIP_MODEL_NAME)
 clip_model = CLIPModel.from_pretrained(CLIP_MODEL_NAME)
 
@@ -16,6 +17,11 @@ clip_model = CLIPModel.from_pretrained(CLIP_MODEL_NAME)
 VIT_MODEL_NAME = "google/vit-base-patch16-224-in21k"
 vit_processor = AutoImageProcessor.from_pretrained(VIT_MODEL_NAME)
 vit_model = ViTModel.from_pretrained(VIT_MODEL_NAME)
+
+# ResNet model setup
+RESNET_MODEL_NAME = "microsoft/resnet-50"
+resnet_feature_extractor = AutoFeatureExtractor.from_pretrained(RESNET_MODEL_NAME)
+resnet_model = ResNetModel.from_pretrained(RESNET_MODEL_NAME)
 
 def get_image_embedding(image_path: str, model_type: str = "clip") -> Union[List[float], dict]:
     try:
@@ -42,6 +48,20 @@ def get_image_embedding(image_path: str, model_type: str = "clip") -> Union[List
                 # Get image features
                 with torch.no_grad():
                     outputs = vit_model(**inputs)
+                
+                # Use pooler_output as the image embedding
+                image_embedding = outputs.pooler_output
+                
+                # Convert to list and return
+                return image_embedding.squeeze().tolist()
+            
+            elif model_type.lower() == "resnet":
+                # Process the image using ResNet feature extractor
+                inputs = resnet_feature_extractor(images=img, return_tensors="pt")
+                
+                # Get image features
+                with torch.no_grad():
+                    outputs = resnet_model(**inputs)
                 
                 # Use pooler_output as the image embedding
                 image_embedding = outputs.pooler_output
@@ -77,6 +97,15 @@ if isinstance(vit_embedding, dict) and "error" in vit_embedding:
 else:
     print(f"ViT Embedding shape: {len(vit_embedding)}")
     print(f"ViT First few values: {vit_embedding[:5]}")
+
+# Get embedding using ResNet
+resnet_embedding = get_image_embedding(image_path, model_type="resnet")
+
+if isinstance(resnet_embedding, dict) and "error" in resnet_embedding:
+    print(f"ResNet Error: {resnet_embedding['error']}")
+else:
+    print(f"ResNet Embedding shape: {len(resnet_embedding)}")
+    print(f"ResNet First few values: {resnet_embedding[:5]}")
 
 # Note: This implementation uses the CLIP and ViT models directly from Hugging Face Transformers,
 # which is more efficient and doesn't require making API calls.
