@@ -24,6 +24,12 @@ import nest_asyncio
 from tqdm import tqdm
 import re
 from data_loader import load_and_prepare_data_SBRD, load_and_prepare_data_DurumWheat, load_and_prepare_data_soybean_seeds, load_and_prepare_data_mango_leaf, load_and_prepare_data_DeepWeeds, load_and_prepare_data_IP02, load_and_prepare_data_bean_leaf, load_and_prepare_data_YellowRust, load_and_prepare_data_FUSARIUM22, load_and_prepare_data_InsectCount, load_and_prepare_data_DiseaseQuantify, load_and_prepare_data_IDC, load_and_prepare_data_Soybean_PNAS, load_and_prepare_data_Soybean_Dangerous_Insects
+import clip
+import torch
+import torch.nn.functional as F
+import timm
+from torchvision import transforms
+
 nest_asyncio.apply()
 global vision_prompt
 
@@ -75,7 +81,7 @@ datasets = [
     # {"loader": load_and_prepare_data_DurumWheat, "samples": 100, "shots": universal_shots, "vision_prompt": universal_prompt},
     # {"loader": load_and_prepare_data_soybean_seeds, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt},
     # {"loader": load_and_prepare_data_mango_leaf, "samples": 50, "shots": universal_shots,  "vision_prompt": universal_prompt},
-    {"loader": load_and_prepare_data_DeepWeeds, "samples": 15, "shots": universal_shots,  "vision_prompt": universal_prompt},
+    {"loader": load_and_prepare_data_DeepWeeds, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt},
     # # {"loader": load_and_prepare_data_IP02, "samples": 105, "shots": universal_shots,  "vision_prompt": universal_prompt}, # implement resizing for this data and run every model again
     # {"loader": load_and_prepare_data_bean_leaf, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt},
     # {"loader": load_and_prepare_data_YellowRust, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt},
