@@ -48,38 +48,43 @@ def process_model_csvs(model_folder):
     return pd.DataFrame(results)
 
 # Function to generate plots
-def generate_plots(results_df, model_name):
+def generate_plots(results_df, model_name, dataset_name):
     plots_folder = os.path.join('results_analysis', 'plots')
     os.makedirs(plots_folder, exist_ok=True)
 
+    # Define a color cycle
+    colors = plt.cm.get_cmap('tab10')(np.linspace(0, 1, len(results_df['Encoder'].unique())))
+
     # Plot 1: Accuracy vs Number of Shots
     plt.figure(figsize=(12, 8))
-    for encoder in results_df['Encoder'].unique():
+    for i, encoder in enumerate(results_df['Encoder'].unique()):
         for method in ['Embedding', 'Random']:
             data = results_df[(results_df['Encoder'] == encoder) & (results_df['Method'] == method)]
-            plt.plot(data['Shots'], data['Accuracy'], marker='o', label=f'{encoder} - {method}')
+            linestyle = '-' if method == 'Embedding' else ':'
+            plt.plot(data['Shots'], data['Accuracy'], marker='o', linestyle=linestyle, color=colors[i], label=f'{encoder} - {method}')
 
     plt.xlabel('Number of Shots')
     plt.ylabel('Accuracy')
     plt.title(f'Accuracy vs Number of Shots - {model_name}')
     plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.tight_layout()
-    plt.savefig(os.path.join(plots_folder, f'accuracy_vs_shots_{model_name}.png'))
+    plt.savefig(os.path.join(plots_folder, f'accuracy_vs_shots_{model_name}_{dataset_name}.png'))
     plt.close()
 
     # Plot 2: Average Same Category Count vs Number of Shots
     plt.figure(figsize=(12, 8))
-    for encoder in results_df['Encoder'].unique():
+    for i, encoder in enumerate(results_df['Encoder'].unique()):
         for method in ['Embedding', 'Random']:
             data = results_df[(results_df['Encoder'] == encoder) & (results_df['Method'] == method)]
-            plt.plot(data['Shots'], data['Avg_Same_Category_Count'], marker='o', label=f'{encoder} - {method}')
+            linestyle = '-' if method == 'Embedding' else ':'
+            plt.plot(data['Shots'], data['Avg_Same_Category_Count'], marker='o', linestyle=linestyle, color=colors[i], label=f'{encoder} - {method}')
 
     plt.xlabel('Number of Shots')
     plt.ylabel('Average Same Category Count')
     plt.title(f'Average Same Category Count vs Number of Shots - {model_name}')
     plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.tight_layout()
-    plt.savefig(os.path.join(plots_folder, f'avg_same_category_count_vs_shots_{model_name}.png'))
+    plt.savefig(os.path.join(plots_folder, f'avg_same_category_count_vs_shots_{model_name}_{dataset_name}.png'))
     plt.close()
 
     print(f"Plots saved for {model_name} in the '{plots_folder}' folder.")
@@ -102,6 +107,7 @@ if __name__ == "__main__":
             print(f"Combined results for {model_name} saved in '{combined_results_path}'")
             
             # Generate plots for the model
-            generate_plots(results_df, model_name)
+            dataset_name = os.path.splitext(os.listdir(model_folder)[0])[0]  # Infer dataset name from the first CSV file
+            generate_plots(results_df, model_name, dataset_name)
 
     print(f"\nAll results and plots saved in '{analysis_folder}' folder.")
