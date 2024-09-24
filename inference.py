@@ -75,7 +75,7 @@ datasets = [
     # {"loader": load_and_prepare_data_DurumWheat, "samples": 100, "shots": universal_shots, "vision_prompt": universal_prompt},
     # {"loader": load_and_prepare_data_soybean_seeds, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt},
     # {"loader": load_and_prepare_data_mango_leaf, "samples": 50, "shots": universal_shots,  "vision_prompt": universal_prompt},
-    {"loader": load_and_prepare_data_DeepWeeds, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt},
+    {"loader": load_and_prepare_data_DeepWeeds, "samples": 15, "shots": universal_shots,  "vision_prompt": universal_prompt},
     # # {"loader": load_and_prepare_data_IP02, "samples": 105, "shots": universal_shots,  "vision_prompt": universal_prompt}, # implement resizing for this data and run every model again
     # {"loader": load_and_prepare_data_bean_leaf, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt},
     # {"loader": load_and_prepare_data_YellowRust, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt},
@@ -331,10 +331,10 @@ from get_embeddingp import get_image_embedding
 # Modify the precompute_embeddings function
 def precompute_embeddings(all_data):
     embeddings = {}
-    print("Precomputing CLIP embeddings...")
+    print("Precomputing ViT embeddings...")
     for idx, row in tqdm(all_data.iterrows(), total=len(all_data), desc="Computing embeddings"):
         image_path = row[0]
-        embedding = get_image_embedding(image_path)
+        embedding = get_image_embedding(image_path, model_type="vit")
         if isinstance(embedding, dict) and "error" in embedding:
             print(f"Error computing embedding for {image_path}: {embedding['error']}")
         else:
@@ -355,7 +355,7 @@ async def process_image(api, i, number_of_shots, all_data_results, all_data, pro
         
         if use_embedding:
             # Use adaptive example selection
-            input_embedding = get_image_embedding(image_path)
+            input_embedding = get_image_embedding(image_path, model_type="vit")
             if isinstance(input_embedding, dict) and "error" in input_embedding:
                 raise ValueError(f"Failed to compute embedding for {image_path}: {input_embedding['error']}")
             
