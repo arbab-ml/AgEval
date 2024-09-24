@@ -59,4 +59,57 @@ def generate_plots(results_df, model_name):
         dataset_results = results_df[results_df['Dataset'] == dataset_name]
 
         # Plot 1: Accuracy vs Number of Shots
-        plt.figur
+        plt.figure(figsize=(12, 8))
+        for i, encoder in enumerate(dataset_results['Encoder'].unique()):
+            for method in ['Embedding', 'Random']:
+                data = dataset_results[(dataset_results['Encoder'] == encoder) & (dataset_results['Method'] == method)]
+                linestyle = '-' if method == 'Embedding' else ':'
+                plt.plot(data['Shots'], data['Accuracy'], marker='o', linestyle=linestyle, color=colors[i], label=f'{encoder} - {method}')
+
+        plt.xlabel('Number of Shots')
+        plt.ylabel('Accuracy')
+        plt.title(f'Accuracy vs Number of Shots - {model_name} - {dataset_name}')
+        plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+        plt.tight_layout()
+        plt.savefig(os.path.join(plots_folder, f'accuracy_vs_shots_{dataset_name}.png'))
+        plt.close()
+
+        # Plot 2: Average Same Category Count vs Number of Shots
+        plt.figure(figsize=(12, 8))
+        for i, encoder in enumerate(dataset_results['Encoder'].unique()):
+            for method in ['Embedding', 'Random']:
+                data = dataset_results[(dataset_results['Encoder'] == encoder) & (dataset_results['Method'] == method)]
+                linestyle = '-' if method == 'Embedding' else ':'
+                plt.plot(data['Shots'], data['Avg_Same_Category_Count'], marker='o', linestyle=linestyle, color=colors[i], label=f'{encoder} - {method}')
+
+        plt.xlabel('Number of Shots')
+        plt.ylabel('Average Same Category Count')
+        plt.title(f'Average Same Category Count vs Number of Shots - {model_name} - {dataset_name}')
+        plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+        plt.tight_layout()
+        plt.savefig(os.path.join(plots_folder, f'avg_same_category_count_vs_shots_{dataset_name}.png'))
+        plt.close()
+
+    print(f"Plots saved for {model_name} in the '{plots_folder}' folder.")
+
+# Main execution
+if __name__ == "__main__":
+    results_folder = 'results'
+    analysis_folder = 'results_analysis'
+    os.makedirs(analysis_folder, exist_ok=True)
+
+    for model_name in os.listdir(results_folder):
+        model_folder = os.path.join(results_folder, model_name)
+        if os.path.isdir(model_folder):
+            print(f"\nProcessing model: {model_name}")
+            results_df = process_model_csvs(model_folder)
+            
+            # Save combined results CSV for the model
+            combined_results_path = os.path.join(analysis_folder, f'{model_name}_combined_results.csv')
+            results_df.to_csv(combined_results_path, index=False)
+            print(f"Combined results for {model_name} saved in '{combined_results_path}'")
+            
+            # Generate plots for the model
+            generate_plots(results_df, model_name)
+
+    print(f"\nAll results and plots saved in '{analysis_folder}' folder.")

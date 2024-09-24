@@ -68,22 +68,22 @@ if __name__ == "__main__":
 # DO NOT REMOVE THIS COMMENT. LEAVE IT AS IS.
 # COMMENT START
 # Results for 0 shots:
-#                           Embedding     Random
-# Model  Encoder Dataset                        
-# GPT-4o clip    DeepWeeds  37.799886  39.727381
-#                SBRD       30.895778  34.994999
-#        resnet  DeepWeeds  42.313485  39.653794
-#                SBRD       31.493149  35.628050
-#        vit     DeepWeeds  37.684610  35.887969
-#                SBRD       29.980493  31.195951
+# # result_table_dict[0]
+# Results for 0 shots:
+# Method            Embedding                           Random                      
+# Encoder                clip     resnet        vit       clip     resnet        vit
+# Model  Dataset                                                                    
+# GPT-4o DeepWeeds  37.799886  42.313485  37.684610  39.727381  39.653794  35.887969
+#        SBRD       30.895778  31.493149  29.980493  34.994999  35.628050  31.195951
 
+
+# # Results for 1 shots:
+# # result_table_dict[1]
 # Results for 1 shots:
-#                           Embedding     Random
-# Model  Encoder Dataset                        
-# GPT-4o clip    DeepWeeds  52.387846  46.542907
-#                SBRD       60.367094  40.166683
-#        resnet  DeepWeeds  54.869281  40.960357
-#                SBRD       58.904004  39.451309
-#        vit     DeepWeeds  51.180244  38.787223
-#                SBRD       59.614849  47.124710
-# COMMENT END
+# Method            Embedding                           Random                      
+# Encoder                clip     resnet        vit       clip     resnet        vit
+# Model  Dataset                                                                    
+# GPT-4o DeepWeeds  52.387846  54.869281  51.180244  46.542907  40.960357  38.787223
+#        SBRD       60.367094  58.904004  59.614849  40.166683  39.451309  47.124710
+# # and similarly for 2, 4, and 8 shots.
+# # COMMENT END
