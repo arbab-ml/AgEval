@@ -2,3 +2,12 @@
 data/*
 data
 .env
+#ignore all latex auxiliary files
+*.aux
+*.log
+*.out
+*.toc
+*.bbl
+*.blg
+#and sty files
+*.sty
