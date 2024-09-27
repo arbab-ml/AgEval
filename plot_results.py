@@ -35,10 +35,10 @@ def generate_plots(result_table_dict):
     n_rows = math.ceil(n_datasets / n_cols)
 
     # Create the main figure
-    fig = plt.figure(figsize=(15, 2.5 * n_rows))
+    fig = plt.figure(figsize=(15, 3.2 * n_rows))  # Slightly increased height
 
     # Use GridSpec for more control over subplot positioning
-    gs = gridspec.GridSpec(n_rows, n_cols)
+    gs = gridspec.GridSpec(n_rows, n_cols, hspace=0.4)  # Increased hspace for more space between rows
 
     # Color palette for encoders
     encoder_colors = {'clip': '#1f77b4', 'resnet': '#ff7f0e', 'vit': '#2ca02c'}
@@ -93,12 +93,12 @@ def generate_plots(result_table_dict):
                 legend_elements.append(plt.Line2D([0], [0], color=encoder_colors[encoder], lw=1, 
                                                   linestyle=':', label=f'{model} - {encoder} (Random)'))
 
-    fig.legend(handles=legend_elements, loc='upper center', bbox_to_anchor=(0.5, 1.05), 
+    fig.legend(handles=legend_elements, loc='upper center', bbox_to_anchor=(0.5, 1.02), 
                ncol=len(models) * (len(encoders) + 1))
 
     # Adjust the layout
     plt.tight_layout()
-    plt.subplots_adjust(top=0.72, hspace=0.4, wspace=0.3)  # Make room for the legend and adjust spacing
+    plt.subplots_adjust(top=0.92, hspace=0.8, wspace=0.3)  # Adjusted top margin and hspace
 
     # Save the figure
     plt.savefig(os.path.join(plots_folder, 'identification_plots.pdf'), bbox_inches='tight')
