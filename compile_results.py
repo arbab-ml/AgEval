@@ -9,6 +9,9 @@ def calculate_f1(df, shots, method):
     pred_labels = df[f'{method} # of Shots {shots}'].fillna('NA_placeholder')
     return f1_score(true_labels, pred_labels, average='weighted') * 100
 
+def calculate_avg_same_category(df, shots, method):
+    return df[f'{method} Same Category Count {shots}'].mean()
+
 def process_model_csvs(results_folder):
     results = {shots: [] for shots in [0, 1, 2, 4, 8]}
     
@@ -27,13 +30,15 @@ def process_model_csvs(results_folder):
                             for shots in [0, 1, 2, 4, 8]:
                                 for method in ['Embedding', 'Random']:
                                     f1 = calculate_f1(df, shots, method)
+                                    avg_same_category = calculate_avg_same_category(df, shots, method)
                                     
                                     results[shots].append({
                                         'Model': model,
                                         'Dataset': dataset_name,
                                         'Method': method,
                                         'Encoder': encoder,
-                                        'F1': f1
+                                        'F1': f1,
+                                        'Avg_Same_Category': avg_same_category
                                     })
 
     return results
@@ -50,7 +55,7 @@ if __name__ == "__main__":
     result_table_dict = {}
     for shots, data in results_dict.items():
         result_df = pd.DataFrame(data)
-        result_df = result_df.pivot_table(values='F1', index=['Model', 'Dataset'], columns=['Method', 'Encoder'])
+        result_df = result_df.pivot_table(values=['F1', 'Avg_Same_Category'], index=['Model', 'Dataset'], columns=['Method', 'Encoder'])
         result_table_dict[shots] = result_df
 
     # Save the result_table_dict as a pickle file

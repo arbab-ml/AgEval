@@ -1,0 +1,11 @@
+<paper_writing_rules>
+    <rule>Write concisely and clearly, avoiding unnecessary adjectives. Focus on factual content and precise language.</rule>
+    <rule>Use paragraph structure instead of bullet points, unless explicitly required.</rule>
+    <rule>Construct substantial paragraphs, typically 10-15 lines in length, to develop ideas fully.</rule>
+    <rule>Employ pure LaTeX syntax for all content.</rule>
+    <rule>Maintain an academic tone consistent with expert-level writing in the field.</rule>
+    <rule>Adhere strictly to the provided instructions, implementing them as specified.</rule>
+    <rule>Omit superfluous adjectives and maintain a direct, to-the-point writing style. some such examples include state-of-art' or 'intelligent' , 'innovation' so do not use any words like this.  </rule>
+    <rule>Present a realistically optimistic perspective while avoiding exaggeration.</rule>
+    <rule>Ensure the writing reflects the expertise and tone of an academic professional in the field.</rule>
+</paper_writing_rules>

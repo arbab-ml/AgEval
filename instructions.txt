@@ -18,3 +18,5 @@ Project: Adaptive Few-Shot Learning for Image Classification
    d. Evaluate and compare performance with random few-shot selection
 
 6. Expected outcome: Improved accuracy and generalization in image classification tasks
+
+By selecting examples that are more contextually relevant to the input image, the model can better generalize from limited data
