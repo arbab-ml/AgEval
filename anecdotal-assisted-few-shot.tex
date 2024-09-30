@@ -1,65 +1,63 @@
 
-    \begin{table}
-    \caption{Bean Leaf Lesions dataset analysis}
-    \label{table:bean_leaf_lesions}
+    \begin{figure}[htbp]
     \centering
-    \begin{tabular}{lll}
-        \toprule
-        \textbf{Category} & \textbf{Subcategory} & \textbf{Task} \\
-        \midrule
-        Identification (I) & Foliar Stress & Classification \\
-        \bottomrule
-    \end{tabular}
-    \end{table}
+    \begin{subfigure}[c]{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Bean Rust/bean_rust_train.130.jpg}
+        \caption{Sample image}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[c]{0.65\textwidth}
+        \centering
+        \begin{tabular}{lll}
+            \toprule
+            \textbf{Category} & \textbf{Subcategory} & \textbf{Task} \\
+            \midrule
+            Identification (I) & Foliar Stress & Bean Leaf Lesions \\
+            \midrule
+            \multicolumn{3}{l}{\textbf{Question:} What type of bean leaf lesion is this?} \\
+            \multicolumn{3}{l}{\textbf{Ground Truth:} Bean Rust} \\
+            \bottomrule
+        \end{tabular}
+    \end{subfigure}
 
-    \begin{figure}
-    \centering
-    \includegraphics[height=0.160\linewidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Bean Rust/bean_rust_train.130.jpg}
-    \caption{Sample image from Bean Leaf Lesions dataset. Question: What type of bean leaf lesion is this?}
-    \label{fig:bean_leaf_lesions}
-    \end{figure}
+    \vspace{1em}
 
-    \textbf{Ground Truth:} Bean Rust
-
-    \begin{table}
-    \caption{Example images for Bean Leaf Lesions dataset}
-    \label{table:bean_leaf_lesions_examples}
-    \centering
     \begin{tabular}{lcccc}
         \toprule
         \textbf{Method} & \multicolumn{4}{c}{\textbf{Examples}} \\
         \midrule
-    VIT-based & \begin{tabular}{c}
-    \includegraphics[width=0.16\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Bean Rust/bean_rust_train.14.jpg} \\
+        VIT-based
+     & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Bean Rust/bean_rust_train.14.jpg} \\
     Bean Rust
 \end{tabular} & \begin{tabular}{c}
-    \includegraphics[width=0.16\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Bean Rust/bean_rust_train.241.jpg} \\
+    \includegraphics[width=0.15\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Bean Rust/bean_rust_train.241.jpg} \\
     Bean Rust
 \end{tabular} & \begin{tabular}{c}
-    \includegraphics[width=0.16\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Bean Rust/bean_rust_train.10.jpg} \\
+    \includegraphics[width=0.15\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Bean Rust/bean_rust_train.10.jpg} \\
     Bean Rust
 \end{tabular} & \begin{tabular}{c}
-    \includegraphics[width=0.16\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Angular Leaf Spot/angular_leaf_spot_train.137.jpg} \\
+    \includegraphics[width=0.15\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Angular Leaf Spot/angular_leaf_spot_train.137.jpg} \\
     Angular Leaf Spot
 \end{tabular} \\
-
 Traditional & \begin{tabular}{c}
-    \includegraphics[width=0.16\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Angular Leaf Spot/angular_leaf_spot_train.185.jpg} \\
+    \includegraphics[width=0.15\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Angular Leaf Spot/angular_leaf_spot_train.185.jpg} \\
     Angular Leaf Spot
 \end{tabular} & \begin{tabular}{c}
-    \includegraphics[width=0.16\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Angular Leaf Spot/angular_leaf_spot_train.173.jpg} \\
+    \includegraphics[width=0.15\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Angular Leaf Spot/angular_leaf_spot_train.173.jpg} \\
     Angular Leaf Spot
 \end{tabular} & \begin{tabular}{c}
-    \includegraphics[width=0.16\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Angular Leaf Spot/angular_leaf_spot_train.296.jpg} \\
+    \includegraphics[width=0.15\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Angular Leaf Spot/angular_leaf_spot_train.296.jpg} \\
     Angular Leaf Spot
 \end{tabular} & \begin{tabular}{c}
-    \includegraphics[width=0.16\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Healthy/healthy_train.1.jpg} \\
+    \includegraphics[width=0.15\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Healthy/healthy_train.1.jpg} \\
     Healthy
 \end{tabular} \\
 
-
         \bottomrule
     \end{tabular}
-    \end{table}
-    
+    \caption{Analysis of the Bean Leaf Lesions dataset}
+    \label{fig:bean_leaf_lesions}
+    \end{figure}
     
