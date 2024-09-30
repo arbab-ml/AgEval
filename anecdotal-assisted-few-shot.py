@@ -1,12 +1,66 @@
 import pandas as pd
 import os
 
+
+#Metadata about all # DO NOT DELETE THESE:
+dataset_mapping = {
+    'Durum Wheat': ('Identification (I)', 'F1', 'Seed Morphology'),
+    'Soybean Seeds': ('Identification (I)', 'F1', 'Seed Morphology'),
+    'Mango Leaf Disease': ('Identification (I)', 'F1', 'Foliar Stress'),
+    'Bean Leaf Lesions': ('Identification (I)', 'F1', 'Foliar Stress'),
+    'Soybean Diseases': ('Identification (I)', 'F1', 'Foliar Stress'),
+    'Dangerous Insects': ('Identification (I)', 'F1', 'Invasive Species'),
+    'DeepWeeds': ('Identification (I)', 'F1', 'Invasive Species'),
+    'Yellow Rust 19': ('Classification (C)', 'NMAE', 'Disease Severity'),
+    'IDC': ('Classification (C)', 'NMAE', 'Stress Tolerance'),
+    'FUSARIUM 22': ('Classification (C)', 'NMAE', 'Stress Tolerance'),
+    'InsectCount': ('Quantification (Q)', 'NMAE', 'Pest'),
+    'PlantDoc': ('Quantification (Q)', 'NMAE', 'Disease'),
+}
+
+question_mapping = {
+    'Durum Wheat':'What wheat variety is this?',
+    'Soybean Seeds':'What soybean lifecycle stage is this?' ,
+    'Mango Leaf Disease': 'What mango leaf disease is present?' ,
+    'Bean Leaf Lesions': 'What type of bean leaf lesion is this?',
+    'Soybean Diseases': 'What is the type of stress in this soybean?',
+    'Dangerous Insects': 'What is the name of this harmful insect?',
+    'DeepWeeds':'What is the name of this weed?' ,
+    'Yellow Rust 19':'What is the severity of yellow rust disease?' ,
+    'IDC':'What is the rating (1-5) of soybean stress severity?' ,
+    'FUSARIUM 22':'What is the severity of chickpea fusarium wilt?' ,
+    'InsectCount': 'What is the insect count?',
+    'PlantDoc': 'What is the diseased leaf percentage?',
+}
+
+# THE NAMES OF FILES ARE:
+# results/GPT-4o/vit/Bean Leaf Lesions.csv
+# results/GPT-4o/vit/Dangerous Insects.csv
+# results/GPT-4o/vit/DeepWeeds.csv
+# results/GPT-4o/vit/Durum Wheat.csv
+# results/GPT-4o/vit/Mango Leaf Disease.csv
+# results/GPT-4o/vit/SBRD.csv
+# results/GPT-4o/vit/Soybean Diseases.csv
+# results/GPT-4o/vit/Soybean Seeds.csv
+
+
+
+
 def generate_latex_output(csv_file_path):
     df = pd.read_csv(csv_file_path, index_col=0)
     row = df.iloc[0]
     
-    image_path = row['0']
+    # Extract dataset name from the file path
+    dataset_name = os.path.splitext(os.path.basename(csv_file_path))[0]
+    
+    prefix = "/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib"
+    image_path = os.path.join(prefix, row['0'].replace('./', ''))
     ground_truth = row['1']
+    
+    # Get question, category, subcategory, and task from mappings
+    question = question_mapping.get(dataset_name, "Question not found")
+    category, metric, subcategory = dataset_mapping.get(dataset_name, ("", "", ""))
+    task = "Classification" if category == "Identification (I)" else category.split()[0]
     
     # VIT Embedding examples
     vit_embedding_shots = [path.replace('./', '') for path in row['Embedding Example Paths 4'].strip("[]").replace("'", "").split(', ')]
@@ -17,57 +71,63 @@ def generate_latex_output(csv_file_path):
     random_categories = row['Random Example Categories 4'].strip("[]").replace("'", "").split(', ')
     
     latex_output = f"""
-    \\begin{{figure}}[t!]
-        \\small
-        \\textbf{{Question: What type of bean leaf lesion is shown in this image?}}
-        \\vspace{{1em}}
-        \\begin{{center}}
-        \\includegraphics[height=0.20\\linewidth]{{{image_path}}}
-        \\end{{center}}
-        \\vspace{{1em}}
-        
-        \\begin{{tabular}}{{|p{{0.28\\linewidth}}|p{{0.28\\linewidth}}|p{{0.28\\linewidth}}|}}
-            \\hline
-            \\textbf{{Category}} & \\textbf{{Subcategory}} & \\textbf{{Task}} \\\\
-            \\hline
-            Plant Pathology & Bean Leaf Lesions & Classification \\\\
-            \\hline
-        \\end{{tabular}}
-        \\vspace{{1em}}
+    \\begin{{table}}
+    \\caption{{{dataset_name} dataset analysis}}
+    \\label{{table:{dataset_name.lower().replace(' ', '_')}}}
+    \\centering
+    \\begin{{tabular}}{{lll}}
+        \\toprule
+        \\textbf{{Category}} & \\textbf{{Subcategory}} & \\textbf{{Task}} \\\\
+        \\midrule
+        {category} & {subcategory} & {task} \\\\
+        \\bottomrule
+    \\end{{tabular}}
+    \\end{{table}}
 
-        \\textbf{{Ground Truth:}} {ground_truth}
-        \\vspace{{1em}}
+    \\begin{{figure}}
+    \\centering
+    \\includegraphics[height=0.160\\linewidth]{{{image_path}}}
+    \\caption{{Sample image from {dataset_name} dataset. Question: {question}}}
+    \\label{{fig:{dataset_name.lower().replace(' ', '_')}}}
+    \\end{{figure}}
 
-        \\begin{{tabular}}{{p{{0.15\\linewidth}}|p{{0.2\\linewidth}}p{{0.2\\linewidth}}p{{0.2\\linewidth}}p{{0.2\\linewidth}}}}
-            \\textbf{{Method}} & \\multicolumn{{4}}{{c}}{{\\textbf{{Examples}}}} \\\\
-            \\hline
+    \\textbf{{Ground Truth:}} {ground_truth}
+
+    \\begin{{table}}
+    \\caption{{Example images for {dataset_name} dataset}}
+    \\label{{table:{dataset_name.lower().replace(' ', '_')}_examples}}
+    \\centering
+    \\begin{{tabular}}{{lcccc}}
+        \\toprule
+        \\textbf{{Method}} & \\multicolumn{{4}}{{c}}{{\\textbf{{Examples}}}} \\\\
+        \\midrule
     """
     
     # VIT Embedding row
-    latex_output += "\\textbf{VIT Embedding} & "
+    latex_output += "VIT-based"
     for i in range(4):
-        vit_path = os.path.join("/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib", vit_embedding_shots[i])
-        latex_output += f"""
-            \\begin{{tabular}}{{c}}
-            \\includegraphics[width=0.85\\linewidth]{{{vit_path}}} \\\\
-            {vit_embedding_categories[i]}
-            \\end{{tabular}} &"""
-    latex_output = latex_output.rstrip("&") + "\\\\\n"
+        vit_path = os.path.join(prefix, vit_embedding_shots[i])
+        latex_output += f" & \\begin{{tabular}}{{c}}\n"
+        latex_output += f"    \\includegraphics[width=0.16\\textwidth]{{{vit_path}}} \\\\\n"
+        latex_output += f"    {vit_embedding_categories[i]}\n"
+        latex_output += f"\\end{{tabular}}"
+    latex_output += " \\\\\n\n"
 
     # Random row
-    latex_output += "\\textbf{Random} & "
+    latex_output += "Traditional"
     for i in range(4):
-        random_path = os.path.join("/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib", random_shots[i])
-        latex_output += f"""
-            \\begin{{tabular}}{{c}}
-            \\includegraphics[width=0.85\\linewidth]{{{random_path}}} \\\\
-            {random_categories[i]}
-            \\end{{tabular}} &"""
-    latex_output = latex_output.rstrip("&") + "\\\\\n"
+        random_path = os.path.join(prefix, random_shots[i])
+        latex_output += f" & \\begin{{tabular}}{{c}}\n"
+        latex_output += f"    \\includegraphics[width=0.16\\textwidth]{{{random_path}}} \\\\\n"
+        latex_output += f"    {random_categories[i]}\n"
+        latex_output += f"\\end{{tabular}}"
+    latex_output += " \\\\\n\n"
 
     latex_output += """
-        \\end{tabular}
-    \\end{figure}
+        \\bottomrule
+    \\end{tabular}
+    \\end{table}
+    
     """
     
     return latex_output
