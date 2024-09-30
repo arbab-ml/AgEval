@@ -8,14 +8,24 @@ import pickle
 import matplotlib.gridspec as gridspec
 import matplotlib.patches as mpatches
 
+# DO NOT REMOVE THIS COMMENT. LEAVE IT AS IS.
+# plt.rcParams.update({
+#     'font.family': 'Arial',
+#     'font.size': 13,
+#     'axes.labelsize': 13,
+#     'axes.titlesize': 14,
+#     'xtick.labelsize': 11,
+#     'ytick.labelsize': 11,
+#     'legend.fontsize': 12,
+# })
 plt.rcParams.update({
-    'font.family': 'Arial',
-    'font.size': 13,
-    'axes.labelsize': 13,
-    'axes.titlesize': 14,
-    'xtick.labelsize': 11,
-    'ytick.labelsize': 11,
-    'legend.fontsize': 12,
+    'font.family': 'Times New Roman',
+    'font.size': 9,
+    'axes.labelsize': 9,
+    'axes.titlesize': 10,
+    'xtick.labelsize': 8,
+    'ytick.labelsize': 8,
+    'legend.fontsize': 8,
 })
 
 def generate_plots(result_table_dict):
@@ -33,12 +43,12 @@ def generate_plots(result_table_dict):
 
     metrics = ['F1', 'Avg_Same_Category']
     for metric in metrics:
-        fig = plt.figure(figsize=(15, 3.2 * n_rows))
-        gs = gridspec.GridSpec(n_rows, n_cols, hspace=0.4)
+        fig = plt.figure(figsize=(15/2, 3.2/2 * n_rows + 0.67))  # Reduced figure height
+        gs = gridspec.GridSpec(n_rows, n_cols, hspace=0.6)  # Increased vertical space between subplots
 
         encoder_colors = {'clip': '#1f77b4', 'resnet': '#ff7f0e', 'vit': '#2ca02c'}
 
-        for i, dataset in enumerate(datasets):
+        for i, dataset in enumerate(reversed(datasets)):
             row = i // n_cols
             col = i % n_cols
             
@@ -62,7 +72,7 @@ def generate_plots(result_table_dict):
             
             ax.set_title(f'{dataset}')
             ax.set_xlabel('Number of Shots')
-            ax.set_ylabel(metric)
+            ax.set_ylabel(metric.replace('_', ' '))
             
             y_min, y_max = min(all_values), max(all_values)
             y_range = y_max - y_min
@@ -80,11 +90,11 @@ def generate_plots(result_table_dict):
                     legend_elements.append(plt.Line2D([0], [0], color=encoder_colors[encoder], lw=1, 
                                                       linestyle=':', label=f'{model} - {encoder} (Random)'))
 
-        fig.legend(handles=legend_elements, loc='upper center', bbox_to_anchor=(0.5, 1.02), 
+        fig.legend(handles=legend_elements, loc='upper center', bbox_to_anchor=(0.5, 1.033), 
                    ncol=len(models) * (len(encoders) + 1))
 
         plt.tight_layout()
-        plt.subplots_adjust(top=0.92, hspace=0.8, wspace=0.3)
+        plt.subplots_adjust(top=0.9, hspace=1.0, wspace=0.3)  # Adjusted top margin and increased vertical space
 
         plt.savefig(os.path.join(plots_folder, f'{metric.lower()}_plots.pdf'), bbox_inches='tight')
         plt.close()
@@ -96,22 +106,6 @@ def generate_plots(result_table_dict):
     with open(os.path.join(plots_folder, 'caption.txt'), 'w') as f:
         f.write(caption)
 
-def to_latex_with_multicolumn(df):
-    df = df.reset_index()
-    
-    df.columns = pd.MultiIndex.from_tuples([('Model', ''), ('Dataset', '')] + 
-                                           [col for col in df.columns[2:]])
-    
-    latex = df.to_latex(multicolumn=True, multicolumn_format='c', multirow=True,
-                        column_format='l' + 'l' + 'c'*len(df.columns[2:]), 
-                        float_format="{:0.2f}".format,
-                        escape=False)
-    
-    latex = latex.replace('\\toprule', '\\hline')
-    latex = latex.replace('\\midrule', '\\hline')
-    latex = latex.replace('\\bottomrule', '\\hline')
-    
-    return latex
 
 if __name__ == "__main__":
     analysis_folder = 'results_analysis'
