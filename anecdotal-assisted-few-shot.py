@@ -68,6 +68,8 @@ def generate_latex_output(csv_file_path):
     latex_output = f"""
     \\begin{{figure}}[htbp]
     \\centering
+    \\resizebox{{\\textwidth}}{{!}}{{%
+    \\begin{{tabular}}{{c}}
     \\begin{{subfigure}}[c]{{0.25\\textwidth}}
         \\centering
         \\includegraphics[width=\\textwidth]{{{image_path}}}
@@ -87,9 +89,12 @@ def generate_latex_output(csv_file_path):
             \\bottomrule
         \\end{{tabular}}
     \\end{{subfigure}}
+    \\end{{tabular}}
+    }}
 
     \\vspace{{1em}}
 
+    \\resizebox{{\\textwidth}}{{!}}{{%
     \\begin{{tabular}}{{lcccc}}
         \\toprule
         \\textbf{{Method}} & \\multicolumn{{4}}{{c}}{{\\textbf{{Examples}}}} \\\\
@@ -117,18 +122,33 @@ def generate_latex_output(csv_file_path):
     latex_output += """
         \\bottomrule
     \\end{tabular}
-    \\caption{Analysis of the """ + f"{dataset_name}" + """ dataset}
+    }
+    \\caption{Analysis of Assisted few-shot example selection for """ + f"{dataset_name}" + """ Task}
     \\label{fig:""" + f"{dataset_name.lower().replace(' ', '_')}" + """}
     \\end{figure}
     """
     
     return latex_output
 
-# csv_file_path = 'results/GPT-4o/vit/Bean Leaf Lesions.csv'
-csv_file_path = 'results/GPT-4o/vit/DeepWeeds.csv'
+datasets = [
+    'Bean Leaf Lesions',
+    'Dangerous Insects',
+    'DeepWeeds',
+    'Durum Wheat',
+    'Mango Leaf Disease',
+    'SBRD',
+    'Soybean Diseases',
+    'Soybean Seeds'
+]
 
-latex_output = generate_latex_output(csv_file_path)
-print(latex_output)
+all_latex_output = ""
+
+for dataset in datasets:
+    csv_file_path = f'results/GPT-4o/vit/{dataset}.csv'
+    latex_output = generate_latex_output(csv_file_path)
+    all_latex_output += latex_output + "\n\n"
+
+print(all_latex_output)
 
 with open('anecdotal-assisted-few-shot.tex', 'w') as f:
-    f.write(latex_output)
+    f.write(all_latex_output)

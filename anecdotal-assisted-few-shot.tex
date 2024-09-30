@@ -1,7 +1,9 @@
 
     \begin{figure}[htbp]
     \centering
-    \begin{subfigure}[c]{0.3\textwidth}
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{c}
+    \begin{subfigure}[c]{0.25\textwidth}
         \centering
         \includegraphics[width=\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Bean Rust/bean_rust_train.130.jpg}
         \caption{Sample image}
@@ -20,9 +22,12 @@
             \bottomrule
         \end{tabular}
     \end{subfigure}
+    \end{tabular}
+    }
 
     \vspace{1em}
 
+    \resizebox{\textwidth}{!}{%
     \begin{tabular}{lcccc}
         \toprule
         \textbf{Method} & \multicolumn{4}{c}{\textbf{Examples}} \\
@@ -57,7 +62,6 @@ Traditional & \begin{tabular}{c}
 
         \bottomrule
     \end{tabular}
-    \caption{Analysis of the Bean Leaf Lesions dataset}
-    \label{fig:bean_leaf_lesions}
-    \end{figure}
-    
+    }
+    \caption{Analysis of Assisted few-shot example selection for Bean Leaf Lesions dataset}
+    \label{fig:bean_leaf_lesions
