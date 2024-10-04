@@ -10,4 +10,60 @@
     <rule>Ensure the writing reflects the expertise and tone of an academic professional in the field.</rule>
 
     <tables_rules>
-   
+    \subsection{Tables}
+
+    All tables must be centered, neat, clean and legible.  The table number and
+    title always appear before the table.  See Table~\ref{sample-table}.
+
+    Place one line space before the table title, one line space after the
+    table title, and one line space after the table. The table title must
+    be lower case (except for first word and proper nouns); tables are
+    numbered consecutively.
+
+    Note that publication-quality tables \emph{do not contain vertical rules.} We
+    strongly suggest the use of the \verb+booktabs+ package, which allows for
+    typesetting high-quality, professional tables:
+    \begin{center}
+    \url{https://www.ctan.org/pkg/booktabs}
+    \end{center}
+    This package was used to typeset Table~\ref{sample-table}.
+
+    \begin{table}
+    \caption{Sample table title}
+    \label{sample-table}
+    \centering
+    \begin{tabular}{lll}
+        \toprule
+        \multicolumn{2}{c}{Part}                   \\
+        \cmidrule(r){1-2}
+        Name     & Description     & Size ($\mu$m) \\
+        \midrule
+        Dendrite & Input terminal  & $\sim$100     \\
+        Axon     & Output terminal & $\sim$10      \\
+        Soma     & Cell body       & up to $10^6$  \\
+        \bottomrule
+    \end{tabular}
+    \end{table}
+    </tables_rules>
+    <figures_rules>
+        \subsection{Figures}
+        \begin{figure}
+        \centering
+        \fbox{\rule[-.5cm]{0cm}{4cm} \rule[-.5cm]{4cm}{0cm}}
+        \caption{Sample figure caption.}
+        \end{figure}
+
+
+        All artwork must be neat, clean, and legible. Lines should be dark enough for
+        purposes of reproduction. The figure number and caption always appear after the
+        figure. Place one line space before the figure caption and one line space after
+        the figure. The figure caption should be lower case (except for first word and
+        proper nouns); figures are numbered consecutively.
+
+
+        You may use color figures.  However, it is best for the figure captions and the
+        paper body to be legible if the paper is printed in either black/white or in
+        color.
+    </figures_rules>
+</paper_writing_rules>
+

@@ -5,7 +5,7 @@
     \begin{tabular}{c}
     \begin{subfigure}[c]{0.25\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Bean Rust/bean_rust_train.130.jpg}
+        \includegraphics[width=\textwidth]{anecdotal/data/bean-leaf-lesions-classification/train/Bean Rust/bean_rust_train.130.jpg}
         \caption{Sample image}
     \end{subfigure}
     \hfill
@@ -34,34 +34,527 @@
         \midrule
         VIT-based
      & \begin{tabular}{c}
-    \includegraphics[width=0.15\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Bean Rust/bean_rust_train.14.jpg} \\
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/bean-leaf-lesions-classification/train/Bean Rust/bean_rust_train.14.jpg} \\
     Bean Rust
 \end{tabular} & \begin{tabular}{c}
-    \includegraphics[width=0.15\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Bean Rust/bean_rust_train.241.jpg} \\
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/bean-leaf-lesions-classification/train/Bean Rust/bean_rust_train.241.jpg} \\
     Bean Rust
 \end{tabular} & \begin{tabular}{c}
-    \includegraphics[width=0.15\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Bean Rust/bean_rust_train.10.jpg} \\
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/bean-leaf-lesions-classification/train/Bean Rust/bean_rust_train.10.jpg} \\
     Bean Rust
 \end{tabular} & \begin{tabular}{c}
-    \includegraphics[width=0.15\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Angular Leaf Spot/angular_leaf_spot_train.137.jpg} \\
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/bean-leaf-lesions-classification/train/Angular Leaf Spot/angular_leaf_spot_train.137.jpg} \\
     Angular Leaf Spot
 \end{tabular} \\
 Traditional & \begin{tabular}{c}
-    \includegraphics[width=0.15\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Angular Leaf Spot/angular_leaf_spot_train.185.jpg} \\
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/bean-leaf-lesions-classification/train/Angular Leaf Spot/angular_leaf_spot_train.185.jpg} \\
     Angular Leaf Spot
 \end{tabular} & \begin{tabular}{c}
-    \includegraphics[width=0.15\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Angular Leaf Spot/angular_leaf_spot_train.173.jpg} \\
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/bean-leaf-lesions-classification/train/Angular Leaf Spot/angular_leaf_spot_train.173.jpg} \\
     Angular Leaf Spot
 \end{tabular} & \begin{tabular}{c}
-    \includegraphics[width=0.15\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Angular Leaf Spot/angular_leaf_spot_train.296.jpg} \\
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/bean-leaf-lesions-classification/train/Angular Leaf Spot/angular_leaf_spot_train.296.jpg} \\
     Angular Leaf Spot
 \end{tabular} & \begin{tabular}{c}
-    \includegraphics[width=0.15\textwidth]{/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/data/bean-leaf-lesions-classification/train/Healthy/healthy_train.1.jpg} \\
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/bean-leaf-lesions-classification/train/Healthy/healthy_train.1.jpg} \\
     Healthy
 \end{tabular} \\
 
         \bottomrule
     \end{tabular}
     }
-    \caption{Analysis of Assisted few-shot example selection for Bean Leaf Lesions dataset}
-    \label{fig:bean_leaf_lesions
+    \caption{Analysis of Assisted few-shot example selection for Bean Leaf Lesions Task}
+    \label{fig:bean_leaf_lesions}
+    \end{figure}
+    
+
+
+    \begin{figure}[htbp]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{c}
+    \begin{subfigure}[c]{0.25\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{anecdotal/data/farm_insects/farm_insects/Colorado Potato Beetles/Image_2.jpg}
+        \caption{Sample image}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[c]{0.65\textwidth}
+        \centering
+        \begin{tabular}{lll}
+            \toprule
+            \textbf{Category} & \textbf{Subcategory} & \textbf{Task} \\
+            \midrule
+            Identification (I) & Invasive Species & Dangerous Insects \\
+            \midrule
+            \multicolumn{3}{l}{\textbf{Question:} What is the name of this harmful insect?} \\
+            \multicolumn{3}{l}{\textbf{Ground Truth:} Colorado Potato Beetles} \\
+            \bottomrule
+        \end{tabular}
+    \end{subfigure}
+    \end{tabular}
+    }
+
+    \vspace{1em}
+
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Method} & \multicolumn{4}{c}{\textbf{Examples}} \\
+        \midrule
+        VIT-based
+     & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/farm_insects/farm_insects/Colorado Potato Beetles/Image_95.jpg} \\
+    Colorado Potato Beetles
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/farm_insects/farm_insects/Colorado Potato Beetles/Image_6.jpeg} \\
+    Colorado Potato Beetles
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/farm_insects/farm_insects/Colorado Potato Beetles/Image_110.jpg} \\
+    Colorado Potato Beetles
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/farm_insects/farm_insects/Colorado Potato Beetles/Image_106.jpg} \\
+    Colorado Potato Beetles
+\end{tabular} \\
+Traditional & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/farm_insects/farm_insects/Cabbage Loopers/Image_54.jpg} \\
+    Cabbage Loopers
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/farm_insects/farm_insects/Fall Armyworms/Image_86.JPG} \\
+    Fall Armyworms
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/farm_insects/farm_insects/Armyworms/Image_90.jpg} \\
+    Armyworms
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/farm_insects/farm_insects/Cabbage Loopers/Image_81.jpg} \\
+    Cabbage Loopers
+\end{tabular} \\
+
+        \bottomrule
+    \end{tabular}
+    }
+    \caption{Analysis of Assisted few-shot example selection for Dangerous Insects Task}
+    \label{fig:dangerous_insects}
+    \end{figure}
+    
+
+
+    \begin{figure}[htbp]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{c}
+    \begin{subfigure}[c]{0.25\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{anecdotal/data/deepweeds/images/20170728-152004-1.jpg}
+        \caption{Sample image}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[c]{0.65\textwidth}
+        \centering
+        \begin{tabular}{lll}
+            \toprule
+            \textbf{Category} & \textbf{Subcategory} & \textbf{Task} \\
+            \midrule
+            Identification (I) & Invasive Species & DeepWeeds \\
+            \midrule
+            \multicolumn{3}{l}{\textbf{Question:} What is the name of this weed?} \\
+            \multicolumn{3}{l}{\textbf{Ground Truth:} Prickly acacia} \\
+            \bottomrule
+        \end{tabular}
+    \end{subfigure}
+    \end{tabular}
+    }
+
+    \vspace{1em}
+
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Method} & \multicolumn{4}{c}{\textbf{Examples}} \\
+        \midrule
+        VIT-based
+     & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/deepweeds/images/20170727-120008-3.jpg} \\
+    Prickly acacia
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/deepweeds/images/20170727-124521-1.jpg} \\
+    Prickly acacia
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/deepweeds/images/20170727-113159-1.jpg} \\
+    Prickly acacia
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/deepweeds/images/20170920-114717-3.jpg} \\
+    Parkinsonia
+\end{tabular} \\
+Traditional & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/deepweeds/images/20171025-074729-2.jpg} \\
+    Parthenium
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/deepweeds/images/20170714-140705-1.jpg} \\
+    Lantana
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/deepweeds/images/20171102-120816-1.jpg} \\
+    Parkinsonia
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/deepweeds/images/20170627-104853-0.jpg} \\
+    Snake weed
+\end{tabular} \\
+
+        \bottomrule
+    \end{tabular}
+    }
+    \caption{Analysis of Assisted few-shot example selection for DeepWeeds Task}
+    \label{fig:deepweeds}
+    \end{figure}
+    
+
+
+    \begin{figure}[htbp]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{c}
+    \begin{subfigure}[c]{0.25\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{anecdotal/data/Durum_Wheat_Dataset/Durum_Wheat_Dataset/Dataset2-Durum Wheat Video Images/Starchy Kernels/Frame 0024.jpg}
+        \caption{Sample image}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[c]{0.65\textwidth}
+        \centering
+        \begin{tabular}{lll}
+            \toprule
+            \textbf{Category} & \textbf{Subcategory} & \textbf{Task} \\
+            \midrule
+            Identification (I) & Seed Morphology & Durum Wheat \\
+            \midrule
+            \multicolumn{3}{l}{\textbf{Question:} What wheat variety is this?} \\
+            \multicolumn{3}{l}{\textbf{Ground Truth:} Starchy Kernels} \\
+            \bottomrule
+        \end{tabular}
+    \end{subfigure}
+    \end{tabular}
+    }
+
+    \vspace{1em}
+
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Method} & \multicolumn{4}{c}{\textbf{Examples}} \\
+        \midrule
+        VIT-based
+     & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Durum_Wheat_Dataset/Durum_Wheat_Dataset/Dataset2-Durum Wheat Video Images/Starchy Kernels/Frame 0020.jpg} \\
+    Starchy Kernels
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Durum_Wheat_Dataset/Durum_Wheat_Dataset/Dataset2-Durum Wheat Video Images/Starchy Kernels/Frame 0016.jpg} \\
+    Starchy Kernels
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Durum_Wheat_Dataset/Durum_Wheat_Dataset/Dataset2-Durum Wheat Video Images/Starchy Kernels/Frame 0023.jpg} \\
+    Starchy Kernels
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Durum_Wheat_Dataset/Durum_Wheat_Dataset/Dataset2-Durum Wheat Video Images/Starchy Kernels/Frame 0036.jpg} \\
+    Starchy Kernels
+\end{tabular} \\
+Traditional & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Durum_Wheat_Dataset/Durum_Wheat_Dataset/Dataset2-Durum Wheat Video Images/Foreign Matters/Frame 0015.jpg} \\
+    Foreign Matters
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Durum_Wheat_Dataset/Durum_Wheat_Dataset/Dataset2-Durum Wheat Video Images/Vitreous Kernels/Frame 0004.jpg} \\
+    Vitreous Kernels
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Durum_Wheat_Dataset/Durum_Wheat_Dataset/Dataset2-Durum Wheat Video Images/Foreign Matters/Frame 0008.jpg} \\
+    Foreign Matters
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Durum_Wheat_Dataset/Durum_Wheat_Dataset/Dataset2-Durum Wheat Video Images/Starchy Kernels/Frame 0052.jpg} \\
+    Starchy Kernels
+\end{tabular} \\
+
+        \bottomrule
+    \end{tabular}
+    }
+    \caption{Analysis of Assisted few-shot example selection for Durum Wheat Task}
+    \label{fig:durum_wheat}
+    \end{figure}
+    
+
+
+    \begin{figure}[htbp]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{c}
+    \begin{subfigure}[c]{0.25\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{anecdotal/data/mango-leaf-disease-dataset/Powdery Mildew/IMG_20211107_123919 (Custom).jpg}
+        \caption{Sample image}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[c]{0.65\textwidth}
+        \centering
+        \begin{tabular}{lll}
+            \toprule
+            \textbf{Category} & \textbf{Subcategory} & \textbf{Task} \\
+            \midrule
+            Identification (I) & Foliar Stress & Mango Leaf Disease \\
+            \midrule
+            \multicolumn{3}{l}{\textbf{Question:} What mango leaf disease is present?} \\
+            \multicolumn{3}{l}{\textbf{Ground Truth:} Powdery Mildew} \\
+            \bottomrule
+        \end{tabular}
+    \end{subfigure}
+    \end{tabular}
+    }
+
+    \vspace{1em}
+
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Method} & \multicolumn{4}{c}{\textbf{Examples}} \\
+        \midrule
+        VIT-based
+     & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/mango-leaf-disease-dataset/Powdery Mildew/IMG_20211107_122459 (Custom).jpg} \\
+    Powdery Mildew
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/mango-leaf-disease-dataset/Powdery Mildew/IMG_20211107_124044 (Custom).jpg} \\
+    Powdery Mildew
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/mango-leaf-disease-dataset/Powdery Mildew/IMG_20211107_124906 (Custom).jpg} \\
+    Powdery Mildew
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/mango-leaf-disease-dataset/Powdery Mildew/20211109_122158 (Custom).jpg} \\
+    Powdery Mildew
+\end{tabular} \\
+Traditional & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/mango-leaf-disease-dataset/Healthy/20211231_160643 (Custom).jpg} \\
+    Healthy
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/mango-leaf-disease-dataset/Powdery Mildew/IMG_20211107_115443 (Custom).jpg} \\
+    Powdery Mildew
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/mango-leaf-disease-dataset/Gall Midge/IMG_20211106_164440 (Custom).jpg} \\
+    Gall Midge
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/mango-leaf-disease-dataset/Cutting Weevil/20211011_162125 (Custom) (Custom).jpg} \\
+    Cutting Weevil
+\end{tabular} \\
+
+        \bottomrule
+    \end{tabular}
+    }
+    \caption{Analysis of Assisted few-shot example selection for Mango Leaf Disease Task}
+    \label{fig:mango_leaf_disease}
+    \end{figure}
+    
+
+
+    \begin{figure}[htbp]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{c}
+    \begin{subfigure}[c]{0.25\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{anecdotal/data/Severity_Based_Rice_Leaf_Diseases_Dataset/Leaf Disease Dataset/train/Severe Bacterial Blight/BACTERAILBLIGHT3_205.JPG}
+        \caption{Sample image}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[c]{0.65\textwidth}
+        \centering
+        \begin{tabular}{lll}
+            \toprule
+            \textbf{Category} & \textbf{Subcategory} & \textbf{Task} \\
+            \midrule
+             &  & SBRD \\
+            \midrule
+            \multicolumn{3}{l}{\textbf{Question:} Question not found} \\
+            \multicolumn{3}{l}{\textbf{Ground Truth:} Severe Bacterial Blight} \\
+            \bottomrule
+        \end{tabular}
+    \end{subfigure}
+    \end{tabular}
+    }
+
+    \vspace{1em}
+
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Method} & \multicolumn{4}{c}{\textbf{Examples}} \\
+        \midrule
+        VIT-based
+     & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Severity_Based_Rice_Leaf_Diseases_Dataset/Leaf Disease Dataset/train/Mild Bacterial Blight/BACTERIALBLIGHT1_092.jpg} \\
+    Mild Bacterial Blight
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Severity_Based_Rice_Leaf_Diseases_Dataset/Leaf Disease Dataset/train/Severe Bacterial Blight/BACTERIALBLIGHT1_042.jpg} \\
+    Severe Bacterial Blight
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Severity_Based_Rice_Leaf_Diseases_Dataset/Leaf Disease Dataset/train/Severe Blast/BLAST3_152.jpg} \\
+    Severe Blast
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Severity_Based_Rice_Leaf_Diseases_Dataset/Leaf Disease Dataset/train/Severe Blast/BLAST5_086.jpg} \\
+    Severe Blast
+\end{tabular} \\
+Traditional & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Severity_Based_Rice_Leaf_Diseases_Dataset/Leaf Disease Dataset/train/Severe Brownspot/BROWNSPOT6_099.jpg} \\
+    Severe Brownspot
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Severity_Based_Rice_Leaf_Diseases_Dataset/Leaf Disease Dataset/train/Severe Brownspot/BROWNSPOT7_199.jpg} \\
+    Severe Brownspot
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Severity_Based_Rice_Leaf_Diseases_Dataset/Leaf Disease Dataset/train/Severe Blast/BLAST5_047.jpg} \\
+    Severe Blast
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Severity_Based_Rice_Leaf_Diseases_Dataset/Leaf Disease Dataset/train/Mild Blast/BLAST9_097.jpg} \\
+    Mild Blast
+\end{tabular} \\
+
+        \bottomrule
+    \end{tabular}
+    }
+    \caption{Analysis of Assisted few-shot example selection for SBRD Task}
+    \label{fig:sbrd}
+    \end{figure}
+    
+
+
+    \begin{figure}[htbp]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{c}
+    \begin{subfigure}[c]{0.25\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{anecdotal/data/Soybean-PNAS/Training Samples/Iron Deficiency Chlorosis/51027.png}
+        \caption{Sample image}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[c]{0.65\textwidth}
+        \centering
+        \begin{tabular}{lll}
+            \toprule
+            \textbf{Category} & \textbf{Subcategory} & \textbf{Task} \\
+            \midrule
+            Identification (I) & Foliar Stress & Soybean Diseases \\
+            \midrule
+            \multicolumn{3}{l}{\textbf{Question:} What is the type of stress in this soybean?} \\
+            \multicolumn{3}{l}{\textbf{Ground Truth:} Iron Deficiency Chlorosis} \\
+            \bottomrule
+        \end{tabular}
+    \end{subfigure}
+    \end{tabular}
+    }
+
+    \vspace{1em}
+
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Method} & \multicolumn{4}{c}{\textbf{Examples}} \\
+        \midrule
+        VIT-based
+     & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Soybean-PNAS/Training Samples/Iron Deficiency Chlorosis/11036.png} \\
+    Iron Deficiency Chlorosis
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Soybean-PNAS/Training Samples/Iron Deficiency Chlorosis/1504.png} \\
+    Iron Deficiency Chlorosis
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Soybean-PNAS/Training Samples/Iron Deficiency Chlorosis/41232.png} \\
+    Iron Deficiency Chlorosis
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Soybean-PNAS/Training Samples/Iron Deficiency Chlorosis/12217.png} \\
+    Iron Deficiency Chlorosis
+\end{tabular} \\
+Traditional & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Soybean-PNAS/Training Samples/Frogeye Leaf Spot/35034.png} \\
+    Frogeye Leaf Spot
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Soybean-PNAS/Training Samples/Healthy/46508.png} \\
+    Healthy
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Soybean-PNAS/Training Samples/Bacterial Pustule/14432.png} \\
+    Bacterial Pustule
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/Soybean-PNAS/Training Samples/Sudden Death Syndrome/40297.png} \\
+    Sudden Death Syndrome
+\end{tabular} \\
+
+        \bottomrule
+    \end{tabular}
+    }
+    \caption{Analysis of Assisted few-shot example selection for Soybean Diseases Task}
+    \label{fig:soybean_diseases}
+    \end{figure}
+    
+
+
+    \begin{figure}[htbp]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{c}
+    \begin{subfigure}[c]{0.25\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{anecdotal/data/soyabean-seeds_Dataset/Soybean Seeds/Spotted/764.jpg}
+        \caption{Sample image}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[c]{0.65\textwidth}
+        \centering
+        \begin{tabular}{lll}
+            \toprule
+            \textbf{Category} & \textbf{Subcategory} & \textbf{Task} \\
+            \midrule
+            Identification (I) & Seed Morphology & Soybean Seeds \\
+            \midrule
+            \multicolumn{3}{l}{\textbf{Question:} What soybean lifecycle stage is this?} \\
+            \multicolumn{3}{l}{\textbf{Ground Truth:} Spotted} \\
+            \bottomrule
+        \end{tabular}
+    \end{subfigure}
+    \end{tabular}
+    }
+
+    \vspace{1em}
+
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Method} & \multicolumn{4}{c}{\textbf{Examples}} \\
+        \midrule
+        VIT-based
+     & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/soyabean-seeds_Dataset/Soybean Seeds/Spotted/876.jpg} \\
+    Spotted
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/soyabean-seeds_Dataset/Soybean Seeds/Spotted/420.jpg} \\
+    Spotted
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/soyabean-seeds_Dataset/Soybean Seeds/Intact/972.jpg} \\
+    Intact
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/soyabean-seeds_Dataset/Soybean Seeds/Spotted/894.jpg} \\
+    Spotted
+\end{tabular} \\
+Traditional & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/soyabean-seeds_Dataset/Soybean Seeds/Skin-damaged/926.jpg} \\
+    Skin-damaged
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/soyabean-seeds_Dataset/Soybean Seeds/Immature/102.jpg} \\
+    Immature
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/soyabean-seeds_Dataset/Soybean Seeds/Intact/192.jpg} \\
+    Intact
+\end{tabular} & \begin{tabular}{c}
+    \includegraphics[width=0.15\textwidth]{anecdotal/data/soyabean-seeds_Dataset/Soybean Seeds/Skin-damaged/32.jpg} \\
+    Skin-damaged
+\end{tabular} \\
+
+        \bottomrule
+    \end{tabular}
+    }
+    \caption{Analysis of Assisted few-shot example selection for Soybean Seeds Task}
+    \label{fig:soybean_seeds}
+    \end{figure}
+    
+

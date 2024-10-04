@@ -1,6 +1,5 @@
 import pandas as pd
 import os
-import shutil
 
 
 #Metadata about all # DO NOT DELETE THESE:
@@ -53,28 +52,17 @@ def generate_latex_output(csv_file_path):
     
     dataset_name = os.path.splitext(os.path.basename(csv_file_path))[0]
     prefix = "/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib"
-    new_prefix = "/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/writing/66f622264889b97fcfa0bc72"
-    
-    def copy_and_update_path(old_path):
-        if not old_path.startswith('./'):
-            old_path = './' + old_path
-        full_old_path = os.path.join(prefix, old_path.replace('./', ''))
-        new_path = os.path.join(new_prefix, 'anecdotal', old_path.replace('./', ''))
-        os.makedirs(os.path.dirname(new_path), exist_ok=True)
-        shutil.copy2(full_old_path, new_path)
-        return 'anecdotal/' + old_path.replace('./', '')
-
-    image_path = copy_and_update_path(row['0'])
+    image_path = os.path.join(prefix, row['0'].replace('./', ''))
     ground_truth = row['1']
     
     question = question_mapping.get(dataset_name, "Question not found")
     category, metric, subcategory = dataset_mapping.get(dataset_name, ("", "", ""))
     task = dataset_name  # The task is the dataset name itself
     
-    vit_embedding_shots = [copy_and_update_path(path) for path in row['Embedding Example Paths 4'].strip("[]").replace("'", "").split(', ')]
+    vit_embedding_shots = [path.replace('./', '') for path in row['Embedding Example Paths 4'].strip("[]").replace("'", "").split(', ')]
     vit_embedding_categories = row['Embedding Example Categories 4'].strip("[]").replace("'", "").split(', ')
     
-    random_shots = [copy_and_update_path(path) for path in row['Random Example Paths 4'].strip("[]").replace("'", "").split(', ')]
+    random_shots = [path.replace('./', '') for path in row['Random Example Paths 4'].strip("[]").replace("'", "").split(', ')]
     random_categories = row['Random Example Categories 4'].strip("[]").replace("'", "").split(', ')
     
     latex_output = f"""
@@ -115,16 +103,18 @@ def generate_latex_output(csv_file_path):
     """
     
     for i in range(4):
+        vit_path = os.path.join(prefix, vit_embedding_shots[i])
         latex_output += f" & \\begin{{tabular}}{{c}}\n"
-        latex_output += f"    \\includegraphics[width=0.15\\textwidth]{{{vit_embedding_shots[i]}}} \\\\\n"
+        latex_output += f"    \\includegraphics[width=0.15\\textwidth]{{{vit_path}}} \\\\\n"
         latex_output += f"    {vit_embedding_categories[i]}\n"
         latex_output += f"\\end{{tabular}}"
     latex_output += " \\\\\n"
 
     latex_output += "Traditional"
     for i in range(4):
+        random_path = os.path.join(prefix, random_shots[i])
         latex_output += f" & \\begin{{tabular}}{{c}}\n"
-        latex_output += f"    \\includegraphics[width=0.15\\textwidth]{{{random_shots[i]}}} \\\\\n"
+        latex_output += f"    \\includegraphics[width=0.15\\textwidth]{{{random_path}}} \\\\\n"
         latex_output += f"    {random_categories[i]}\n"
         latex_output += f"\\end{{tabular}}"
     latex_output += " \\\\\n"
