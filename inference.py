@@ -83,8 +83,8 @@ datasets = [
 
     # {"loader": load_and_prepare_data_Soybean_PNAS, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt}, #done
     # {"loader": load_and_prepare_data_Soybean_Dangerous_Insects, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt}, #done
-    # {"loader": load_and_prepare_data_DurumWheat, "samples": 100, "shots": universal_shots, "vision_prompt": universal_prompt}, #done
-    {"loader": load_and_prepare_data_soybean_seeds, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt}, # TODO
+    {"loader": load_and_prepare_data_DurumWheat, "samples": 100, "shots": universal_shots, "vision_prompt": universal_prompt}, #done
+    # {"loader": load_and_prepare_data_soybean_seeds, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt}, # TODO
     # {"loader": load_and_prepare_data_mango_leaf, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt},#done
     # {"loader": load_and_prepare_data_DeepWeeds, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt}, #done
     # {"loader": load_and_prepare_data_bean_leaf, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt}
