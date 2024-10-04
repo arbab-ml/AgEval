@@ -56,6 +56,14 @@ if __name__ == "__main__":
     for shots, data in results_dict.items():
         result_df = pd.DataFrame(data)
         result_df = result_df.pivot_table(values=['F1', 'Avg_Same_Category'], index=['Model', 'Dataset'], columns=['Method', 'Encoder'])
+        result_df = result_df.round(2)  # Round to two decimal places
+        
+        # Calculate average of all datasets
+        avg_row = result_df.mean()
+        avg_df = pd.DataFrame(avg_row).T
+        avg_df.index = pd.MultiIndex.from_tuples([('GPT-4o', 'Average')], names=['Model', 'Dataset'])
+        result_df = pd.concat([result_df, avg_df])
+        
         result_table_dict[shots] = result_df
 
     # Save the result_table_dict as a pickle file
@@ -68,6 +76,16 @@ if __name__ == "__main__":
     for shots, df in result_table_dict.items():
         print(f"\nResults for {shots} shots:")
         print(df)
+
+    # Save result_table_dict for Avg_Same_Category and F1 as text files
+    for metric in ['Avg_Same_Category', 'F1']:
+        with open(os.path.join('writing/66f622264889b97fcfa0bc72/', f'{metric.lower()}.txt'), 'w') as f:
+            for shots, df in result_table_dict.items():
+                f.write(f"Results for {shots} shots:\n")
+                f.write(df[metric].to_string())
+                f.write("\n\n")
+
+
 # This is how the result_table_dict looks like:
 # shot 
 # DO NOT REMOVE THIS COMMENT. LEAVE IT AS IS.
