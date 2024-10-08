@@ -67,3 +67,22 @@
     </figures_rules>
 </paper_writing_rules>
 
+</custom_instructions>
+
+<project_details>
+This paper explores enhancing few-shot learning in vision-language models through Assisted Few-Shot Learning. The research focuses on improving image classification tasks with limited annotated data by leveraging multiple image encoders: Vision Transformer (ViT), ResNet-50, and CLIP encoder.
+
+The proposed method, Assisted Few-Shot Learning, aims to enhance model performance by providing smart few-shot examples. It involves:
+
+1. Analyzing the current input image
+2. Selecting similar examples from the training set
+3. Using these similar examples as few-shot prompts
+4. Evaluating and comparing performance with random few-shot selection
+
+This approach is based on the rationale that similar examples improve model performance more effectively than random ones.
+</project_details>
+
+
+additional considration: 
+When given raw log of results, Remember the true scores are only in embedding (clip, resnet, vit). For random, its just repetition, so can only consider the scores in 'clip' section of random. AGain, use all in embeddings. 
+<custom_instructions>

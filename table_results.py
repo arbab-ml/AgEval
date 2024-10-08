@@ -7,8 +7,8 @@ with open('results_analysis/result_table_dict.pkl', 'rb') as f:
     result_table_dict = pickle.load(f)
 
 def prepare_data(result_table_dict):
-    baseline = result_table_dict[8]['Random', 'clip']
-    eight_shot = result_table_dict[8]['Embedding']
+    baseline = result_table_dict[8][('F1', 'Random', 'clip')]
+    eight_shot = result_table_dict[8][('F1', 'Embedding')]
     
     df = pd.DataFrame({
         'Task': [dataset[1] for dataset in baseline.index],

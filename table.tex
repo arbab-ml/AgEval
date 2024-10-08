@@ -1,15 +1,20 @@
-\begin{tabular}{llcccccc}
+\begin{table*}[htbp]
+\centering
+\caption{Assisted Few-shot Performance Comparison with Baseline (8-shot)}
+\label{tab:eight_shot_results}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccc}
 \hline
- & Model & Dataset & \multicolumn{3}{c}{Embedding} & \multicolumn{3}{c}{Random} \\
- &  &  & clip & resnet & vit & clip & resnet & vit \\
+Task & Baseline & clip & resnet & vit \\
 \hline
-0 & GPT-4o & Bean Leaf Lesions & 91.96 & 91.98 & 90.06 & 88.34 & 82.97 & 85.34 \\
-1 & GPT-4o & Dangerous Insects & 79.33 & 82.23 & 81.41 & 84.21 & 83.25 & 85.41 \\
-2 & GPT-4o & DeepWeeds & 67.54 & 72.26 & 83.46 & 56.99 & 59.79 & 51.43 \\
-3 & GPT-4o & Durum Wheat & 100.00 & 88.07 & 100.00 & 97.98 & 87.10 & 96.96 \\
-4 & GPT-4o & Mango Leaf Disease & 98.96 & 93.71 & 94.31 & 76.65 & 80.53 & 73.86 \\
-5 & GPT-4o & SBRD & 65.22 & 67.51 & 73.84 & 51.20 & 50.38 & 58.61 \\
-6 & GPT-4o & Soybean Diseases & 44.88 & 48.66 & 52.66 & 32.43 & 36.95 & 35.90 \\
-7 & GPT-4o & Soybean Seeds & 57.42 & 65.29 & 61.26 & 44.16 & 48.14 & 42.69 \\
+Bean Leaf Lesions & 88.34 & 91.96 (+3.62) & \colorbox{yellow!25}{91.98 (+3.64)} & 90.06 (+1.72) \\
+Dangerous Insects & \colorbox{yellow!25}{84.21} & 79.33 (-4.88) & 82.23 (-1.98) & 81.41 (-2.80) \\
+DeepWeeds & 56.99 & 67.54 (+10.55) & 72.26 (+15.27) & \colorbox{yellow!25}{83.46 (+26.47)} \\
+Durum Wheat & 97.98 & \colorbox{yellow!25}{100.00 (+2.02)} & \colorbox{yellow!25}{100.00 (+2.02)} & \colorbox{yellow!25}{100.00 (+2.02)} \\
+Mango Leaf Disease & 76.65 & \colorbox{yellow!25}{98.96 (+22.31)} & 93.71 (+17.06) & 94.31 (+17.66) \\
+Soybean Diseases & 32.43 & 44.88 (+12.45) & 48.66 (+16.23) & \colorbox{yellow!25}{52.66 (+20.23)} \\
+Soybean Seeds & 44.16 & 57.42 (+13.26) & \colorbox{yellow!25}{65.29 (+21.13)} & 61.26 (+17.10) \\
+Average & 68.68 & 77.16 (+8.48) & 79.16 (+10.48) & \colorbox{yellow!25}{80.45 (+11.77)} \\
 \hline
 \end{tabular}
+}\end{table*}
