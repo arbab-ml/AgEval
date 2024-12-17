@@ -1,6 +1,9 @@
 /data/*
 data/*
 data
+biotrove-data/*
+biotrove-data
+/biotrove-data/*
 .env
 #ignore all latex auxiliary files
 *.aux
