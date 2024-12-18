@@ -1,0 +1,23 @@
+,0,1,Embedding # of Shots 0,Embedding Example Paths 0,Embedding Example Categories 0,Embedding Same Category Count 0,Random # of Shots 0,Random Example Paths 0,Random Example Categories 0,Random Same Category Count 0
+0,./biotrove-data/images/83466471.jpg,Acronicta cyanescens,Acronicta cyanescens,[],[],0.0,Acronicta cyanescens,[],[],0.0
+1,./biotrove-data/images/304471128.jpg,Bathanthidium sibiricum,Andrena bimaculata,[],[],0.0,Andrena mediovittata,[],[],0.0
+2,./biotrove-data/images/286832748.jpg,Appias lalassis,Amblyscirtes linda,[],[],0.0,Amelora synclera,[],[],0.0
+3,./biotrove-data/images/281201817.jpg,Aeromachus dubius,Aeromachus dubius,[],[],0.0,Aeromachus dubius,[],[],0.0
+4,./biotrove-data/images/153107310.jpg,Bombus mendax,Bombus mendax,[],[],0.0,Bombus mendax,[],[],0.0
+5,./biotrove-data/images/257712279.jpg,Andrena mediovittata,Andrena bimaculata,[],[],0.0,Andrena mediovittata,[],[],0.0
+6,./biotrove-data/images/182670641.jpg,Camponotus johnsoni,Camponotus johnsoni,[],[],0.0,Camponotus johnsoni,[],[],0.0
+7,./biotrove-data/images/40800907.jpg,Austrothurgus rubricatus,Bathanthidium sibiricum,[],[],0.0,Bathanthidium sibiricum,[],[],0.0
+8,./biotrove-data/images/39657261.jpg,Amelora synclera,Amelora synclera,[],[],0.0,Amelora synclera,[],[],0.0
+9,./biotrove-data/images/277545058.jpg,Andrena bimaculata,Andrena bimaculata,[],[],0.0,Andrena bimaculata,[],[],0.0
+10,./biotrove-data/images/94769652.jpg,Bradinopyga konkanensis,Bradinopyga konkanensis,[],[],0.0,Bradinopyga konkanensis,[],[],0.0
+11,./biotrove-data/images/331818536.jpg,Autoplusia egenoides,Autoplusia egenoides,[],[],0.0,Autoplusia egenoides,[],[],0.0
+12,./biotrove-data/images/15178649.jpg,Brinckiella wilsoni,Brinckiella wilsoni,[],[],0.0,Brinckiella wilsoni,[],[],0.0
+13,./biotrove-data/images/14536542.jpg,Brachyopa notata,Brachyopa notata,[],[],0.0,Brachyopa notata,[],[],0.0
+14,./biotrove-data/images/242883216.jpg,Amblyscirtes linda,Amblyscirtes linda,[],[],0.0,Aeromachus dubius,[],[],0.0
+15,./biotrove-data/images/129889654.jpg,Astala confederata,Appias galba,[],[],0.0,Antanartia delius,[],[],0.0
+16,./biotrove-data/images/289957377.jpg,Carterocephalus avanti,Carterocephalus avanti,[],[],0.0,Carterocephalus avanti,[],[],0.0
+17,./biotrove-data/images/189424105.jpg,Appias galba,Appias galba,[],[],0.0,Appias lalassis,[],[],0.0
+18,./biotrove-data/images/219058752.jpg,Atrytonopsis frappenda,Aeromachus dubius,[],[],0.0,Atrytonopsis frappenda,[],[],0.0
+19,./biotrove-data/images/182166387.jpg,Beiericolya tardipes,Brinckiella wilsoni,[],[],0.0,Brinckiella wilsoni,[],[],0.0
+20,./biotrove-data/images/208085220.jpg,Callophrys mossii doudoroffi,Callophrys mossii doudoroffi,[],[],0.0,Callophrys mossii doudoroffi,[],[],0.0
+21,./biotrove-data/images/273684269.jpg,Antanartia delius,Antanartia delius,[],[],0.0,Antanartia delius,[],[],0.0

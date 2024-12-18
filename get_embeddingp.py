@@ -7,7 +7,7 @@ import io
 import torch
 from transformers import CLIPProcessor, CLIPModel, AutoImageProcessor, ViTModel, ResNetModel, ResNetConfig, AutoFeatureExtractor
 
-AVAILABLE_ENCODERS = ["vit", "clip", "resnet"]
+AVAILABLE_ENCODERS = ["vit"]#, "clip", "resnet"]
 # CLIP model setup
 CLIP_MODEL_NAME = "openai/clip-vit-base-patch16"
 clip_processor = CLIPProcessor.from_pretrained(CLIP_MODEL_NAME)
@@ -78,7 +78,7 @@ def get_image_embedding(image_path: str, model_type: str = "clip") -> Union[List
         return {"error": f"An error occurred: {str(e)}"}
 
 # Usage
-image_path = "/Users/muhammadarbabarshad/Documents/Personal Data/GPT4o-with-sakib/Overview.png"
+image_path = "Overview.png"
 
 # Get embedding using CLIP
 clip_embedding = get_image_embedding(image_path, model_type="clip")

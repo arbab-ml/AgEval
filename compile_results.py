@@ -45,8 +45,8 @@ def process_model_csvs(results_folder):
 
 # Main execution
 if __name__ == "__main__":
-    results_folder = 'results'
-    analysis_folder = 'results_analysis'
+    results_folder = 'results-hierarchical'
+    analysis_folder = 'results-hierarchical-analysis'
     os.makedirs(analysis_folder, exist_ok=True)
 
     results_dict = process_model_csvs(results_folder)

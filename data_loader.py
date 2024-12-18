@@ -955,3 +955,65 @@ def load_and_prepare_data_InsectCount(total_samples_to_check):
     print(f"Loaded {len(shuffled_data)} samples from {base_directory}")
     print(f"Label range: {shuffled_data[1].min()} to {shuffled_data[1].max()}")
     return shuffled_data, [shuffled_data[1].min(), shuffled_data[1].max()], "InsectCount"
+
+def load_and_prepare_data_BioTrove(total_samples_to_check):
+    """
+    Loads and prepares the BioTrove dataset for inference using scientific names as labels.
+    
+    Args:
+        total_samples_to_check (int): Number of samples to load
+    
+    Returns:
+        tuple: (DataFrame with file paths and labels, list of classes, dataset name)
+    """
+    base_directory = "./biotrove-data"
+    metadata_path = os.path.join(base_directory, "metadata.csv")
+    images_dir = os.path.join(base_directory, "images")
+
+    # Check if the dataset exists
+    if not os.path.exists(metadata_path):
+        print("BioTrove dataset not found. Please run download_biotrove.py first.")
+        return None, None, None
+
+    # Read metadata and filter out rows with missing scientific names
+    metadata_df = pd.read_csv(metadata_path)
+    metadata_df = metadata_df.dropna(subset=['scientificName'])
+    
+    # Get file paths and labels
+    file_paths = []
+    labels = []
+    
+    for _, row in metadata_df.iterrows():
+        image_path = os.path.join(images_dir, f"{row['photo_id']}.jpg")
+        if os.path.exists(image_path):
+            file_paths.append(image_path)
+            labels.append(row['scientificName'])
+
+    data = pd.DataFrame({0: file_paths, 1: labels})
+    
+    # Get unique classes (scientific names)
+    expected_classes = sorted(data[1].unique())
+    
+    # Calculate samples per class
+    samples_per_class = int(total_samples_to_check / len(expected_classes))
+    
+    # Use a fixed random state for deterministic sampling
+    random_state = 42
+    
+    sampled_data = pd.DataFrame(columns=[0, 1])
+    for cls in expected_classes:
+        class_data = data[data[1] == cls]
+        if len(class_data) >= samples_per_class:
+            class_sample = class_data.sample(n=samples_per_class, random_state=random_state)
+        else:
+            class_sample = class_data
+            print(f"Warning: Not enough samples for class {cls}. Using all {len(class_data)} available samples.")
+        sampled_data = pd.concat([sampled_data, class_sample], ignore_index=True)
+    
+    # Shuffle the sampled data
+    print(f"Loaded {len(sampled_data)} samples from {base_directory}")
+    print(f"Number of classes: {len(expected_classes)}")
+    print("Class distribution:")
+    print(sampled_data[1].value_counts())
+    
+    return shuffle(sampled_data, random_state=random_state).reset_index(drop=True), expected_classes, "BioTrove"

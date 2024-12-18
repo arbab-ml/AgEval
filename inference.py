@@ -24,6 +24,7 @@ import nest_asyncio
 from tqdm import tqdm
 import re
 from data_loader import load_and_prepare_data_SBRD, load_and_prepare_data_DurumWheat, load_and_prepare_data_soybean_seeds, load_and_prepare_data_mango_leaf, load_and_prepare_data_DeepWeeds, load_and_prepare_data_IP02, load_and_prepare_data_bean_leaf, load_and_prepare_data_YellowRust, load_and_prepare_data_FUSARIUM22, load_and_prepare_data_InsectCount, load_and_prepare_data_DiseaseQuantify, load_and_prepare_data_IDC, load_and_prepare_data_Soybean_PNAS, load_and_prepare_data_Soybean_Dangerous_Insects
+from data_loader import load_and_prepare_data_BioTrove
 nest_asyncio.apply()
 global vision_prompt
 
@@ -68,6 +69,8 @@ idc_prompt="""
 
 
 universal_shots= [8, 4, 2, 1, 0]
+# universal_shots= [0]
+
 # only 1 and 0 shots
 
 datasets = [
@@ -83,11 +86,12 @@ datasets = [
 
     # {"loader": load_and_prepare_data_Soybean_PNAS, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt}, #done
     # {"loader": load_and_prepare_data_Soybean_Dangerous_Insects, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt}, #done
-    {"loader": load_and_prepare_data_DurumWheat, "samples": 100, "shots": universal_shots, "vision_prompt": universal_prompt}, #done
+    # {"loader": load_and_prepare_data_DurumWheat, "samples": 10, "shots": universal_shots, "vision_prompt": universal_prompt}, #done
     # {"loader": load_and_prepare_data_soybean_seeds, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt}, # TODO
     # {"loader": load_and_prepare_data_mango_leaf, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt},#done
     # {"loader": load_and_prepare_data_DeepWeeds, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt}, #done
     # {"loader": load_and_prepare_data_bean_leaf, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt}
+    {"loader": load_and_prepare_data_BioTrove, "samples": 30, "shots": universal_shots, "vision_prompt": universal_prompt},
 
 ]
 
@@ -509,7 +513,7 @@ async def main():
                         random_prediction = all_data_results.at[i, f"Random # of Shots {number_of_shots}"]
                         print(f"Image {i}: True: {true_label}, Embedding Prediction: {embedding_prediction}, Random Prediction: {random_prediction}")
 
-                results_dir = os.path.join("results", model_name, encoder)
+                results_dir = os.path.join("results-hierarchical", model_name, encoder)
                 os.makedirs(results_dir, exist_ok=True)
                 output_file = os.path.join(results_dir, f"{output_file_name}.csv")
                 all_data_results.to_csv(output_file)
