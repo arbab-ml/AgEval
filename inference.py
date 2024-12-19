@@ -541,18 +541,16 @@ def calculate_accuracy(all_data_results: pd.DataFrame, column_name: str) -> floa
         level = parts[1]   # taxonomic level (kingdom, phylum, etc.)
         shots = parts[2]   # number of shots
         
-        # Get predictions that aren't 'NA'
-        valid_predictions = all_data_results[all_data_results[column_name] != 'NA']
+        # Get predictions that aren't 'NA' and convert all values to strings
+        valid_predictions = all_data_results[all_data_results[column_name] != 'NA'].copy()
         
         if len(valid_predictions) == 0:
             print(f"No valid predictions for {column_name}")
             return 0.0
         
-        # Get true labels for the current level from hierarchy
-        true_labels = valid_predictions['hierarchy'].apply(lambda x: x[level])
-        
-        # Get predictions
-        predictions = valid_predictions[column_name]
+        # Convert predictions and true labels to strings for consistent comparison
+        true_labels = valid_predictions['hierarchy'].apply(lambda x: str(x[level]))
+        predictions = valid_predictions[column_name].astype(str)
         
         # Calculate accuracy
         correct = sum(true_labels == predictions)
@@ -710,16 +708,11 @@ async def process_image_hierarchical(api, i: int, number_of_shots: int,
                     input_embedding, all_data, level, current_filter, embeddings, number_of_shots
                 )
             else:
-                # Random selection for baseline comparison
-                filtered_data = all_data.copy()
-                for prev_level, value in current_filter.items():
-                    filtered_data = filtered_data[
-                        filtered_data['hierarchy'].apply(lambda x: x[prev_level] == value)
-                    ]
-                if len(filtered_data) >= number_of_shots:
-                    examples_df = filtered_data.sample(n=number_of_shots)
+                # Random selection from entire dataset without filtering by hierarchy
+                if len(all_data) >= number_of_shots:
+                    examples_df = all_data.sample(n=number_of_shots, random_state=42)
                 else:
-                    examples_df = filtered_data
+                    examples_df = all_data
             
             # Store example paths and categories for this level
             prefix = "Embedding" if use_embedding else "Random"
