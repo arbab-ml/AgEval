@@ -958,7 +958,7 @@ def load_and_prepare_data_InsectCount(total_samples_to_check):
 
 def load_and_prepare_data_BioTrove(total_samples_to_check):
     """
-    Loads and prepares the BioTrove dataset for inference using scientific names as labels.
+    Loads and prepares the BioTrove dataset for inference using hierarchical classification.
     
     Args:
         total_samples_to_check (int): Number of samples to load
@@ -975,23 +975,39 @@ def load_and_prepare_data_BioTrove(total_samples_to_check):
         print("BioTrove dataset not found. Please run download_biotrove.py first.")
         return None, None, None
 
-    # Read metadata and filter out rows with missing scientific names
+    # Read metadata and filter out rows with missing scientific names or taxonomic info
     metadata_df = pd.read_csv(metadata_path)
-    metadata_df = metadata_df.dropna(subset=['scientificName'])
+    metadata_df = metadata_df.dropna(subset=['scientificName', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'])
     
     # Get file paths and labels
     file_paths = []
     labels = []
+    hierarchical_labels = []
     
     for _, row in metadata_df.iterrows():
         image_path = os.path.join(images_dir, f"{row['photo_id']}.jpg")
         if os.path.exists(image_path):
             file_paths.append(image_path)
-            labels.append(row['scientificName'])
+            labels.append(row['scientificName'])  # Keep flat labels for backward compatibility
+            # Store hierarchical information
+            hierarchical_labels.append({
+                'kingdom': row['kingdom'],
+                'phylum': row['phylum'],
+                'class': row['class'],
+                'order': row['order'],
+                'family': row['family'],
+                'genus': row['genus'],
+                'species': row['species']
+            })
 
-    data = pd.DataFrame({0: file_paths, 1: labels})
+    # Create DataFrame with both flat and hierarchical labels
+    data = pd.DataFrame({
+        0: file_paths,  # Keep original column names for backward compatibility
+        1: labels,
+        'hierarchy': hierarchical_labels
+    })
     
-    # Get unique classes (scientific names)
+    # Get unique classes (scientific names) for backward compatibility
     expected_classes = sorted(data[1].unique())
     
     # Calculate samples per class
@@ -1000,7 +1016,7 @@ def load_and_prepare_data_BioTrove(total_samples_to_check):
     # Use a fixed random state for deterministic sampling
     random_state = 42
     
-    sampled_data = pd.DataFrame(columns=[0, 1])
+    sampled_data = pd.DataFrame(columns=[0, 1, 'hierarchy'])
     for cls in expected_classes:
         class_data = data[data[1] == cls]
         if len(class_data) >= samples_per_class:
@@ -1015,5 +1031,14 @@ def load_and_prepare_data_BioTrove(total_samples_to_check):
     print(f"Number of classes: {len(expected_classes)}")
     print("Class distribution:")
     print(sampled_data[1].value_counts())
+    
+    # Get unique values for each taxonomic level
+    taxonomic_levels = {}
+    for level in ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']:
+        taxonomic_levels[level] = sorted(set([h[level] for h in sampled_data['hierarchy']]))
+        print(f"\nUnique {level}s: {len(taxonomic_levels[level])}")
+    
+    # Store taxonomic levels in the sampled data
+    sampled_data.attrs['taxonomic_levels'] = taxonomic_levels
     
     return shuffle(sampled_data, random_state=random_state).reset_index(drop=True), expected_classes, "BioTrove"

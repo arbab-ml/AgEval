@@ -1,5 +1,3 @@
-
-
 # total_samples_to_check = 10
 # vendor, model, model_name =all_vendors_models[0].values() # index 2 is gemini, 3 is llava
 
@@ -68,7 +66,7 @@ idc_prompt="""
     """
 
 
-universal_shots= [8, 4, 2, 1, 0]
+universal_shots= [1]
 # universal_shots= [0]
 
 # only 1 and 0 shots
@@ -464,24 +462,19 @@ async def main():
         shots = dataset["shots"]
         
         all_data, expected_classes, output_file_name = loader(total_samples_to_check)
-        print(f"Dataset Name: {output_file_name}")
-        print(f"Number of classes / unique labels: {len(expected_classes)}")
-        print(f"Expected classes: {expected_classes}")
-        print(f"Class distribution: {all_data[1].value_counts()}")
-        print("----------------------------")
-        vision_prompt = dataset["vision_prompt"].format(expected_classes=expected_classes)
-
+        print(f"\nDataset Name: {output_file_name}")
+        
         for encoder in AVAILABLE_ENCODERS:
-            print(f"\nProcessing dataset: {output_file_name} with encoder: {encoder}")
+            print(f"\nProcessing with encoder: {encoder}")
             embeddings = precompute_embeddings(all_data, encoder)
             
             for vendor_model in all_vendors_models:
                 vendor = vendor_model["vendor"]
                 model = vendor_model["model"]
                 model_name = vendor_model["model_name"]
-
-                print(f"Running model: {model_name}")
-
+                
+                print(f"\nRunning model: {model_name}")
+                
                 if vendor == "openai":
                     api = GPTAPI(api_key=os.getenv("OPENAI_API_KEY"), model=model)
                 elif vendor == "anthropic":
@@ -492,40 +485,352 @@ async def main():
                     api = GeminiAPI(api_key=os.getenv("GOOGLE_API_KEY"), model=model)
                 else:
                     raise ValueError(f"Unsupported model type: {vendor}")
-
+                
                 all_data_results = all_data.copy(deep=True)
                 all_data_results.columns = all_data_results.columns.map(str)
-
+                
                 for number_of_shots in shots:
-                    print(f"Running with {number_of_shots} shots")
+                    print(f"\nRunning with {number_of_shots} shots")
                     await process_images_for_shots(api, number_of_shots, all_data_results, all_data, embeddings, encoder)
-
-                    embedding_accuracy = calculate_accuracy(all_data_results, f"Embedding # of Shots {number_of_shots}")
-                    random_accuracy = calculate_accuracy(all_data_results, f"Random # of Shots {number_of_shots}")
-                    print(f"Accuracy for {number_of_shots}-shot (Embedding): {embedding_accuracy:.2f}")
-                    print(f"Accuracy for {number_of_shots}-shot (Random): {random_accuracy:.2f}")
-
-                    # Detailed logging
-                    print("\nDetailed results:")
-                    for i in range(len(all_data)):
-                        true_label = all_data.at[i, 1]
-                        embedding_prediction = all_data_results.at[i, f"Embedding # of Shots {number_of_shots}"]
-                        random_prediction = all_data_results.at[i, f"Random # of Shots {number_of_shots}"]
-                        print(f"Image {i}: True: {true_label}, Embedding Prediction: {embedding_prediction}, Random Prediction: {random_prediction}")
-
-                results_dir = os.path.join("results-hierarchical", model_name, encoder)
-                os.makedirs(results_dir, exist_ok=True)
-                output_file = os.path.join(results_dir, f"{output_file_name}.csv")
-                all_data_results.to_csv(output_file)
-                print(f"Results saved to {output_file}")
-
-        print(f"Completed processing for dataset: {output_file_name}\n")
+                    
+                    # Calculate and print accuracies for each taxonomic level
+                    print("\nAccuracies by taxonomic level:")
+                    for level in ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']:
+                        print(f"\n{level.capitalize()} Level:")
+                        
+                        # Calculate embedding accuracy
+                        embedding_col = f"Embedding {level} {number_of_shots}"
+                        if embedding_col in all_data_results.columns:
+                            print("\nEmbedding-based selection:")
+                            embedding_acc = calculate_accuracy(all_data_results, embedding_col)
+                            print(f"Accuracy: {embedding_acc:.4f}")
+                        
+                        # Calculate random accuracy
+                        random_col = f"Random {level} {number_of_shots}"
+                        if random_col in all_data_results.columns:
+                            print("\nRandom selection:")
+                            random_acc = calculate_accuracy(all_data_results, random_col)
+                            print(f"Accuracy: {random_acc:.4f}")
+                    
+                    # Save results
+                    results_dir = os.path.join("results-hierarchical", model_name, encoder)
+                    os.makedirs(results_dir, exist_ok=True)
+                    output_file = os.path.join(results_dir, f"{output_file_name}.csv")
+                    all_data_results.to_csv(output_file)
+                    print(f"\nResults saved to {output_file}")
 
 # Update the calculate_accuracy function
-def calculate_accuracy(all_data_results, column_name):
-    correct = sum(all_data_results['1'] == all_data_results[column_name])
-    total = len(all_data_results)
-    return correct / total if total > 0 else 0
+def calculate_accuracy(all_data_results: pd.DataFrame, column_name: str) -> float:
+    """
+    Calculate accuracy for a specific prediction column.
+    
+    Args:
+        all_data_results: DataFrame containing predictions and true labels
+        column_name: Name of the column containing predictions (e.g., "Embedding kingdom 8")
+    
+    Returns:
+        float: Accuracy score between 0 and 1
+    """
+    try:
+        # Extract method (Embedding/Random) and taxonomic level from column name
+        parts = column_name.split()
+        if len(parts) < 2:
+            return 0.0
+        
+        method = parts[0]  # "Embedding" or "Random"
+        level = parts[1]   # taxonomic level (kingdom, phylum, etc.)
+        shots = parts[2]   # number of shots
+        
+        # Get predictions that aren't 'NA'
+        valid_predictions = all_data_results[all_data_results[column_name] != 'NA']
+        
+        if len(valid_predictions) == 0:
+            print(f"No valid predictions for {column_name}")
+            return 0.0
+        
+        # Get true labels for the current level from hierarchy
+        true_labels = valid_predictions['hierarchy'].apply(lambda x: x[level])
+        
+        # Get predictions
+        predictions = valid_predictions[column_name]
+        
+        # Calculate accuracy
+        correct = sum(true_labels == predictions)
+        total = len(valid_predictions)
+        
+        accuracy = correct / total if total > 0 else 0.0
+        
+        # Print detailed statistics
+        print(f"\nAccuracy statistics for {column_name}:")
+        print(f"Total samples: {total}")
+        print(f"Correct predictions: {correct}")
+        print(f"Accuracy: {accuracy:.4f}")
+        
+        # Print confusion matrix-like statistics
+        unique_labels = sorted(set(true_labels) | set(predictions))
+        print("\nPrediction distribution:")
+        for label in unique_labels:
+            true_count = sum(true_labels == label)
+            pred_count = sum(predictions == label)
+            print(f"{label}:")
+            print(f"  True count: {true_count}")
+            print(f"  Predicted count: {pred_count}")
+        
+        return accuracy
+        
+    except Exception as e:
+        print(f"Error calculating accuracy for {column_name}: {str(e)}")
+        return 0.0
+
+# Add these imports at the top
+from typing import Dict, List, Optional, Tuple
+import numpy as np
+
+# Add hierarchical prompts after the existing prompts
+hierarchical_prompts = {
+    'kingdom': """Identify the kingdom of this organism. Options: {options}
+Your response MUST be a valid JSON object in the following format:
+{{"prediction": "kingdom_name"}}
+where kingdom_name is one of the options listed above.
+Do not include any other text or explanation - only the JSON object.""",
+
+    'phylum': """For this {kingdom} organism, identify its phylum. Options: {options}
+Your response MUST be a valid JSON object in the following format:
+{{"prediction": "phylum_name"}}
+where phylum_name is one of the options listed above.
+Do not include any other text or explanation - only the JSON object.""",
+
+    'class': """Within the phylum {phylum}, identify the class. Options: {options}
+Your response MUST be a valid JSON object in the following format:
+{{"prediction": "class_name"}}
+where class_name is one of the options listed above.
+Do not include any other text or explanation - only the JSON object.""",
+
+    'order': """Within the class {class}, identify the order. Options: {options}
+Your response MUST be a valid JSON object in the following format:
+{{"prediction": "order_name"}}
+where order_name is one of the options listed above.
+Do not include any other text or explanation - only the JSON object.""",
+
+    'family': """Within the order {order}, identify the family. Options: {options}
+Your response MUST be a valid JSON object in the following format:
+{{"prediction": "family_name"}}
+where family_name is one of the options listed above.
+Do not include any other text or explanation - only the JSON object.""",
+
+    'genus': """Within the family {family}, identify the genus. Options: {options}
+Your response MUST be a valid JSON object in the following format:
+{{"prediction": "genus_name"}}
+where genus_name is one of the options listed above.
+Do not include any other text or explanation - only the JSON object.""",
+
+    'species': """Within the genus {genus}, identify the species. Options: {options}
+Your response MUST be a valid JSON object in the following format:
+{{"prediction": "species_name"}}
+where species_name is one of the options listed above.
+Do not include any other text or explanation - only the JSON object."""
+}
+
+# Update the function signature to include embeddings parameter
+def get_hierarchical_examples(query_embedding: List[float], all_data: pd.DataFrame, 
+                            taxonomic_level: str, current_filter: Dict[str, str], 
+                            embeddings: Dict, n_examples: int = 5) -> pd.DataFrame:
+    """
+    Get similar examples for hierarchical prediction at a specific taxonomic level.
+    
+    Args:
+        query_embedding: Embedding of the query image
+        all_data: DataFrame containing all training data
+        taxonomic_level: Current taxonomic level for prediction
+        current_filter: Dictionary of predictions for higher taxonomic levels
+        embeddings: Dictionary mapping indices to precomputed embeddings
+        n_examples: Number of examples to return
+    
+    Returns:
+        DataFrame containing similar examples
+    """
+    # Filter data based on previous predictions
+    filtered_data = all_data.copy()
+    for level, value in current_filter.items():
+        filtered_data = filtered_data[
+            filtered_data['hierarchy'].apply(lambda x: x[level] == value)
+        ]
+    
+    if len(filtered_data) == 0:
+        return pd.DataFrame()
+    
+    # Calculate similarities
+    similarities = []
+    for idx, row in filtered_data.iterrows():
+        embedding = embeddings.get(idx)
+        if embedding is not None:
+            similarity = np.dot(query_embedding, embedding) / (
+                np.linalg.norm(query_embedding) * np.linalg.norm(embedding)
+            )
+            similarities.append((idx, similarity))
+    
+    # Sort by similarity and get top examples
+    similarities.sort(key=lambda x: x[1], reverse=True)
+    top_indices = [idx for idx, _ in similarities[:n_examples]]
+    
+    return filtered_data.loc[top_indices]
+
+# Update the process_image_hierarchical function to pass embeddings to get_hierarchical_examples
+async def process_image_hierarchical(api, i: int, number_of_shots: int, 
+                                   all_data_results: pd.DataFrame, all_data: pd.DataFrame, 
+                                   progress_bar, embeddings: Dict, use_embedding: bool = True, 
+                                   encoder: str = "vit") -> None:
+    """
+    Process an image using hierarchical classification.
+    """
+    try:
+        image_path = all_data[0][i]
+        image_base64 = load_image(image_path)
+        if image_base64 is None:
+            raise ValueError(f"Failed to load image: {image_path}")
+        
+        # Get image embedding
+        if use_embedding:
+            input_embedding = get_image_embedding(image_path, model_type=encoder)
+            if isinstance(input_embedding, dict) and "error" in input_embedding:
+                raise ValueError(f"Failed to compute embedding: {input_embedding['error']}")
+        
+        # Initialize results
+        predictions = {}
+        current_filter = {}
+        
+        # Get taxonomic levels from data attributes
+        taxonomic_levels = all_data.attrs.get('taxonomic_levels', {})
+        
+        # Predict each taxonomic level
+        for level in ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']:
+            # Get examples for current level
+            if use_embedding:
+                examples_df = get_hierarchical_examples(
+                    input_embedding, all_data, level, current_filter, embeddings, number_of_shots
+                )
+            else:
+                # Random selection for baseline comparison
+                filtered_data = all_data.copy()
+                for prev_level, value in current_filter.items():
+                    filtered_data = filtered_data[
+                        filtered_data['hierarchy'].apply(lambda x: x[prev_level] == value)
+                    ]
+                if len(filtered_data) >= number_of_shots:
+                    examples_df = filtered_data.sample(n=number_of_shots)
+                else:
+                    examples_df = filtered_data
+            
+            # Store example paths and categories for this level
+            prefix = "Embedding" if use_embedding else "Random"
+            all_data_results.at[i, f"{prefix} Example Paths {level} {number_of_shots}"] = str([
+                row[0] for _, row in examples_df.iterrows()
+            ])
+            all_data_results.at[i, f"{prefix} Example Categories {level} {number_of_shots}"] = str([
+                row["hierarchy"][level] for _, row in examples_df.iterrows()
+            ])
+            
+            # Prepare examples for API
+            examples = []
+            for _, row in examples_df.iterrows():
+                example_image_base64 = load_image(row[0])
+                if example_image_base64 is None:
+                    continue
+                
+                if isinstance(api, (GPTAPI, OpenRouterAPI)):
+                    examples.append({
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/jpeg;base64,{example_image_base64}",
+                            "detail": "high"
+                        }
+                    })
+                elif isinstance(api, ClaudeAPI):
+                    examples.append({
+                        "type": "image",
+                        "source": {
+                            "type": "base64",
+                            "media_type": "image/jpeg",
+                            "data": example_image_base64
+                        }
+                    })
+                elif isinstance(api, GeminiAPI):
+                    examples.append({
+                        "image_url": {
+                            "url": f"data:image/jpeg;base64,{example_image_base64}"
+                        }
+                    })
+                
+                # Add the label for this taxonomic level
+                examples.append({
+                    "type": "text",
+                    "text": f'{{"prediction": "{row["hierarchy"][level]}"}}'
+                })
+            
+            # Format prompt with current context
+            options = taxonomic_levels.get(level, [])
+            prompt = hierarchical_prompts[level].format(
+                options=options,
+                **current_filter
+            )
+            
+            # Get prediction for current level
+            prediction = await api.get_image_information({
+                "image": image_base64,
+                "examples": examples,
+                "prompt": prompt
+            })
+            
+            try:
+                extracted_json = extract_json(prediction)
+                parsed_prediction = extracted_json['prediction']
+                if parsed_prediction in options:
+                    predictions[level] = parsed_prediction
+                    current_filter[level] = parsed_prediction
+                else:
+                    predictions[level] = 'NA'
+                    break  # Stop hierarchical prediction if invalid prediction
+            except Exception as e:
+                print(f"Error parsing prediction for {level}: {str(e)}")
+                predictions[level] = 'NA'
+                break
+        
+        # Store predictions
+        prefix = "Embedding" if use_embedding else "Random"
+        for level, prediction in predictions.items():
+            all_data_results.at[i, f"{prefix} {level} {number_of_shots}"] = prediction
+        
+    except Exception as e:
+        print(f"Error processing {image_path}: {str(e)}")
+        prefix = "Embedding" if use_embedding else "Random"
+        for level in ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']:
+            all_data_results.at[i, f"{prefix} {level} {number_of_shots}"] = 'NA'
+            all_data_results.at[i, f"{prefix} Example Paths {level} {number_of_shots}"] = 'NA'
+            all_data_results.at[i, f"{prefix} Example Categories {level} {number_of_shots}"] = 'NA'
+    finally:
+        progress_bar.update()
+
+# Update the process_images_for_shots function
+async def process_images_for_shots(api, number_of_shots, all_data_results, all_data, embeddings, encoder):
+    progress_bar = ProgressBar(len(all_data) * 2)
+    tasks = []
+    for i in range(len(all_data)):
+        task_embedding = asyncio.ensure_future(
+            process_image_hierarchical(
+                api, i, number_of_shots, all_data_results, all_data,
+                progress_bar, embeddings, use_embedding=True, encoder=encoder
+            )
+        )
+        task_random = asyncio.ensure_future(
+            process_image_hierarchical(
+                api, i, number_of_shots, all_data_results, all_data,
+                progress_bar, embeddings, use_embedding=False, encoder=encoder
+            )
+        )
+        tasks.extend([task_embedding, task_random])
+    
+    await asyncio.gather(*tasks)
+    progress_bar.close()
 
 if __name__ == "__main__":
     asyncio.run(main())
