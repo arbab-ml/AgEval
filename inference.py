@@ -462,10 +462,10 @@ async def main():
         shots = dataset["shots"]
         
         all_data, expected_classes, output_file_name = loader(total_samples_to_check)
-        print(f"\nDataset Name: {output_file_name}")
+        print_section_header(f"Dataset: {output_file_name}")
         
         for encoder in AVAILABLE_ENCODERS:
-            print(f"\nProcessing with encoder: {encoder}")
+            print_section_header(f"Encoder: {encoder}")
             embeddings = precompute_embeddings(all_data, encoder)
             
             for vendor_model in all_vendors_models:
@@ -473,7 +473,7 @@ async def main():
                 model = vendor_model["model"]
                 model_name = vendor_model["model_name"]
                 
-                print(f"\nRunning model: {model_name}")
+                print_section_header(f"Model: {model_name}")
                 
                 if vendor == "openai":
                     api = GPTAPI(api_key=os.getenv("OPENAI_API_KEY"), model=model)
@@ -490,94 +490,95 @@ async def main():
                 all_data_results.columns = all_data_results.columns.map(str)
                 
                 for number_of_shots in shots:
-                    print(f"\nRunning with {number_of_shots} shots")
+                    print_subsection_header(f"Running with {number_of_shots} shots")
                     await process_images_for_shots(api, number_of_shots, all_data_results, all_data, embeddings, encoder)
                     
-                    # Calculate and print accuracies for each taxonomic level
-                    print("\nAccuracies by taxonomic level:")
+                    print_section_header("Accuracies by Taxonomic Level")
                     for level in ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']:
-                        print(f"\n{level.capitalize()} Level:")
+                        print_subsection_header(f"{level.capitalize()} Level")
                         
-                        # Calculate embedding accuracy
                         embedding_col = f"Embedding {level} {number_of_shots}"
                         if embedding_col in all_data_results.columns:
                             print("\nEmbedding-based selection:")
                             embedding_acc = calculate_accuracy(all_data_results, embedding_col)
-                            print(f"Accuracy: {embedding_acc:.4f}")
                         
-                        # Calculate random accuracy
                         random_col = f"Random {level} {number_of_shots}"
                         if random_col in all_data_results.columns:
                             print("\nRandom selection:")
                             random_acc = calculate_accuracy(all_data_results, random_col)
-                            print(f"Accuracy: {random_acc:.4f}")
+                        
+                        # Add a big separator after each level's complete results
+                        print_separator("*", 100)
                     
-                    # Save results
                     results_dir = os.path.join("results-hierarchical", model_name, encoder)
                     os.makedirs(results_dir, exist_ok=True)
                     output_file = os.path.join(results_dir, f"{output_file_name}.csv")
                     all_data_results.to_csv(output_file)
-                    print(f"\nResults saved to {output_file}")
+                    print(f"\nResults saved to: {output_file}")
 
 # Update the calculate_accuracy function
+def print_separator(char="=", length=80):
+    print(f"\n{char * length}")
+
+def print_section_header(title):
+    print_separator()
+    print(f"\n{title.center(80)}")
+    print_separator()
+
+def print_subsection_header(title):
+    print(f"\n{'-' * 40}")
+    print(f"{title}")
+    print(f"{'-' * 40}")
+
 def calculate_accuracy(all_data_results: pd.DataFrame, column_name: str) -> float:
     """
     Calculate accuracy for a specific prediction column.
-    
-    Args:
-        all_data_results: DataFrame containing predictions and true labels
-        column_name: Name of the column containing predictions (e.g., "Embedding kingdom 8")
-    
-    Returns:
-        float: Accuracy score between 0 and 1
     """
     try:
-        # Extract method (Embedding/Random) and taxonomic level from column name
         parts = column_name.split()
         if len(parts) < 2:
             return 0.0
         
         method = parts[0]  # "Embedding" or "Random"
-        level = parts[1]   # taxonomic level (kingdom, phylum, etc.)
+        level = parts[1]   # taxonomic level
         shots = parts[2]   # number of shots
         
-        # Get predictions that aren't 'NA' and convert all values to strings
         valid_predictions = all_data_results[all_data_results[column_name] != 'NA'].copy()
         
         if len(valid_predictions) == 0:
-            print(f"No valid predictions for {column_name}")
+            print(f"\nNo valid predictions for {column_name}")
             return 0.0
         
-        # Convert predictions and true labels to strings for consistent comparison
         true_labels = valid_predictions['hierarchy'].apply(lambda x: str(x[level]))
         predictions = valid_predictions[column_name].astype(str)
         
-        # Calculate accuracy
         correct = sum(true_labels == predictions)
         total = len(valid_predictions)
-        
         accuracy = correct / total if total > 0 else 0.0
         
-        # Print detailed statistics
-        print(f"\nAccuracy statistics for {column_name}:")
-        print(f"Total samples: {total}")
-        print(f"Correct predictions: {correct}")
-        print(f"Accuracy: {accuracy:.4f}")
+        # Print formatted statistics
+        print_subsection_header(f"Statistics for {column_name}")
+        print(f"│ Total samples:       {total}")
+        print(f"│ Correct predictions: {correct}")
+        print(f"│ Accuracy:           {accuracy:.4f}")
         
-        # Print confusion matrix-like statistics
+        # Print distribution statistics
+        print_subsection_header("Prediction Distribution")
         unique_labels = sorted(set(true_labels) | set(predictions))
-        print("\nPrediction distribution:")
+        max_label_length = max(len(str(label)) for label in unique_labels)
+        
+        print(f"{'Label'.ljust(max_label_length)} | True Count | Predicted Count")
+        print(f"{'-' * max_label_length}-+-----------+----------------")
+        
         for label in unique_labels:
             true_count = sum(true_labels == label)
             pred_count = sum(predictions == label)
-            print(f"{label}:")
-            print(f"  True count: {true_count}")
-            print(f"  Predicted count: {pred_count}")
+            print(f"{str(label).ljust(max_label_length)} | {str(true_count).center(9)} | {str(pred_count).center(14)}")
         
         return accuracy
         
     except Exception as e:
-        print(f"Error calculating accuracy for {column_name}: {str(e)}")
+        print(f"\nError calculating accuracy for {column_name}: {str(e)}")
         return 0.0
 
 # Add these imports at the top
