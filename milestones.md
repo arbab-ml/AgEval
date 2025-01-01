@@ -98,4 +98,4 @@ This project introduces a novel approach combining hierarchical classification w
 3. Add comprehensive performance analysis
 4. Document limitations and future work
 
-The project now focuses on thoroughly evaluating these three approaches, with particular emphasis on demonstrating the effectiveness of hierarchical assisted few-shot learning in scenarios with large numbers of classes. 
+The project now focuses on thoroughly evaluating these three approaches, with particular emphasis on demonstrating the effectiveness of hierarchical assisted few-shot learning in scenarios with large numbers of classes.   
