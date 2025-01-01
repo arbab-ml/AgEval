@@ -13,4 +13,5 @@ biotrove-data
 *.bbl
 *.blg
 #and sty files
-*.sty
+*.stybiotrove-data-backup-simple
+biotrove-data-backup-simple/*
