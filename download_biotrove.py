@@ -1,43 +1,44 @@
 import os
 import requests
-from datasets import load_dataset
-from tqdm import tqdm
 import pandas as pd
 import time
+from tqdm import tqdm
+from huggingface_hub import hf_hub_download
 
 def is_valid_url(url):
     """Check if a URL is valid."""
     return url is not None and isinstance(url, str) and url.startswith(('http://', 'https://'))
 
-def download_biotrove(num_records=100, batch_size=50):
-    """
-    Downloads the BioTrove dataset from Hugging Face and organizes it into a local directory structure.
+def download_balanced_dataset():
+    """Download and process the BioTrove-Balanced dataset."""
+    print("Downloading BioTrove-Balanced dataset...")
     
-    Args:
-        num_records (int): Number of records to download. Defaults to 100.
-        batch_size (int): Number of records to process in each batch. Defaults to 50.
-    """
-    # Create base directory and images subdirectory
+    # Create directories
     base_dir = "biotrove-data"
     images_dir = os.path.join(base_dir, "images")
     os.makedirs(images_dir, exist_ok=True)
     
-    print("Loading BioTrove dataset from Hugging Face...")
     try:
-        dataset = load_dataset("BGLab/BioTrove", streaming=True)
-        train_data = dataset['train']
+        # Download balanced dataset
+        parquet_path = hf_hub_download(repo_id="BGLab/BioTrove-Train", 
+                                     filename="BioTrove-benchmark/BioTrove-Balanced.parquet",
+                                     repo_type="dataset")
         
-        all_data = []
+        print("Loading balanced dataset...")
+        df = pd.read_parquet(parquet_path)
+        print(f"Loaded {len(df)} samples")
+        print("\nClass distribution:")
+        print(df['common_name'].value_counts())
+        
+        # Download images
         processed_count = 0
         skipped_count = 0
+        all_data = []
         
-        for item in tqdm(train_data.take(num_records + 100), total=num_records, desc="Processing dataset"):
+        for _, item in tqdm(df.iterrows(), total=len(df), desc="Downloading images"):
             try:
-                if processed_count >= num_records:
-                    break
-                    
                 # Create data entry with all original fields
-                data_entry = dict(item)
+                data_entry = item.to_dict()
                 image_filename = f"{item['photo_id']}.jpg"
                 data_entry['local_url'] = os.path.join('images', image_filename) if is_valid_url(item['photo_url']) else None
                 all_data.append(data_entry)
@@ -87,41 +88,38 @@ def download_biotrove(num_records=100, batch_size=50):
             except Exception as e:
                 print(f"\nError processing item: {str(e)}")
                 continue
-            
-            # Save metadata periodically
-            if len(all_data) % batch_size == 0:
-                metadata_df = pd.DataFrame(all_data)
-                metadata_path = os.path.join(base_dir, "metadata.csv")
-                metadata_df.to_csv(metadata_path, index=False)
         
-        # Final metadata save
-        if all_data:
-            metadata_df = pd.DataFrame(all_data)
-            metadata_path = os.path.join(base_dir, "metadata.csv")
-            metadata_df.to_csv(metadata_path, index=False)
-            
-            print("\nDownload complete!")
-            print(f"Images saved to: {os.path.abspath(images_dir)}")
-            print(f"Metadata saved to: {os.path.abspath(metadata_path)}")
-            print(f"\nSkipped {skipped_count} items due to invalid URLs")
-            
-            # Print dataset statistics
-            print("\nDataset statistics:")
-            print(f"Total entries: {len(metadata_df)}")
-            print(f"Successfully downloaded images: {len(metadata_df[metadata_df['local_url'].notna()])}")
-            print("\nClass distribution:")
-            print(metadata_df['common_name'].value_counts())
+        # Save metadata
+        metadata_df = pd.DataFrame(all_data)
+        metadata_path = os.path.join(base_dir, "balanced_metadata.csv")
+        metadata_df.to_csv(metadata_path, index=False)
+        
+        print("\nDownload complete!")
+        print(f"Images saved to: {os.path.abspath(images_dir)}")
+        print(f"Metadata saved to: {os.path.abspath(metadata_path)}")
+        print(f"\nSkipped {skipped_count} items due to invalid URLs")
+        
+        # Print dataset statistics
+        print("\nDataset statistics:")
+        print(f"Total entries: {len(metadata_df)}")
+        print(f"Successfully downloaded images: {len(metadata_df[metadata_df['local_url'].notna()])}")
+        print("\nFinal class distribution:")
+        print(metadata_df['common_name'].value_counts())
+        
+        return True
         
     except Exception as e:
         print(f"Error downloading dataset: {str(e)}")
         return False
-    
-    return True
 
-if __name__ == "__main__":
-    print("Starting BioTrove dataset download...")
-    success = download_biotrove(num_records=200)
+def main():
+    print("Starting BioTrove-Balanced dataset download...")
+    success = download_balanced_dataset()
+    
     if success:
         print("Dataset download and organization completed successfully.")
     else:
         print("Dataset download failed. Please check the error messages above.")
+
+if __name__ == "__main__":
+    main()
