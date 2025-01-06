@@ -967,7 +967,7 @@ def load_and_prepare_data_BioTrove(total_samples_to_check):
         tuple: (DataFrame with file paths and labels, list of classes, dataset name)
     """
     base_directory = "./biotrove-data"
-    metadata_path = os.path.join(base_directory, "metadata.csv")
+    metadata_path = os.path.join(base_directory, "balanced_metadata.csv")
     images_dir = os.path.join(base_directory, "images")
 
     # Check if the dataset exists
@@ -1042,3 +1042,63 @@ def load_and_prepare_data_BioTrove(total_samples_to_check):
     sampled_data.attrs['taxonomic_levels'] = taxonomic_levels
     
     return shuffle(sampled_data, random_state=random_state).reset_index(drop=True), expected_classes, "BioTrove"
+
+def load_and_prepare_data_BioTrove_balanced_subset(total_species=300, samples_per_species=10, random_state=42):
+    """
+    Creates a subset from the balanced BioTrove dataset (300 species, 10 samples each)
+    with specified number of species and samples per species.
+    
+    Args:
+        total_species (int): Number of species to include (default: 300, max: 300)
+        samples_per_species (int): Number of samples per species (default: 10, max: 10)
+        random_state (int): Random seed for reproducibility (default: 42)
+    
+    Returns:
+        tuple: (DataFrame with file paths and labels, list of classes, dataset name)
+    """
+    # First load the balanced dataset (300 species, 10 samples each)
+    # Use the same random_state for consistency
+    data, classes, dataset_name = load_and_prepare_data_BioTrove(total_samples_to_check=3000)
+    
+    if data is None:
+        return None, None, None
+    
+    # Ensure parameters don't exceed the available data
+    total_species = min(total_species, 300)
+    samples_per_species = min(samples_per_species, 10)
+    
+    # Sort data by species and photo_id for deterministic ordering
+    data = data.sort_values(by=[1, 0], ascending=[True, True]).reset_index(drop=True)
+    
+    # Get all unique species in a deterministic order
+    all_species = sorted(data[1].unique())
+    
+    # Take only the first total_species species
+    selected_species = all_species[:total_species]
+    
+    # Create subset with specified samples per species
+    subset_data = pd.DataFrame(columns=data.columns)
+    for species in selected_species:
+        species_data = data[data[1] == species]
+        # Sample deterministically using the random_state
+        species_subset = species_data.sample(n=samples_per_species, random_state=random_state)
+        subset_data = pd.concat([subset_data, species_subset], ignore_index=True)
+    
+    # Shuffle the final dataset with the same random_state
+    subset_data = shuffle(subset_data, random_state=random_state).reset_index(drop=True)
+    
+    print(f"\nBalanced subset statistics:")
+    print(f"Total species: {len(selected_species)}")
+    print(f"Samples per species: {samples_per_species}")
+    print(f"Total samples: {len(subset_data)}")
+    
+    # Get unique values for each taxonomic level in the subset
+    taxonomic_levels = {}
+    for level in ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']:
+        taxonomic_levels[level] = sorted(set([h[level] for h in subset_data['hierarchy']]))
+        print(f"\nUnique {level}s in subset: {len(taxonomic_levels[level])}")
+    
+    # Store taxonomic levels in the subset data
+    subset_data.attrs['taxonomic_levels'] = taxonomic_levels
+    
+    return subset_data, selected_species, "BioTrove-Balanced"

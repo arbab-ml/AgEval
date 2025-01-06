@@ -70,6 +70,10 @@ This project introduces a novel approach combining hierarchical classification w
 }
 ```
 
+### Dataset Variants
+- Primary evaluation uses BioTrove-Balanced (300 species, 10 samples each)
+- Additional variants include BioTrove-Train (full dataset), BioTrove-Test (held-out), and BioTrove-Benchmark
+
 ### Key Metrics to Implement
 1. Example Selection Quality
    ```python

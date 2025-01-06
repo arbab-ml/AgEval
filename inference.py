@@ -22,13 +22,15 @@ import nest_asyncio
 from tqdm import tqdm
 import re
 from data_loader import load_and_prepare_data_SBRD, load_and_prepare_data_DurumWheat, load_and_prepare_data_soybean_seeds, load_and_prepare_data_mango_leaf, load_and_prepare_data_DeepWeeds, load_and_prepare_data_IP02, load_and_prepare_data_bean_leaf, load_and_prepare_data_YellowRust, load_and_prepare_data_FUSARIUM22, load_and_prepare_data_InsectCount, load_and_prepare_data_DiseaseQuantify, load_and_prepare_data_IDC, load_and_prepare_data_Soybean_PNAS, load_and_prepare_data_Soybean_Dangerous_Insects
-from data_loader import load_and_prepare_data_BioTrove
+from data_loader import load_and_prepare_data_BioTrove, load_and_prepare_data_BioTrove_balanced_subset
 nest_asyncio.apply()
 global vision_prompt
 
 #claude-3-sonnet-20240229
 all_vendors_models=[
-    {"vendor": "openai", "model": "gpt-4o-2024-05-13", "model_name": "GPT-4o"}, #  done
+    # {"vendor": "openai", "model": "gpt-4o-2024-05-13", "model_name": "GPT-4o"}, #  done
+    {"vendor": "openai", "model": "gpt-4o-mini", "model_name": "GPT-4o-mini"}, #  done
+
     # {"vendor": "anthropic", "model": "claude-3-5-sonnet-20240620", "model_name": "Claude-3.5-sonnet"}, #done 
     # {"vendor": "anthropic", "model": "claude-3-haiku-20240307", "model_name": "Claude-3-haiku"}, #done 
     # {"vendor": "openrouter", "model": "liuhaotian/llava-yi-34b", "model_name": "LLaVA v1.6 34B"}, #done
@@ -89,8 +91,18 @@ datasets = [
     # {"loader": load_and_prepare_data_mango_leaf, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt},#done
     # {"loader": load_and_prepare_data_DeepWeeds, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt}, #done
     # {"loader": load_and_prepare_data_bean_leaf, "samples": 100, "shots": universal_shots,  "vision_prompt": universal_prompt}
-    {"loader": load_and_prepare_data_BioTrove, "samples": 30, "shots": universal_shots, "vision_prompt": universal_prompt},
-
+    
+    # Use the balanced subset loader with custom parameters
+    {
+        "loader": lambda samples: load_and_prepare_data_BioTrove_balanced_subset(
+            total_species=10,  # Use 10 species
+            samples_per_species=2,  # 2 samples per species
+            random_state=42  # For reproducibility
+        ),
+        "samples": None,  # Not used for balanced subset
+        "shots": universal_shots,
+        "vision_prompt": universal_prompt
+    },
 ]
 
 
@@ -703,89 +715,95 @@ async def process_image_hierarchical(api, i: int, number_of_shots: int,
         
         # Predict each taxonomic level
         for level in ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']:
-            # Get examples for current level
-            if use_embedding:
-                examples_df = get_hierarchical_examples(
-                    input_embedding, all_data, level, current_filter, embeddings, number_of_shots
-                )
-            else:
-                # Random selection from entire dataset without filtering by hierarchy
-                if len(all_data) >= number_of_shots:
-                    examples_df = all_data.sample(n=number_of_shots, random_state=42)
-                else:
-                    examples_df = all_data
-            
-            # Store example paths and categories for this level
-            prefix = "Embedding" if use_embedding else "Random"
-            all_data_results.at[i, f"{prefix} Example Paths {level} {number_of_shots}"] = str([
-                row[0] for _, row in examples_df.iterrows()
-            ])
-            all_data_results.at[i, f"{prefix} Example Categories {level} {number_of_shots}"] = str([
-                row["hierarchy"][level] for _, row in examples_df.iterrows()
-            ])
-            
-            # Prepare examples for API
-            examples = []
-            for _, row in examples_df.iterrows():
-                example_image_base64 = load_image(row[0])
-                if example_image_base64 is None:
-                    continue
-                
-                if isinstance(api, (GPTAPI, OpenRouterAPI)):
-                    examples.append({
-                        "type": "image_url",
-                        "image_url": {
-                            "url": f"data:image/jpeg;base64,{example_image_base64}",
-                            "detail": "high"
-                        }
-                    })
-                elif isinstance(api, ClaudeAPI):
-                    examples.append({
-                        "type": "image",
-                        "source": {
-                            "type": "base64",
-                            "media_type": "image/jpeg",
-                            "data": example_image_base64
-                        }
-                    })
-                elif isinstance(api, GeminiAPI):
-                    examples.append({
-                        "image_url": {
-                            "url": f"data:image/jpeg;base64,{example_image_base64}"
-                        }
-                    })
-                
-                # Add the label for this taxonomic level
-                examples.append({
-                    "type": "text",
-                    "text": f'{{"prediction": "{row["hierarchy"][level]}"}}'
-                })
-            
-            # Format prompt with current context
-            options = taxonomic_levels.get(level, [])
-            prompt = hierarchical_prompts[level].format(
-                options=options,
-                **current_filter
-            )
-            
-            # Get prediction for current level
-            prediction = await api.get_image_information({
-                "image": image_base64,
-                "examples": examples,
-                "prompt": prompt
-            })
-            
             try:
-                extracted_json = extract_json(prediction)
-                parsed_prediction = extracted_json['prediction']
-                if parsed_prediction in options:
-                    predictions[level] = parsed_prediction
-                    current_filter[level] = parsed_prediction
+                # Get examples for current level
+                if use_embedding:
+                    examples_df = get_hierarchical_examples(
+                        input_embedding, all_data, level, current_filter, embeddings, number_of_shots
+                    )
                 else:
+                    # Random selection from entire dataset without filtering by hierarchy
+                    if len(all_data) >= number_of_shots:
+                        examples_df = all_data.sample(n=number_of_shots, random_state=42)
+                    else:
+                        examples_df = all_data
+                
+                # Store example paths and categories for this level
+                prefix = "Embedding" if use_embedding else "Random"
+                all_data_results.at[i, f"{prefix} Example Paths {level} {number_of_shots}"] = str([
+                    row[0] for _, row in examples_df.iterrows()
+                ])
+                all_data_results.at[i, f"{prefix} Example Categories {level} {number_of_shots}"] = str([
+                    row["hierarchy"][level] for _, row in examples_df.iterrows()
+                ])
+                
+                # Prepare examples for API
+                examples = []
+                for _, row in examples_df.iterrows():
+                    example_image_base64 = load_image(row[0])
+                    if example_image_base64 is None:
+                        continue
+                    
+                    if isinstance(api, (GPTAPI, OpenRouterAPI)):
+                        examples.append({
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{example_image_base64}",
+                                "detail": "high"
+                            }
+                        })
+                    elif isinstance(api, ClaudeAPI):
+                        examples.append({
+                            "type": "image",
+                            "source": {
+                                "type": "base64",
+                                "media_type": "image/jpeg",
+                                "data": example_image_base64
+                            }
+                        })
+                    elif isinstance(api, GeminiAPI):
+                        examples.append({
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{example_image_base64}"
+                            }
+                        })
+                    
+                    # Add the label for this taxonomic level
+                    examples.append({
+                        "type": "text",
+                        "text": f'{{"prediction": "{row["hierarchy"][level]}"}}'
+                    })
+                
+                # Format prompt with current context
+                options = taxonomic_levels.get(level, [])
+                prompt = hierarchical_prompts[level].format(
+                    options=options,
+                    **current_filter
+                )
+                
+                # Get prediction for current level
+                prediction = await api.get_image_information({
+                    "image": image_base64,
+                    "examples": examples,
+                    "prompt": prompt
+                })
+                
+                try:
+                    extracted_json = extract_json(prediction)
+                    parsed_prediction = extracted_json['prediction']
+                    if parsed_prediction in options:
+                        predictions[level] = parsed_prediction
+                        current_filter[level] = parsed_prediction
+                    else:
+                        print(f"\nInvalid prediction for {level} at {image_path}. Response: {prediction}")
+                        predictions[level] = 'NA'
+                        break  # Stop hierarchical prediction if invalid prediction
+                except Exception as e:
+                    print(f"\nError parsing prediction for {level} at {image_path}. Response: {prediction}\nError: {str(e)}")
                     predictions[level] = 'NA'
-                    break  # Stop hierarchical prediction if invalid prediction
+                    break
             except Exception as e:
-                print(f"Error parsing prediction for {level}: {str(e)}")
+                print(f"\nAPI error for {level} at {image_path}. Error: {str(e)}")
                 predictions[level] = 'NA'
                 break
         
@@ -795,7 +813,7 @@ async def process_image_hierarchical(api, i: int, number_of_shots: int,
             all_data_results.at[i, f"{prefix} {level} {number_of_shots}"] = prediction
         
     except Exception as e:
-        print(f"Error processing {image_path}: {str(e)}")
+        print(f"\nError processing {image_path}. Error: {str(e)}")
         prefix = "Embedding" if use_embedding else "Random"
         for level in ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']:
             all_data_results.at[i, f"{prefix} {level} {number_of_shots}"] = 'NA'

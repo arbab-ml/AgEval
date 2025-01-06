@@ -50,6 +50,12 @@ The main components of this repository are:
 2. `data_loader.py`: Functions for downloading and preparing the benchmark datasets
 3. `get_embedding.py`: Functions for computing visual embeddings using Vision Transformer
 
+The benchmark includes several dataset variants:
+- BioTrove-Balanced: A balanced subset with 10 samples per species (300 species)
+- BioTrove-Train: The full training dataset
+- BioTrove-Test: Held-out test set
+- BioTrove-Benchmark: Collection of evaluation benchmarks
+
 To replicate the results presented in the paper, run `inference.py` to evaluate the different few-shot learning approaches on the datasets.
 
 ## Inference (`inference.py`)
