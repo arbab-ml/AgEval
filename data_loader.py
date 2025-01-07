@@ -1073,8 +1073,17 @@ def load_and_prepare_data_BioTrove_balanced_subset(total_species=300, samples_pe
     # Get all unique species in a deterministic order
     all_species = sorted(data[1].unique())
     
-    # Take only the first total_species species
-    selected_species = all_species[:total_species]
+    # Filter species that have enough samples
+    species_counts = data[1].value_counts()
+    valid_species = species_counts[species_counts >= samples_per_species].index.tolist()
+    valid_species.sort()  # Keep deterministic ordering
+    
+    # Take only the first total_species species from valid ones
+    selected_species = valid_species[:total_species]
+    
+    if len(selected_species) < total_species:
+        print(f"\nWarning: Only found {len(selected_species)} species with {samples_per_species} or more samples.")
+        print(f"Proceeding with available species.")
     
     # Create subset with specified samples per species
     subset_data = pd.DataFrame(columns=data.columns)
@@ -1101,4 +1110,7 @@ def load_and_prepare_data_BioTrove_balanced_subset(total_species=300, samples_pe
     # Store taxonomic levels in the subset data
     subset_data.attrs['taxonomic_levels'] = taxonomic_levels
     
-    return subset_data, selected_species, "BioTrove-Balanced"
+    # Create output file name with species count and samples per species
+    output_file_name = f"BioTrove-Balanced_{total_species}species_{samples_per_species}samples"
+    
+    return subset_data, selected_species, output_file_name

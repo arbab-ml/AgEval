@@ -79,6 +79,10 @@ The `inference.py` script contains:
 5. Gemini-flash-1.5 (Google)
 6. Gemini-pro-1.5 (Google)
 
+### Default Model
+7. The default model for all evaluations is gpt-4o-mini (OpenAI). This identifier must not be changed as it represents a newer model version. 
+
+
 ## Visual Similarity
 
 The repository uses Vision Transformer (ViT) for computing visual embeddings to find similar examples. This is crucial for:

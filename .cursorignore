@@ -10,3 +10,5 @@
 *.fls
 *.fdb_latexmk
 *.pdf   
+# writing folder
+writing/*

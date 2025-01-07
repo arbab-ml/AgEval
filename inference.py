@@ -68,7 +68,7 @@ idc_prompt="""
     """
 
 
-universal_shots= [1]
+universal_shots= [1, 8]
 # universal_shots= [0]
 
 # only 1 and 0 shots
@@ -95,8 +95,8 @@ datasets = [
     # Use the balanced subset loader with custom parameters
     {
         "loader": lambda samples: load_and_prepare_data_BioTrove_balanced_subset(
-            total_species=10,  # Use 10 species
-            samples_per_species=2,  # 2 samples per species
+            total_species=50,  # Use 10 species
+            samples_per_species=3,  # 2 samples per species
             random_state=42  # For reproducibility
         ),
         "samples": None,  # Not used for balanced subset
@@ -157,7 +157,7 @@ class GPTAPI:
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.api_key}"
         }
-        self.rate_limiter = RateLimiter(max_requests=100, time_window=1) # old was 20
+        self.rate_limiter = RateLimiter(max_requests=500, time_window=0.1) # old was 20
 
     async def get_image_information(self, inputs: dict) -> str:
         await self.rate_limiter.wait()

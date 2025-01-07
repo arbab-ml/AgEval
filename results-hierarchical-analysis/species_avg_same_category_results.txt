@@ -1,0 +1,8 @@
+Results for 1 shots:
+Method                                           Embedding Random
+Encoder                                                vit    vit
+Model       Dataset                                              
+GPT-4o-mini BioTrove-Balanced_10species_2samples      1.00   0.10
+            BioTrove-Balanced_50species_3samples      0.63   0.02
+Average     All Datasets                              0.81   0.06
+

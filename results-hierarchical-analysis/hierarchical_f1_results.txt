@@ -1,0 +1,64 @@
+Results for 1 shots:
+
+Kingdom Level:
+Method                                           Embedding  Random
+Encoder                                                vit     vit
+Model       Dataset                                               
+GPT-4o-mini BioTrove-Balanced_10species_2samples     100.0  100.00
+            BioTrove-Balanced_50species_3samples      99.0   98.67
+Average     All Datasets                              99.5   99.34
+
+
+Phylum Level:
+Method                                           Embedding  Random
+Encoder                                                vit     vit
+Model       Dataset                                               
+GPT-4o-mini BioTrove-Balanced_10species_2samples    100.00  100.00
+            BioTrove-Balanced_50species_3samples     96.07   97.01
+Average     All Datasets                             98.04   98.50
+
+
+Class Level:
+Method                                           Embedding  Random
+Encoder                                                vit     vit
+Model       Dataset                                               
+GPT-4o-mini BioTrove-Balanced_10species_2samples    100.00  100.00
+            BioTrove-Balanced_50species_3samples     91.69   86.24
+Average     All Datasets                             95.84   93.12
+
+
+Order Level:
+Method                                           Embedding  Random
+Encoder                                                vit     vit
+Model       Dataset                                               
+GPT-4o-mini BioTrove-Balanced_10species_2samples    100.00  100.00
+            BioTrove-Balanced_50species_3samples     89.31   75.85
+Average     All Datasets                             94.65   87.92
+
+
+Family Level:
+Method                                           Embedding  Random
+Encoder                                                vit     vit
+Model       Dataset                                               
+GPT-4o-mini BioTrove-Balanced_10species_2samples    100.00  100.00
+            BioTrove-Balanced_50species_3samples     75.50   56.99
+Average     All Datasets                             87.75   78.49
+
+
+Genus Level:
+Method                                           Embedding  Random
+Encoder                                                vit     vit
+Model       Dataset                                               
+GPT-4o-mini BioTrove-Balanced_10species_2samples    100.00  100.00
+            BioTrove-Balanced_50species_3samples     64.52   39.66
+Average     All Datasets                             82.26   69.83
+
+
+Species Level:
+Method                                           Embedding Random
+Encoder                                                vit    vit
+Model       Dataset                                              
+GPT-4o-mini BioTrove-Balanced_10species_2samples    100.00  20.15
+            BioTrove-Balanced_50species_3samples     59.22   2.06
+Average     All Datasets                             79.61  11.11
+

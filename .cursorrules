@@ -86,3 +86,6 @@ This approach is based on the rationale that similar examples improve model perf
 additional considration: 
 When given raw log of results, Remember the true scores are only in embedding (clip, resnet, vit). For random, its just repetition, so can only consider the scores in 'clip' section of random. AGain, use all in embeddings. 
 <custom_instructions>
+
+Very important rule for writing code:
+Whenever writing code, focus on the depth and note width of things to do. And only focus on core functionality. Do not make it more complex than it needs to be. 
