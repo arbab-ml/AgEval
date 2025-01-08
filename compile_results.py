@@ -24,9 +24,9 @@ def calculate_avg_same_category(df, shots, method, level):
     matches = []
     for true_label, example_list in zip(true_labels, example_categories):
         match_count = sum(1 for ex in example_list if ex == true_label)
-        matches.append(match_count)
+        matches.append(match_count / len(example_list) if example_list else 0)
     
-    return np.mean(matches)
+    return np.mean(matches) * 100
 
 def process_model_csvs(results_folder):
     results = {shots: [] for shots in SHOTS_TO_PROCESS}
@@ -46,7 +46,7 @@ def process_model_csvs(results_folder):
                                 df = pd.read_csv(file_path)
                                 
                                 for shots in SHOTS_TO_PROCESS:
-                                    for method in ['Embedding', 'Random']:
+                                    for method in ['Embedding', 'Random']:  # Keep as Embedding internally
                                         for level in TAXONOMIC_LEVELS:
                                             try:
                                                 f1 = calculate_f1(df, shots, method, level)
@@ -75,18 +75,18 @@ def print_results_table(result_table_dict):
     for shots, level_tables in result_table_dict.items():
         print(f"\n{shots}-Shot Results")
         print("-" * 100)
-        print(f"{'Level':<10} | {'Embedding F1':>12} | {'Random F1':>10} | {'Embedding Matches':>16} | {'Random Matches':>13}")
+        print(f"{'Level':<10} | {'STAGE F1':>12} | {'Random F1':>10} | {'STAGE Examples':>16} | {'Random Examples':>13}")
         print("-" * 100)
         
         for level, df in level_tables.items():
             # Get average values (last row of each dataframe)
             avg_row = df.iloc[-1]
-            emb_f1 = avg_row[('F1', 'Embedding', 'vit')]
+            stage_f1 = avg_row[('F1', 'Embedding', 'vit')]  # Use Embedding internally
             rand_f1 = avg_row[('F1', 'Random', 'vit')]
-            emb_matches = avg_row[('Avg_Same_Category', 'Embedding', 'vit')]
+            stage_matches = avg_row[('Avg_Same_Category', 'Embedding', 'vit')]  # Use Embedding internally
             rand_matches = avg_row[('Avg_Same_Category', 'Random', 'vit')]
             
-            print(f"{level.capitalize():<10} | {emb_f1:>12.2f} | {rand_f1:>10.2f} | {emb_matches:>16.2f} | {rand_matches:>13.2f}")
+            print(f"{level.capitalize():<10} | {stage_f1:>12.2f} | {rand_f1:>10.2f} | {stage_matches:>16.2f} | {rand_matches:>13.2f}")
         print("-" * 100)
 
 # Main execution
@@ -138,12 +138,12 @@ if __name__ == "__main__":
             for shots, level_tables in result_table_dict.items():
                 f.write(f"\n{shots}-Shot Results\n")
                 f.write("-" * 100 + "\n")
-                f.write(f"{'Level':<10} | {'Embedding':>12} | {'Random':>10}\n")
+                f.write(f"{'Level':<10} | {'STAGE':>12} | {'Random':>10}\n")
                 f.write("-" * 100 + "\n")
                 
                 for level, df in level_tables.items():
                     avg_row = df.iloc[-1]
-                    emb_val = avg_row[(metric, 'Embedding', 'vit')]
+                    stage_val = avg_row[(metric, 'Embedding', 'vit')]  # Use Embedding internally
                     rand_val = avg_row[(metric, 'Random', 'vit')]
-                    f.write(f"{level.capitalize():<10} | {emb_val:>12.2f} | {rand_val:>10.2f}\n")
+                    f.write(f"{level.capitalize():<10} | {stage_val:>12.2f} | {rand_val:>10.2f}\n")
                 f.write("-" * 100 + "\n\n")

@@ -1,0 +1,45 @@
+\begin{table*}[htbp]
+\centering
+\caption{Performance comparison of STAGE across taxonomic levels using 1-shot learning. 
+    The table shows F1 scores for both baseline (random selection) and STAGE (similarity-guided selection) approaches, 
+    with relative improvements shown in parentheses. The 'Same Examples' column indicates the percentage of selected examples 
+    that share the same taxonomic classification as the query image. Higher values indicate better example selection quality. 
+    Best performance for each level is highlighted.}
+\label{tab:hierarchical_results_1shot}
+\begin{tabular}{lccc}
+\hline
+Level & Baseline & STAGE & Same Examples \\
+\hline
+Kingdom & 97.28 & \colorbox{yellow!25}{99.00 (+1.72)} & 100.00 \\
+Phylum & 95.05 & \colorbox{yellow!25}{97.48 (+2.43)} & 98.67 \\
+Class & 83.46 & \colorbox{yellow!25}{92.16 (+8.70)} & 96.67 \\
+Order & 74.33 & \colorbox{yellow!25}{87.47 (+13.14)} & 90.00 \\
+Family & 55.94 & \colorbox{yellow!25}{73.29 (+17.35)} & 86.67 \\
+Genus & 38.82 & \colorbox{yellow!25}{61.90 (+23.08)} & 72.67 \\
+Species & 2.22 & \colorbox{yellow!25}{57.63 (+55.41)} & 61.33 \\
+\hline
+\end{tabular}
+\end{table*}
+\vspace{2em}
+\begin{table*}[htbp]
+\centering
+\caption{Performance comparison of STAGE across taxonomic levels using 8-shot learning. 
+    The table shows F1 scores for both baseline (random selection) and STAGE (similarity-guided selection) approaches, 
+    with relative improvements shown in parentheses. The 'Same Examples' column indicates the percentage of selected examples 
+    that share the same taxonomic classification as the query image. Higher values indicate better example selection quality. 
+    Best performance for each level is highlighted.}
+\label{tab:hierarchical_results_8shot}
+\begin{tabular}{lccc}
+\hline
+Level & Baseline & STAGE & Same Examples \\
+\hline
+Kingdom & 98.67 & \colorbox{yellow!25}{99.66 (+0.99)} & 89.75 \\
+Phylum & \colorbox{yellow!25}{95.09} & 94.12 (-0.97) & 95.25 \\
+Class & 87.07 & \colorbox{yellow!25}{92.22 (+5.15)} & 78.92 \\
+Order & 81.75 & \colorbox{yellow!25}{89.55 (+7.80)} & 65.83 \\
+Family & 56.41 & \colorbox{yellow!25}{81.77 (+25.36)} & 58.33 \\
+Genus & 37.15 & \colorbox{yellow!25}{82.15 (+45.00)} & 63.92 \\
+Species & 9.34 & \colorbox{yellow!25}{80.09 (+70.75)} & 68.67 \\
+\hline
+\end{tabular}
+\end{table*}
