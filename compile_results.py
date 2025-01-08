@@ -5,6 +5,7 @@ from sklearn.metrics import f1_score
 import pickle
 
 TAXONOMIC_LEVELS = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
+SHOTS_TO_PROCESS = [1, 8]  # Process both 1-shot and 8-shot results
 
 def calculate_f1(df, shots, method, level):
     # Extract true labels from hierarchy dictionary for the given level
@@ -28,7 +29,7 @@ def calculate_avg_same_category(df, shots, method, level):
     return np.mean(matches)
 
 def process_model_csvs(results_folder):
-    results = {shots: [] for shots in [1]}  # Currently only processing 1-shot
+    results = {shots: [] for shots in SHOTS_TO_PROCESS}
     
     for model in os.listdir(results_folder):
         model_path = os.path.join(results_folder, model)
@@ -44,7 +45,7 @@ def process_model_csvs(results_folder):
                             try:
                                 df = pd.read_csv(file_path)
                                 
-                                for shots in [1]:  # Currently only processing 1-shot
+                                for shots in SHOTS_TO_PROCESS:
                                     for method in ['Embedding', 'Random']:
                                         for level in TAXONOMIC_LEVELS:
                                             try:
@@ -61,11 +62,32 @@ def process_model_csvs(results_folder):
                                                     'Avg_Same_Category': avg_same_category
                                                 })
                                             except Exception as e:
-                                                print(f"Error processing {method} for {dataset_name} at {level}: {str(e)}")
+                                                print(f"Error processing {method} for {dataset_name} at {level} with {shots} shots: {str(e)}")
                             except Exception as e:
                                 print(f"Error reading file {file_path}: {str(e)}")
 
     return results
+
+def print_results_table(result_table_dict):
+    print("\nResults Summary")
+    print("=" * 100)
+    
+    for shots, level_tables in result_table_dict.items():
+        print(f"\n{shots}-Shot Results")
+        print("-" * 100)
+        print(f"{'Level':<10} | {'Embedding F1':>12} | {'Random F1':>10} | {'Embedding Matches':>16} | {'Random Matches':>13}")
+        print("-" * 100)
+        
+        for level, df in level_tables.items():
+            # Get average values (last row of each dataframe)
+            avg_row = df.iloc[-1]
+            emb_f1 = avg_row[('F1', 'Embedding', 'vit')]
+            rand_f1 = avg_row[('F1', 'Random', 'vit')]
+            emb_matches = avg_row[('Avg_Same_Category', 'Embedding', 'vit')]
+            rand_matches = avg_row[('Avg_Same_Category', 'Random', 'vit')]
+            
+            print(f"{level.capitalize():<10} | {emb_f1:>12.2f} | {rand_f1:>10.2f} | {emb_matches:>16.2f} | {rand_matches:>13.2f}")
+        print("-" * 100)
 
 # Main execution
 if __name__ == "__main__":
@@ -106,20 +128,22 @@ if __name__ == "__main__":
         pickle.dump(result_table_dict, f)
 
     print(f"Results saved in '{analysis_folder}/hierarchical_result_table_dict.pkl'")
-
-    # Print DataFrames for each shot and level
-    for shots, level_tables in result_table_dict.items():
-        print(f"\nResults for {shots} shots:")
-        for level, df in level_tables.items():
-            print(f"\n{level.capitalize()} Level:")
-            print(df)
+    
+    # Print formatted results
+    print_results_table(result_table_dict)
 
     # Save results as text files, one for each metric and level
     for metric in ['F1', 'Avg_Same_Category']:
         with open(os.path.join(analysis_folder, f'hierarchical_{metric.lower()}_results.txt'), 'w') as f:
             for shots, level_tables in result_table_dict.items():
-                f.write(f"Results for {shots} shots:\n")
+                f.write(f"\n{shots}-Shot Results\n")
+                f.write("-" * 100 + "\n")
+                f.write(f"{'Level':<10} | {'Embedding':>12} | {'Random':>10}\n")
+                f.write("-" * 100 + "\n")
+                
                 for level, df in level_tables.items():
-                    f.write(f"\n{level.capitalize()} Level:\n")
-                    f.write(df[metric].to_string())
-                    f.write("\n\n")
+                    avg_row = df.iloc[-1]
+                    emb_val = avg_row[(metric, 'Embedding', 'vit')]
+                    rand_val = avg_row[(metric, 'Random', 'vit')]
+                    f.write(f"{level.capitalize():<10} | {emb_val:>12.2f} | {rand_val:>10.2f}\n")
+                f.write("-" * 100 + "\n\n")
