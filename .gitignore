@@ -15,3 +15,4 @@ biotrove-data
 #and sty files
 *.stybiotrove-data-backup-simple
 biotrove-data-backup-simple/*
+writing/*
