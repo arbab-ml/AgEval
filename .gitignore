@@ -16,3 +16,4 @@ biotrove-data
 *.stybiotrove-data-backup-simple
 biotrove-data-backup-simple/*
 writing/*
+writing/
