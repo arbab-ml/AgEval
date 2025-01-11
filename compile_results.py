@@ -5,15 +5,23 @@ from sklearn.metrics import f1_score
 import pickle
 
 TAXONOMIC_LEVELS = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
-SHOTS_TO_PROCESS = [1, 8]  # Process both 1-shot and 8-shot results
+SHOTS_TO_PROCESS = [1]  # Process both 1-shot and 8-shot results
 
 def calculate_f1(df, shots, method, level):
+    # Filter for evaluated rows if the column exists
+    if 'evaluated' in df.columns:
+        df = df[df['evaluated']]
+    
     # Extract true labels from hierarchy dictionary for the given level
     true_labels = df['hierarchy'].apply(lambda x: eval(x)[level] if isinstance(x, str) else 'Unknown')
     pred_labels = df[f'{method} {level} {shots}'].fillna('NA_placeholder')
     return f1_score(true_labels, pred_labels, average='weighted') * 100
 
 def calculate_avg_same_category(df, shots, method, level):
+    # Filter for evaluated rows if the column exists
+    if 'evaluated' in df.columns:
+        df = df[df['evaluated']]
+    
     # Get true label for each image at the given level
     true_labels = df['hierarchy'].apply(lambda x: eval(x)[level] if isinstance(x, str) else 'Unknown')
     

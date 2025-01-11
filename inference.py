@@ -68,7 +68,7 @@ idc_prompt="""
     """
 
 
-universal_shots= [1, 8]
+universal_shots= [1]
 # universal_shots= [0]
 
 # only 1 and 0 shots
@@ -95,8 +95,8 @@ datasets = [
     # Use the balanced subset loader with custom parameters
     {
         "loader": lambda samples: load_and_prepare_data_BioTrove_balanced_subset(
-            total_species=50,  # Use 10 species
-            samples_per_species=3,  # 2 samples per species
+            total_species=5,  # Use 10 species
+            samples_per_species=2,  # 2 samples per species
             random_state=42  # For reproducibility
         ),
         "samples": None,  # Not used for balanced subset
@@ -453,10 +453,12 @@ async def process_image(api, i, number_of_shots, all_data_results, all_data, pro
     finally:
         progress_bar.update()
 
-async def process_images_for_shots(api, number_of_shots, all_data_results, all_data, embeddings, encoder):
-    progress_bar = ProgressBar(len(all_data) * 2)
+async def process_images_for_shots(api, number_of_shots, all_data_results, all_data, embeddings, encoder, evaluation_indices=None):
+    # If evaluation_indices is None, use all indices
+    indices_to_evaluate = evaluation_indices if evaluation_indices is not None else range(len(all_data))
+    progress_bar = ProgressBar(len(indices_to_evaluate) * 2)
     tasks = []
-    for i in range(len(all_data)):
+    for i in indices_to_evaluate:
         task_embedding = asyncio.ensure_future(process_image(api, i, number_of_shots, all_data_results, all_data, progress_bar, embeddings, use_embedding=True, encoder=encoder))
         task_random = asyncio.ensure_future(process_image(api, i, number_of_shots, all_data_results, all_data, progress_bar, embeddings, use_embedding=False, encoder=encoder))
         tasks.extend([task_embedding, task_random])
@@ -465,7 +467,7 @@ async def process_images_for_shots(api, number_of_shots, all_data_results, all_d
     progress_bar.close()
 
 # Update the main function
-async def main():
+async def main(evaluation_percentage=100):
     global vision_prompt
 
     for dataset in datasets:
@@ -475,6 +477,12 @@ async def main():
         
         all_data, expected_classes, output_file_name = loader(total_samples_to_check)
         print_section_header(f"Dataset: {output_file_name}")
+        
+        # Sample indices for evaluation
+        num_samples = len(all_data)
+        num_to_evaluate = int(num_samples * evaluation_percentage / 100)
+        evaluation_indices = np.random.choice(num_samples, size=num_to_evaluate, replace=False)
+        print(f"Evaluating {num_to_evaluate} samples ({evaluation_percentage}% of {num_samples} total samples)")
         
         for encoder in AVAILABLE_ENCODERS:
             print_section_header(f"Encoder: {encoder}")
@@ -501,9 +509,13 @@ async def main():
                 all_data_results = all_data.copy(deep=True)
                 all_data_results.columns = all_data_results.columns.map(str)
                 
+                # Add evaluated column
+                all_data_results['evaluated'] = False
+                all_data_results.loc[evaluation_indices, 'evaluated'] = True
+                
                 for number_of_shots in shots:
                     print_subsection_header(f"Running with {number_of_shots} shots")
-                    await process_images_for_shots(api, number_of_shots, all_data_results, all_data, embeddings, encoder)
+                    await process_images_for_shots(api, number_of_shots, all_data_results, all_data, embeddings, encoder, evaluation_indices)
                     
                     print_section_header("Accuracies by Taxonomic Level")
                     for level in ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']:
@@ -823,10 +835,12 @@ async def process_image_hierarchical(api, i: int, number_of_shots: int,
         progress_bar.update()
 
 # Update the process_images_for_shots function
-async def process_images_for_shots(api, number_of_shots, all_data_results, all_data, embeddings, encoder):
-    progress_bar = ProgressBar(len(all_data) * 2)
+async def process_images_for_shots(api, number_of_shots, all_data_results, all_data, embeddings, encoder, evaluation_indices=None):
+    # If evaluation_indices is None, use all indices
+    indices_to_evaluate = evaluation_indices if evaluation_indices is not None else range(len(all_data))
+    progress_bar = ProgressBar(len(indices_to_evaluate) * 2)
     tasks = []
-    for i in range(len(all_data)):
+    for i in indices_to_evaluate:
         task_embedding = asyncio.ensure_future(
             process_image_hierarchical(
                 api, i, number_of_shots, all_data_results, all_data,
@@ -845,4 +859,9 @@ async def process_images_for_shots(api, number_of_shots, all_data_results, all_d
     progress_bar.close()
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--evaluation_percentage", type=float, default=100.0,
+                      help="Percentage of data to evaluate (default: 100.0)")
+    args = parser.parse_args()
+    asyncio.run(main(args.evaluation_percentage))

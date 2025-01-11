@@ -12,3 +12,14 @@
 *.pdf   
 # writing folder
 writing/*
+Analysis-Bullseye-IntraTask.py
+Analysis-Bullseye-IntraTask.ipynb
+anecdotal-assisted-few-shot-local.py
+anecdotal-assisted-few-shot.tex
+anecdotal-assisted-few-shot.py
+embedding_visualization.tex
+further_visul.ipynb
+plot_results_2.py
+plot_results.py
+utils/*
+outdated-analyze_results.py
