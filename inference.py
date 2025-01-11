@@ -68,7 +68,7 @@ idc_prompt="""
     """
 
 
-universal_shots= [1]
+universal_shots= [1,8]
 # universal_shots= [0]
 
 # only 1 and 0 shots
@@ -95,8 +95,8 @@ datasets = [
     # Use the balanced subset loader with custom parameters
     {
         "loader": lambda samples: load_and_prepare_data_BioTrove_balanced_subset(
-            total_species=5,  # Use 10 species
-            samples_per_species=2,  # 2 samples per species
+            total_species=20,  # Use 10 species
+            samples_per_species=10,  # 2 samples per species
             random_state=42  # For reproducibility
         ),
         "samples": None,  # Not used for balanced subset
@@ -476,6 +476,8 @@ async def main(evaluation_percentage=100):
         shots = dataset["shots"]
         
         all_data, expected_classes, output_file_name = loader(total_samples_to_check)
+        # Append evaluation percentage to output file name
+        output_file_name = f"{output_file_name}_eval{int(evaluation_percentage)}pct"
         print_section_header(f"Dataset: {output_file_name}")
         
         # Sample indices for evaluation
