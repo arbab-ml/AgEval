@@ -11,10 +11,42 @@ def calculate_f1(df, shots, method, level):
     # Filter for evaluated rows if the column exists
     if 'evaluated' in df.columns:
         df = df[df['evaluated']]
+        print(f"\nTotal evaluated rows: {len(df)}")
     
     # Extract true labels from hierarchy dictionary for the given level
     true_labels = df['hierarchy'].apply(lambda x: eval(x)[level] if isinstance(x, str) else 'Unknown')
     pred_labels = df[f'{method} {level} {shots}'].fillna('NA_placeholder')
+    
+    # Print detailed analysis for kingdom level
+    if level == 'kingdom':
+        print(f"\nDetailed Analysis for {method} {level} {shots}-shot:")
+        print("True label distribution:")
+        print(true_labels.value_counts())
+        print("\nPredicted label distribution:")
+        print(pred_labels.value_counts())
+        
+        # Add verification of predictions
+        print("\nVerification of predictions:")
+        print(f"Number of evaluated rows: {len(df)}")
+        print(f"Number of predictions: {len(pred_labels)}")
+        print(f"Number of non-NA predictions: {len(pred_labels[pred_labels != 'NA_placeholder'])}")
+        
+        # Print some example rows
+        print("\nExample rows with predictions:")
+        sample_df = df.sample(min(5, len(df)))
+        for idx, row in sample_df.iterrows():
+            hierarchy = eval(row['hierarchy'])
+            pred = row[f'{method} {level} {shots}']
+            print(f"\nRow {idx}:")
+            print(f"True label: {hierarchy[level]}")
+            print(f"Predicted: {pred}")
+            print(f"Evaluated: {row['evaluated']}")
+        
+        print("\nConfusion Matrix:")
+        from sklearn.metrics import confusion_matrix
+        cm = confusion_matrix(true_labels, pred_labels)
+        print(cm)
+    
     return f1_score(true_labels, pred_labels, average='weighted') * 100
 
 def calculate_avg_same_category(df, shots, method, level):
@@ -46,6 +78,42 @@ def process_model_csvs(results_folder):
         try:
             df = pd.read_csv(target_file)
             dataset_name = os.path.splitext(os.path.basename(target_file))[0]
+            
+            # Print dataset statistics
+            print("\nDataset Statistics:")
+            print("=" * 50)
+            print(f"Total rows: {len(df)}")
+            if 'evaluated' in df.columns:
+                print(f"Evaluated rows: {df['evaluated'].sum()}")
+                print(f"Evaluation percentage: {(df['evaluated'].sum() / len(df)) * 100:.2f}%")
+                
+                # Print distribution of evaluated rows
+                eval_df = df[df['evaluated']]
+                print("\nDistribution in evaluated rows:")
+                eval_dist = eval_df['hierarchy'].apply(lambda x: eval(x)['kingdom']).value_counts()
+                print(eval_dist)
+            
+            # Print class distribution for each taxonomic level
+            for level in TAXONOMIC_LEVELS:
+                if 'hierarchy' in df.columns:
+                    true_labels = df['hierarchy'].apply(lambda x: eval(x)[level] if isinstance(x, str) else 'Unknown')
+                    unique_classes = len(true_labels.unique())
+                    print(f"\n{level.capitalize()} level unique classes: {unique_classes}")
+                    if level == 'kingdom':
+                        print("Kingdom distribution:")
+                        print(true_labels.value_counts())
+            
+            # Print example of predictions for kingdom level
+            if 'evaluated' in df.columns:
+                eval_df = df[df['evaluated']]
+                print("\nSample of Kingdom predictions (first 5 evaluated rows):")
+                for idx, row in eval_df.head().iterrows():
+                    hierarchy = eval(row['hierarchy'])
+                    print(f"\nTrue Kingdom: {hierarchy['kingdom']}")
+                    print(f"1-shot Embedding pred: {row['Embedding kingdom 1']}")
+                    print(f"8-shot Embedding pred: {row['Embedding kingdom 8']}")
+                    print(f"1-shot Random pred: {row['Random kingdom 1']}")
+                    print(f"8-shot Random pred: {row['Random kingdom 8']}")
             
             for shots in SHOTS_TO_PROCESS:
                 for method in ['Embedding', 'Random']:

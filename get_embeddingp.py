@@ -7,6 +7,7 @@ import io
 import torch
 import torch.nn.functional as F
 from transformers import CLIPProcessor, CLIPModel, AutoImageProcessor, ViTModel, ResNetModel, ResNetConfig, AutoFeatureExtractor
+import pickle
 
 AVAILABLE_ENCODERS = ["vit"]  # Focusing on ViT for now as it's most reliable for hierarchical classification
 
@@ -15,9 +16,35 @@ VIT_MODEL_NAME = "google/vit-large-patch16-224-in21k"
 vit_processor = AutoImageProcessor.from_pretrained(VIT_MODEL_NAME)
 vit_model = ViTModel.from_pretrained(VIT_MODEL_NAME)
 
+# Global cache for embeddings
+EMBEDDING_CACHE = {}
+CACHE_FILE = "embedding_cache.pkl"
+
+def load_cache():
+    """Load embedding cache from disk if it exists."""
+    global EMBEDDING_CACHE
+    if os.path.exists(CACHE_FILE):
+        try:
+            with open(CACHE_FILE, 'rb') as f:
+                EMBEDDING_CACHE = pickle.load(f)
+            print(f"Loaded {len(EMBEDDING_CACHE)} cached embeddings")
+        except Exception as e:
+            print(f"Error loading cache: {e}")
+            EMBEDDING_CACHE = {}
+
+def save_cache():
+    """Save embedding cache to disk."""
+    try:
+        with open(CACHE_FILE, 'wb') as f:
+            pickle.dump(EMBEDDING_CACHE, f)
+        print(f"Saved {len(EMBEDDING_CACHE)} embeddings to cache")
+    except Exception as e:
+        print(f"Error saving cache: {e}")
+
 def get_image_embedding(image_path: str, model_type: str = "vit") -> Union[List[float], Dict[str, str]]:
     """
     Get image embedding optimized for hierarchical classification.
+    Uses caching to avoid recomputing embeddings for the same image.
     
     Args:
         image_path: Path to the image file
@@ -28,6 +55,11 @@ def get_image_embedding(image_path: str, model_type: str = "vit") -> Union[List[
     """
     if model_type.lower() != "vit":
         return {"error": f"Unsupported model type: {model_type}. Currently only 'vit' is supported."}
+    
+    # Check cache first
+    cache_key = f"{image_path}_{model_type}"
+    if cache_key in EMBEDDING_CACHE:
+        return EMBEDDING_CACHE[cache_key]
     
     try:
         # Open and convert image to RGB
@@ -52,10 +84,18 @@ def get_image_embedding(image_path: str, model_type: str = "vit") -> Union[List[
                 # Normalize the combined features
                 normalized_features = F.normalize(combined_features, p=2, dim=1)
                 
-                return normalized_features.squeeze().tolist()
+                # Cache the result before returning
+                embedding = normalized_features.squeeze().tolist()
+                EMBEDDING_CACHE[cache_key] = embedding
+                return embedding
     
     except Exception as e:
-        return {"error": f"Failed to compute embedding: {str(e)}"}
+        error_dict = {"error": f"Failed to compute embedding: {str(e)}"}
+        EMBEDDING_CACHE[cache_key] = error_dict
+        return error_dict
+
+# Load cache at module import
+load_cache()
 
 def get_hierarchical_similarity(embedding1: List[float], embedding2: List[float], 
                               level_weights: Dict[str, float] = None) -> float:
@@ -103,3 +143,6 @@ if __name__ == "__main__":
     else:
         print(f"ViT Embedding shape: {len(vit_embedding)}")
         print(f"ViT First few values: {vit_embedding[:5]}")
+    
+    # Save cache before exit
+    save_cache()

@@ -95,8 +95,8 @@ datasets = [
     # Use the balanced subset loader with custom parameters
     {
         "loader": lambda samples: load_and_prepare_data_BioTrove_balanced_subset(
-            total_species=219,  # Use 10 species
-            samples_per_species=10,  # 2 samples per species
+            total_species=219,  # Use 10 species; max 219
+            samples_per_species=10,  # 2 samples per species; max 10
             random_state=42  # For reproducibility
         ),
         "samples": None,  # Not used for balanced subset
@@ -470,77 +470,82 @@ async def process_images_for_shots(api, number_of_shots, all_data_results, all_d
 async def main(evaluation_percentage=100):
     global vision_prompt
 
-    for dataset in datasets:
-        loader = dataset["loader"]
-        total_samples_to_check = dataset["samples"]
-        shots = dataset["shots"]
-        
-        all_data, expected_classes, output_file_name = loader(total_samples_to_check)
-        # Append evaluation percentage to output file name
-        output_file_name = f"{output_file_name}_eval{int(evaluation_percentage)}pct"
-        print_section_header(f"Dataset: {output_file_name}")
-        
-        # Sample indices for evaluation
-        num_samples = len(all_data)
-        num_to_evaluate = int(num_samples * evaluation_percentage / 100)
-        evaluation_indices = np.random.choice(num_samples, size=num_to_evaluate, replace=False)
-        print(f"Evaluating {num_to_evaluate} samples ({evaluation_percentage}% of {num_samples} total samples)")
-        
-        for encoder in AVAILABLE_ENCODERS:
-            print_section_header(f"Encoder: {encoder}")
-            embeddings = precompute_embeddings(all_data, encoder)
+    try:
+        for dataset in datasets:
+            loader = dataset["loader"]
+            total_samples_to_check = dataset["samples"]
+            shots = dataset["shots"]
             
-            for vendor_model in all_vendors_models:
-                vendor = vendor_model["vendor"]
-                model = vendor_model["model"]
-                model_name = vendor_model["model_name"]
+            all_data, expected_classes, output_file_name = loader(total_samples_to_check)
+            # Append evaluation percentage to output file name
+            output_file_name = f"{output_file_name}_eval{int(evaluation_percentage)}pct"
+            print_section_header(f"Dataset: {output_file_name}")
+            
+            # Sample indices for evaluation
+            num_samples = len(all_data)
+            num_to_evaluate = int(num_samples * evaluation_percentage / 100)
+            evaluation_indices = np.random.choice(num_samples, size=num_to_evaluate, replace=False)
+            print(f"Evaluating {num_to_evaluate} samples ({evaluation_percentage}% of {num_samples} total samples)")
+            
+            for encoder in AVAILABLE_ENCODERS:
+                print_section_header(f"Encoder: {encoder}")
+                embeddings = precompute_embeddings(all_data, encoder)
                 
-                print_section_header(f"Model: {model_name}")
-                
-                if vendor == "openai":
-                    api = GPTAPI(api_key=os.getenv("OPENAI_API_KEY"), model=model)
-                elif vendor == "anthropic":
-                    api = ClaudeAPI(api_key=os.getenv("ANTHROPIC_API_KEY"), model=model)
-                elif vendor == "openrouter":
-                    api = OpenRouterAPI(api_key=os.getenv("OPENROUTER_API_KEY"), model=model)
-                elif vendor == "google":
-                    api = GeminiAPI(api_key=os.getenv("GOOGLE_API_KEY"), model=model)
-                else:
-                    raise ValueError(f"Unsupported model type: {vendor}")
-                
-                all_data_results = all_data.copy(deep=True)
-                all_data_results.columns = all_data_results.columns.map(str)
-                
-                # Add evaluated column
-                all_data_results['evaluated'] = False
-                all_data_results.loc[evaluation_indices, 'evaluated'] = True
-                
-                for number_of_shots in shots:
-                    print_subsection_header(f"Running with {number_of_shots} shots")
-                    await process_images_for_shots(api, number_of_shots, all_data_results, all_data, embeddings, encoder, evaluation_indices)
+                for vendor_model in all_vendors_models:
+                    vendor = vendor_model["vendor"]
+                    model = vendor_model["model"]
+                    model_name = vendor_model["model_name"]
                     
-                    print_section_header("Accuracies by Taxonomic Level")
-                    for level in ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']:
-                        print_subsection_header(f"{level.capitalize()} Level")
-                        
-                        embedding_col = f"Embedding {level} {number_of_shots}"
-                        if embedding_col in all_data_results.columns:
-                            print("\nEmbedding-based selection:")
-                            embedding_acc = calculate_accuracy(all_data_results, embedding_col)
-                        
-                        random_col = f"Random {level} {number_of_shots}"
-                        if random_col in all_data_results.columns:
-                            print("\nRandom selection:")
-                            random_acc = calculate_accuracy(all_data_results, random_col)
-                        
-                        # Add a big separator after each level's complete results
-                        print_separator("*", 100)
+                    print_section_header(f"Model: {model_name}")
                     
-                    results_dir = os.path.join("results-hierarchical", model_name, encoder)
-                    os.makedirs(results_dir, exist_ok=True)
-                    output_file = os.path.join(results_dir, f"{output_file_name}.csv")
-                    all_data_results.to_csv(output_file)
-                    print(f"\nResults saved to: {output_file}")
+                    if vendor == "openai":
+                        api = GPTAPI(api_key=os.getenv("OPENAI_API_KEY"), model=model)
+                    elif vendor == "anthropic":
+                        api = ClaudeAPI(api_key=os.getenv("ANTHROPIC_API_KEY"), model=model)
+                    elif vendor == "openrouter":
+                        api = OpenRouterAPI(api_key=os.getenv("OPENROUTER_API_KEY"), model=model)
+                    elif vendor == "google":
+                        api = GeminiAPI(api_key=os.getenv("GOOGLE_API_KEY"), model=model)
+                    else:
+                        raise ValueError(f"Unsupported model type: {vendor}")
+
+                    all_data_results = all_data.copy(deep=True)
+                    all_data_results.columns = all_data_results.columns.map(str)
+                    
+                    # Add evaluated column
+                    all_data_results['evaluated'] = False
+                    all_data_results.loc[evaluation_indices, 'evaluated'] = True
+                    
+                    for number_of_shots in shots:
+                        print_subsection_header(f"Running with {number_of_shots} shots")
+                        await process_images_for_shots(api, number_of_shots, all_data_results, all_data, embeddings, encoder, evaluation_indices)
+                        
+                        print_section_header("Accuracies by Taxonomic Level")
+                        for level in ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']:
+                            print_subsection_header(f"{level.capitalize()} Level")
+                            
+                            embedding_col = f"Embedding {level} {number_of_shots}"
+                            if embedding_col in all_data_results.columns:
+                                print("\nEmbedding-based selection:")
+                                embedding_acc = calculate_accuracy(all_data_results, embedding_col)
+                            
+                            random_col = f"Random {level} {number_of_shots}"
+                            if random_col in all_data_results.columns:
+                                print("\nRandom selection:")
+                                random_acc = calculate_accuracy(all_data_results, random_col)
+                            
+                            # Add a big separator after each level's complete results
+                            print_separator("*", 100)
+                    
+                    # Save results
+                    os.makedirs(os.path.join("results-hierarchical", model_name, encoder), exist_ok=True)
+                    output_path = os.path.join("results-hierarchical", model_name, encoder, f"{output_file_name}.csv")
+                    all_data_results.to_csv(output_path, index=False)
+                    print(f"\nResults saved to: {output_path}")
+    finally:
+        # Save embedding cache at the end
+        from get_embeddingp import save_cache
+        save_cache()
 
 # Update the calculate_accuracy function
 def print_separator(char="=", length=80):
