@@ -95,7 +95,7 @@ datasets = [
     # Use the balanced subset loader with custom parameters
     {
         "loader": lambda samples: load_and_prepare_data_BioTrove_balanced_subset(
-            total_species=20,  # Use 10 species
+            total_species=219,  # Use 10 species
             samples_per_species=10,  # 2 samples per species
             random_state=42  # For reproducibility
         ),

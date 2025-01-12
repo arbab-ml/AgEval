@@ -39,40 +39,36 @@ def calculate_avg_same_category(df, shots, method, level):
 def process_model_csvs(results_folder):
     results = {shots: [] for shots in SHOTS_TO_PROCESS}
     
-    for model in os.listdir(results_folder):
-        model_path = os.path.join(results_folder, model)
-        if os.path.isdir(model_path):
-            for encoder in os.listdir(model_path):
-                encoder_path = os.path.join(model_path, encoder)
-                if os.path.isdir(encoder_path):
-                    for file_name in os.listdir(encoder_path):
-                        if file_name.endswith('.csv'):
-                            dataset_name = os.path.splitext(file_name)[0]
-                            file_path = os.path.join(encoder_path, file_name)
+    # Specific file path
+    target_file = os.path.join(results_folder, "GPT-4o-mini", "vit", "BioTrove-Balanced_219species_10samples_eval10pct.csv")
+    
+    if os.path.exists(target_file):
+        try:
+            df = pd.read_csv(target_file)
+            dataset_name = os.path.splitext(os.path.basename(target_file))[0]
+            
+            for shots in SHOTS_TO_PROCESS:
+                for method in ['Embedding', 'Random']:
+                    for level in TAXONOMIC_LEVELS:
+                        try:
+                            f1 = calculate_f1(df, shots, method, level)
+                            avg_same_category = calculate_avg_same_category(df, shots, method, level)
                             
-                            try:
-                                df = pd.read_csv(file_path)
-                                
-                                for shots in SHOTS_TO_PROCESS:
-                                    for method in ['Embedding', 'Random']:  # Keep as Embedding internally
-                                        for level in TAXONOMIC_LEVELS:
-                                            try:
-                                                f1 = calculate_f1(df, shots, method, level)
-                                                avg_same_category = calculate_avg_same_category(df, shots, method, level)
-                                                
-                                                results[shots].append({
-                                                    'Model': model,
-                                                    'Dataset': dataset_name,
-                                                    'Method': method,
-                                                    'Encoder': encoder,
-                                                    'Level': level,
-                                                    'F1': f1,
-                                                    'Avg_Same_Category': avg_same_category
-                                                })
-                                            except Exception as e:
-                                                print(f"Error processing {method} for {dataset_name} at {level} with {shots} shots: {str(e)}")
-                            except Exception as e:
-                                print(f"Error reading file {file_path}: {str(e)}")
+                            results[shots].append({
+                                'Model': 'GPT-4o-mini',
+                                'Dataset': dataset_name,
+                                'Method': method,
+                                'Encoder': 'vit',
+                                'Level': level,
+                                'F1': f1,
+                                'Avg_Same_Category': avg_same_category
+                            })
+                        except Exception as e:
+                            print(f"Error processing {method} for {dataset_name} at {level} with {shots} shots: {str(e)}")
+        except Exception as e:
+            print(f"Error reading file {target_file}: {str(e)}")
+    else:
+        print(f"Target file not found: {target_file}")
 
     return results
 
@@ -120,12 +116,6 @@ if __name__ == "__main__":
                         index=['Model', 'Dataset'],
                         columns=['Method', 'Encoder']
                     )
-                    
-                    # Calculate average of all datasets
-                    avg_row = level_pivot.mean()
-                    avg_df = pd.DataFrame(avg_row).T
-                    avg_df.index = pd.MultiIndex.from_tuples([('Average', 'All Datasets')], names=['Model', 'Dataset'])
-                    level_pivot = pd.concat([level_pivot, avg_df])
                     level_pivot = level_pivot.round(2)
                     level_tables[level] = level_pivot
             
@@ -135,14 +125,19 @@ if __name__ == "__main__":
     with open(os.path.join(analysis_folder, 'hierarchical_result_table_dict.pkl'), 'wb') as f:
         pickle.dump(result_table_dict, f)
 
-    print(f"Results saved in '{analysis_folder}/hierarchical_result_table_dict.pkl'")
+    print(f"\nResults for BioTrove-Balanced_219species_10samples_eval10pct.csv")
+    print("=" * 100)
     
     # Print formatted results
     print_results_table(result_table_dict)
 
     # Save results as text files, one for each metric and level
     for metric in ['F1', 'Avg_Same_Category']:
-        with open(os.path.join(analysis_folder, f'hierarchical_{metric.lower()}_results.txt'), 'w') as f:
+        output_file = os.path.join(analysis_folder, f'hierarchical_{metric.lower()}_results.txt')
+        with open(output_file, 'w') as f:
+            f.write(f"Results for BioTrove-Balanced_219species_10samples_eval10pct.csv\n")
+            f.write("=" * 100 + "\n")
+            
             for shots, level_tables in result_table_dict.items():
                 f.write(f"\n{shots}-Shot Results\n")
                 f.write("-" * 100 + "\n")
@@ -150,8 +145,7 @@ if __name__ == "__main__":
                 f.write("-" * 100 + "\n")
                 
                 for level, df in level_tables.items():
-                    avg_row = df.iloc[-1]
-                    stage_val = avg_row[(metric, 'Embedding', 'vit')]  # Use Embedding internally
-                    rand_val = avg_row[(metric, 'Random', 'vit')]
+                    stage_val = df.iloc[0][('F1', 'Embedding', 'vit')]  # Use first row since we only have one dataset
+                    rand_val = df.iloc[0][('F1', 'Random', 'vit')]
                     f.write(f"{level.capitalize():<10} | {stage_val:>12.2f} | {rand_val:>10.2f}\n")
                 f.write("-" * 100 + "\n\n")
