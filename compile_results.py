@@ -6,6 +6,25 @@ import pickle
 
 TAXONOMIC_LEVELS = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
 SHOTS_TO_PROCESS = [1, 8]  # Process both 1-shot and 8-shot results
+CACHE_DIR = 'cache'
+EMBEDDING_CACHE_FILE = os.path.join(CACHE_DIR, 'embedding_cache.pkl')
+
+def load_embedding_cache():
+    if os.path.exists(EMBEDDING_CACHE_FILE):
+        try:
+            with open(EMBEDDING_CACHE_FILE, 'rb') as f:
+                return pickle.load(f)
+        except Exception as e:
+            print(f"Error loading embedding cache: {e}")
+    return {}
+
+def save_embedding_cache(cache):
+    os.makedirs(CACHE_DIR, exist_ok=True)
+    try:
+        with open(EMBEDDING_CACHE_FILE, 'wb') as f:
+            pickle.dump(cache, f)
+    except Exception as e:
+        print(f"Error saving embedding cache: {e}")
 
 def calculate_f1(df, shots, method, level):
     # Filter for evaluated rows
@@ -65,7 +84,7 @@ def calculate_avg_same_category(df, shots, method, level):
     
     return np.mean(matches) * 100
 
-def process_model_csvs(results_folder):
+def process_model_csvs(results_folder, embedding_cache=None):
     results = {shots: [] for shots in SHOTS_TO_PROCESS}
     
     target_file = os.path.join(results_folder, "GPT-4o-mini", "vit", "BioTrove-Balanced_219species_10samples_eval2pct.csv")
@@ -73,6 +92,17 @@ def process_model_csvs(results_folder):
     if os.path.exists(target_file):
         try:
             df = pd.read_csv(target_file)
+            
+            # Cache embeddings for each image path if not already cached
+            if embedding_cache is not None:
+                for idx, row in df.iterrows():
+                    image_path = row.get('image_path')
+                    if image_path and image_path not in embedding_cache:
+                        # Here you would compute the embedding
+                        # embedding = compute_embedding(image_path)
+                        # embedding_cache[image_path] = embedding
+                        pass
+            
             dataset_name = os.path.splitext(os.path.basename(target_file))[0]
             
             for shots in SHOTS_TO_PROCESS:
@@ -107,13 +137,13 @@ def process_model_csvs(results_folder):
 
 def print_results_table(result_table_dict):
     print("\nResults Summary")
-    print("=" * 100)
+    print("=" * 120)
     
     for shots, level_tables in result_table_dict.items():
         print(f"\n{shots}-Shot Results")
-        print("-" * 100)
-        print(f"{'Level':<10} | {'STAGE F1':>12} | {'Random F1':>10} | {'STAGE Examples':>16} | {'Random Examples':>13} | {'Error Types':>50}")
-        print("-" * 100)
+        print("-" * 120)
+        print(f"{'Level':<10} | {'STAGE F1':>12} | {'Random F1':>10} | {'STAGE Examples':>16} | {'Random Examples':>13} | {'STAGE Errors':>25} | {'Random Errors':>25}")
+        print("-" * 120)
         
         for level in TAXONOMIC_LEVELS:
             try:
@@ -128,29 +158,44 @@ def print_results_table(result_table_dict):
                     
                     # Get error counts for each type
                     error_types = ['NA_JSON_PARSE', 'NA_INVALID_PRED', 'NA_API_ERROR', 'NA_GENERAL', 'NA_CASCADE']
-                    error_parts = []
+                    stage_errors = []
+                    random_errors = []
                     for err_type in error_types:
-                        stage_count = avg_row.get((err_type, 'Embedding', 'vit'), 0)
-                        rand_count = avg_row.get((err_type, 'Random', 'vit'), 0)
-                        if stage_count > 0 or rand_count > 0:
-                            error_parts.append(f"{err_type[3:]}({stage_count}/{rand_count})")
-                    error_str = ", ".join(error_parts) if error_parts else "None"
+                        stage_count = int(avg_row.get((err_type, 'Embedding', 'vit'), 0))
+                        rand_count = int(avg_row.get((err_type, 'Random', 'vit'), 0))
+                        if stage_count > 0:
+                            stage_errors.append(f"{err_type[3:]}({stage_count})")
+                        if rand_count > 0:
+                            random_errors.append(f"{err_type[3:]}({rand_count})")
+                    
+                    stage_error_str = ", ".join(stage_errors) if stage_errors else "None"
+                    random_error_str = ", ".join(random_errors) if random_errors else "None"
                 else:
                     stage_f1 = rand_f1 = stage_matches = rand_matches = 0.0
-                    error_str = "N/A"
+                    stage_error_str = random_error_str = "N/A"
                 
-                print(f"{level.capitalize():<10} | {stage_f1:>12.2f} | {rand_f1:>10.2f} | {stage_matches:>16.2f} | {rand_matches:>13.2f} | {error_str:>50}")
+                print(f"{level.capitalize():<10} | {stage_f1:>12.2f} | {rand_f1:>10.2f} | {stage_matches:>16.2f} | {rand_matches:>13.2f} | {stage_error_str:>25} | {random_error_str:>25}")
             except Exception as e:
-                print(f"{level.capitalize():<10} | {0:>12.2f} | {0:>10.2f} | {0:>16.2f} | {0:>13.2f} | {'Error':>50}")
-        print("-" * 100)
+                print(f"{level.capitalize():<10} | {0:>12.2f} | {0:>10.2f} | {0:>16.2f} | {0:>13.2f} | {'Error':>25} | {'Error':>25}")
+        print("-" * 120)
 
 # Main execution
 if __name__ == "__main__":
     results_folder = 'results-hierarchical'
     analysis_folder = 'results-hierarchical-analysis'
     os.makedirs(analysis_folder, exist_ok=True)
+    os.makedirs(CACHE_DIR, exist_ok=True)
 
-    results_dict = process_model_csvs(results_folder)
+    # Load embedding cache
+    embedding_cache = load_embedding_cache()
+    if embedding_cache:
+        print(f"Loaded {len(embedding_cache)} cached embeddings")
+
+    results_dict = process_model_csvs(results_folder, embedding_cache)
+    
+    # Save embedding cache
+    save_embedding_cache(embedding_cache)
+    print(f"Saved {len(embedding_cache)} embeddings to cache")
     
     # Convert results to DataFrames
     result_table_dict = {}

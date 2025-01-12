@@ -23,6 +23,7 @@ from tqdm import tqdm
 import re
 from data_loader import load_and_prepare_data_SBRD, load_and_prepare_data_DurumWheat, load_and_prepare_data_soybean_seeds, load_and_prepare_data_mango_leaf, load_and_prepare_data_DeepWeeds, load_and_prepare_data_IP02, load_and_prepare_data_bean_leaf, load_and_prepare_data_YellowRust, load_and_prepare_data_FUSARIUM22, load_and_prepare_data_InsectCount, load_and_prepare_data_DiseaseQuantify, load_and_prepare_data_IDC, load_and_prepare_data_Soybean_PNAS, load_and_prepare_data_Soybean_Dangerous_Insects
 from data_loader import load_and_prepare_data_BioTrove, load_and_prepare_data_BioTrove_balanced_subset
+import pickle
 nest_asyncio.apply()
 global vision_prompt
 
@@ -347,15 +348,44 @@ from get_embeddingp import get_image_embedding, AVAILABLE_ENCODERS
 
 # Modify the precompute_embeddings function
 def precompute_embeddings(all_data, encoder):
+    # Define cache file path based on encoder
+    cache_file = f'embeddings_cache_{encoder}.pkl'
+    
+    # Try to load existing embeddings
     embeddings = {}
-    print(f"Precomputing {encoder} embeddings...")
-    for idx, row in tqdm(all_data.iterrows(), total=len(all_data), desc="Computing embeddings"):
-        image_path = row[0]
-        embedding = get_image_embedding(image_path, model_type=encoder)
-        if isinstance(embedding, dict) and "error" in embedding:
-            print(f"Error computing embedding for {image_path}: {embedding['error']}")
-        else:
-            embeddings[idx] = embedding
+    if os.path.exists(cache_file):
+        print(f"Loading cached {encoder} embeddings from {cache_file}...")
+        try:
+            with open(cache_file, 'rb') as f:
+                embeddings = pickle.load(f)
+            print(f"Loaded {len(embeddings)} cached embeddings.")
+        except Exception as e:
+            print(f"Error loading cache: {e}")
+            embeddings = {}
+    
+    # Compute missing embeddings
+    missing_indices = set(all_data.index) - set(embeddings.keys())
+    if missing_indices:
+        print(f"Computing {len(missing_indices)} missing {encoder} embeddings...")
+        for idx in tqdm(missing_indices, desc="Computing embeddings"):
+            image_path = all_data.iloc[idx][0]
+            embedding = get_image_embedding(image_path, model_type=encoder)
+            if isinstance(embedding, dict) and "error" in embedding:
+                print(f"Error computing embedding for {image_path}: {embedding['error']}")
+            else:
+                embeddings[idx] = embedding
+        
+        # Save updated embeddings cache
+        print(f"Saving embeddings cache to {cache_file}...")
+        try:
+            with open(cache_file, 'wb') as f:
+                pickle.dump(embeddings, f)
+            print("Cache saved successfully.")
+        except Exception as e:
+            print(f"Error saving cache: {e}")
+    else:
+        print("All embeddings found in cache.")
+    
     return embeddings
 
 # Modify the process_image function
