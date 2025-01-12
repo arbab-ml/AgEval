@@ -8,46 +8,43 @@ TAXONOMIC_LEVELS = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 's
 SHOTS_TO_PROCESS = [1, 8]  # Process both 1-shot and 8-shot results
 
 def calculate_f1(df, shots, method, level):
-    # Filter for evaluated rows if the column exists
+    # Filter for evaluated rows
     if 'evaluated' in df.columns:
         df = df[df['evaluated']]
-        print(f"\nTotal evaluated rows: {len(df)}")
     
-    # Extract true labels from hierarchy dictionary for the given level
+    # Extract labels and predictions
     true_labels = df['hierarchy'].apply(lambda x: eval(x)[level] if isinstance(x, str) else 'Unknown')
-    pred_labels = df[f'{method} {level} {shots}'].fillna('NA_placeholder')
+    pred_column = f'{method} {level} {shots}'
+    predictions = df[pred_column]
     
-    # Print detailed analysis for kingdom level
-    if level == 'kingdom':
-        print(f"\nDetailed Analysis for {method} {level} {shots}-shot:")
-        print("True label distribution:")
-        print(true_labels.value_counts())
-        print("\nPredicted label distribution:")
-        print(pred_labels.value_counts())
-        
-        # Add verification of predictions
-        print("\nVerification of predictions:")
-        print(f"Number of evaluated rows: {len(df)}")
-        print(f"Number of predictions: {len(pred_labels)}")
-        print(f"Number of non-NA predictions: {len(pred_labels[pred_labels != 'NA_placeholder'])}")
-        
-        # Print some example rows
-        print("\nExample rows with predictions:")
-        sample_df = df.sample(min(5, len(df)))
-        for idx, row in sample_df.iterrows():
-            hierarchy = eval(row['hierarchy'])
-            pred = row[f'{method} {level} {shots}']
-            print(f"\nRow {idx}:")
-            print(f"True label: {hierarchy[level]}")
-            print(f"Predicted: {pred}")
-            print(f"Evaluated: {row['evaluated']}")
-        
-        print("\nConfusion Matrix:")
-        from sklearn.metrics import confusion_matrix
-        cm = confusion_matrix(true_labels, pred_labels)
-        print(cm)
+    # Define error codes and count them
+    error_types = {
+        'NA_JSON_PARSE': 'JSON Parsing Errors',
+        'NA_INVALID_PRED': 'Invalid Predictions',
+        'NA_API_ERROR': 'API Errors',
+        'NA_GENERAL': 'General Errors',
+        'NA_CASCADE': 'Cascading Errors from Higher Levels'
+    }
+    error_counts = {error_code: len(predictions[predictions == error_code]) 
+                   for error_code in error_types.keys()}
     
-    return f1_score(true_labels, pred_labels, average='weighted') * 100
+    # Filter out error codes for F1 calculation
+    valid_mask = ~predictions.isin(error_types.keys())
+    valid_predictions = predictions[valid_mask]
+    valid_true_labels = true_labels[valid_mask]
+    
+    # Calculate F1 score
+    try:
+        if len(valid_predictions) > 0:
+            valid_true_labels = valid_true_labels.astype(str)
+            valid_predictions = valid_predictions.astype(str)
+            f1 = f1_score(valid_true_labels, valid_predictions, average='weighted') * 100
+        else:
+            f1 = 0.0
+    except Exception as e:
+        f1 = 0.0
+    
+    return f1, error_counts
 
 def calculate_avg_same_category(df, shots, method, level):
     # Filter for evaluated rows if the column exists
@@ -71,55 +68,18 @@ def calculate_avg_same_category(df, shots, method, level):
 def process_model_csvs(results_folder):
     results = {shots: [] for shots in SHOTS_TO_PROCESS}
     
-    # Specific file path
-    target_file = os.path.join(results_folder, "GPT-4o-mini", "vit", "BioTrove-Balanced_219species_10samples_eval10pct.csv")
+    target_file = os.path.join(results_folder, "GPT-4o-mini", "vit", "BioTrove-Balanced_219species_10samples_eval2pct.csv")
     
     if os.path.exists(target_file):
         try:
             df = pd.read_csv(target_file)
             dataset_name = os.path.splitext(os.path.basename(target_file))[0]
             
-            # Print dataset statistics
-            print("\nDataset Statistics:")
-            print("=" * 50)
-            print(f"Total rows: {len(df)}")
-            if 'evaluated' in df.columns:
-                print(f"Evaluated rows: {df['evaluated'].sum()}")
-                print(f"Evaluation percentage: {(df['evaluated'].sum() / len(df)) * 100:.2f}%")
-                
-                # Print distribution of evaluated rows
-                eval_df = df[df['evaluated']]
-                print("\nDistribution in evaluated rows:")
-                eval_dist = eval_df['hierarchy'].apply(lambda x: eval(x)['kingdom']).value_counts()
-                print(eval_dist)
-            
-            # Print class distribution for each taxonomic level
-            for level in TAXONOMIC_LEVELS:
-                if 'hierarchy' in df.columns:
-                    true_labels = df['hierarchy'].apply(lambda x: eval(x)[level] if isinstance(x, str) else 'Unknown')
-                    unique_classes = len(true_labels.unique())
-                    print(f"\n{level.capitalize()} level unique classes: {unique_classes}")
-                    if level == 'kingdom':
-                        print("Kingdom distribution:")
-                        print(true_labels.value_counts())
-            
-            # Print example of predictions for kingdom level
-            if 'evaluated' in df.columns:
-                eval_df = df[df['evaluated']]
-                print("\nSample of Kingdom predictions (first 5 evaluated rows):")
-                for idx, row in eval_df.head().iterrows():
-                    hierarchy = eval(row['hierarchy'])
-                    print(f"\nTrue Kingdom: {hierarchy['kingdom']}")
-                    print(f"1-shot Embedding pred: {row['Embedding kingdom 1']}")
-                    print(f"8-shot Embedding pred: {row['Embedding kingdom 8']}")
-                    print(f"1-shot Random pred: {row['Random kingdom 1']}")
-                    print(f"8-shot Random pred: {row['Random kingdom 8']}")
-            
             for shots in SHOTS_TO_PROCESS:
                 for method in ['Embedding', 'Random']:
                     for level in TAXONOMIC_LEVELS:
                         try:
-                            f1 = calculate_f1(df, shots, method, level)
+                            f1, error_counts = calculate_f1(df, shots, method, level)
                             avg_same_category = calculate_avg_same_category(df, shots, method, level)
                             
                             results[shots].append({
@@ -129,7 +89,12 @@ def process_model_csvs(results_folder):
                                 'Encoder': 'vit',
                                 'Level': level,
                                 'F1': f1,
-                                'Avg_Same_Category': avg_same_category
+                                'Avg_Same_Category': avg_same_category,
+                                'NA_JSON_PARSE': error_counts.get('NA_JSON_PARSE', 0),
+                                'NA_INVALID_PRED': error_counts.get('NA_INVALID_PRED', 0),
+                                'NA_API_ERROR': error_counts.get('NA_API_ERROR', 0),
+                                'NA_GENERAL': error_counts.get('NA_GENERAL', 0),
+                                'NA_CASCADE': error_counts.get('NA_CASCADE', 0)
                             })
                         except Exception as e:
                             print(f"Error processing {method} for {dataset_name} at {level} with {shots} shots: {str(e)}")
@@ -147,18 +112,36 @@ def print_results_table(result_table_dict):
     for shots, level_tables in result_table_dict.items():
         print(f"\n{shots}-Shot Results")
         print("-" * 100)
-        print(f"{'Level':<10} | {'STAGE F1':>12} | {'Random F1':>10} | {'STAGE Examples':>16} | {'Random Examples':>13}")
+        print(f"{'Level':<10} | {'STAGE F1':>12} | {'Random F1':>10} | {'STAGE Examples':>16} | {'Random Examples':>13} | {'Error Types':>50}")
         print("-" * 100)
         
-        for level, df in level_tables.items():
-            # Get average values (last row of each dataframe)
-            avg_row = df.iloc[-1]
-            stage_f1 = avg_row[('F1', 'Embedding', 'vit')]  # Use Embedding internally
-            rand_f1 = avg_row[('F1', 'Random', 'vit')]
-            stage_matches = avg_row[('Avg_Same_Category', 'Embedding', 'vit')]  # Use Embedding internally
-            rand_matches = avg_row[('Avg_Same_Category', 'Random', 'vit')]
-            
-            print(f"{level.capitalize():<10} | {stage_f1:>12.2f} | {rand_f1:>10.2f} | {stage_matches:>16.2f} | {rand_matches:>13.2f}")
+        for level in TAXONOMIC_LEVELS:
+            try:
+                if level in level_tables:
+                    df = level_tables[level]
+                    avg_row = df.iloc[-1]
+                    
+                    stage_f1 = avg_row.get(('F1', 'Embedding', 'vit'), 0.0)
+                    rand_f1 = avg_row.get(('F1', 'Random', 'vit'), 0.0)
+                    stage_matches = avg_row.get(('Avg_Same_Category', 'Embedding', 'vit'), 0.0)
+                    rand_matches = avg_row.get(('Avg_Same_Category', 'Random', 'vit'), 0.0)
+                    
+                    # Get error counts for each type
+                    error_types = ['NA_JSON_PARSE', 'NA_INVALID_PRED', 'NA_API_ERROR', 'NA_GENERAL', 'NA_CASCADE']
+                    error_parts = []
+                    for err_type in error_types:
+                        stage_count = avg_row.get((err_type, 'Embedding', 'vit'), 0)
+                        rand_count = avg_row.get((err_type, 'Random', 'vit'), 0)
+                        if stage_count > 0 or rand_count > 0:
+                            error_parts.append(f"{err_type[3:]}({stage_count}/{rand_count})")
+                    error_str = ", ".join(error_parts) if error_parts else "None"
+                else:
+                    stage_f1 = rand_f1 = stage_matches = rand_matches = 0.0
+                    error_str = "N/A"
+                
+                print(f"{level.capitalize():<10} | {stage_f1:>12.2f} | {rand_f1:>10.2f} | {stage_matches:>16.2f} | {rand_matches:>13.2f} | {error_str:>50}")
+            except Exception as e:
+                print(f"{level.capitalize():<10} | {0:>12.2f} | {0:>10.2f} | {0:>16.2f} | {0:>13.2f} | {'Error':>50}")
         print("-" * 100)
 
 # Main execution
@@ -180,7 +163,8 @@ if __name__ == "__main__":
                 level_df = result_df[result_df['Level'] == level].copy()
                 if not level_df.empty:
                     level_pivot = level_df.pivot_table(
-                        values=['F1', 'Avg_Same_Category'],
+                        values=['F1', 'Avg_Same_Category', 'NA_JSON_PARSE', 'NA_INVALID_PRED', 
+                               'NA_API_ERROR', 'NA_GENERAL', 'NA_CASCADE'],
                         index=['Model', 'Dataset'],
                         columns=['Method', 'Encoder']
                     )
@@ -193,17 +177,17 @@ if __name__ == "__main__":
     with open(os.path.join(analysis_folder, 'hierarchical_result_table_dict.pkl'), 'wb') as f:
         pickle.dump(result_table_dict, f)
 
-    print(f"\nResults for BioTrove-Balanced_219species_10samples_eval10pct.csv")
+    print(f"\nResults for BioTrove-Balanced_219species_10samples_eval2pct.csv")
     print("=" * 100)
     
     # Print formatted results
     print_results_table(result_table_dict)
 
-    # Save results as text files, one for each metric and level
+    # Save results as text files
     for metric in ['F1', 'Avg_Same_Category']:
         output_file = os.path.join(analysis_folder, f'hierarchical_{metric.lower()}_results.txt')
         with open(output_file, 'w') as f:
-            f.write(f"Results for BioTrove-Balanced_219species_10samples_eval10pct.csv\n")
+            f.write(f"Results for BioTrove-Balanced_219species_10samples_eval2pct.csv\n")
             f.write("=" * 100 + "\n")
             
             for shots, level_tables in result_table_dict.items():
@@ -213,7 +197,10 @@ if __name__ == "__main__":
                 f.write("-" * 100 + "\n")
                 
                 for level, df in level_tables.items():
-                    stage_val = df.iloc[0][('F1', 'Embedding', 'vit')]  # Use first row since we only have one dataset
-                    rand_val = df.iloc[0][('F1', 'Random', 'vit')]
-                    f.write(f"{level.capitalize():<10} | {stage_val:>12.2f} | {rand_val:>10.2f}\n")
+                    try:
+                        stage_val = df.iloc[0].get((metric, 'Embedding', 'vit'), 0.0)
+                        rand_val = df.iloc[0].get((metric, 'Random', 'vit'), 0.0)
+                        f.write(f"{level.capitalize():<10} | {stage_val:>12.2f} | {rand_val:>10.2f}\n")
+                    except Exception as e:
+                        f.write(f"{level.capitalize():<10} | {'N/A':>12} | {'N/A':>10}\n")
                 f.write("-" * 100 + "\n\n")

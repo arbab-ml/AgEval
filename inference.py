@@ -157,7 +157,7 @@ class GPTAPI:
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.api_key}"
         }
-        self.rate_limiter = RateLimiter(max_requests=500, time_window=0.1) # old was 20
+        self.rate_limiter = RateLimiter(max_requests=100, time_window=5) # old was 20
 
     async def get_image_information(self, inputs: dict) -> str:
         await self.rate_limiter.wait()
@@ -661,6 +661,15 @@ where species_name is one of the options listed above.
 Do not include any other text or explanation - only the JSON object."""
 }
 
+# Error codes for prediction failures
+ERROR_CODES = {
+    'JSON_PARSE': 'NA_JSON_PARSE',  # Failed to parse API response as JSON
+    'INVALID_PRED': 'NA_INVALID_PRED',  # Prediction not in valid options
+    'API_ERROR': 'NA_API_ERROR',  # API call failed
+    'GENERAL_ERROR': 'NA_GENERAL',  # Other unexpected errors
+    'CASCADE_ERROR': 'NA_CASCADE',  # Error propagated from higher taxonomic level
+}
+
 # Update the function signature to include embeddings parameter
 def get_hierarchical_examples(query_embedding: List[float], all_data: pd.DataFrame, 
                             taxonomic_level: str, current_filter: Dict[str, str], 
@@ -735,13 +744,20 @@ async def process_image_hierarchical(api, i: int, number_of_shots: int,
         # Predict each taxonomic level
         for level in ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']:
             try:
+                # If previous level failed, propagate the error
+                prev_level = {'kingdom': None, 'phylum': 'kingdom', 'class': 'phylum', 
+                            'order': 'class', 'family': 'order', 'genus': 'family', 
+                            'species': 'genus'}[level]
+                if prev_level and predictions.get(prev_level, '').startswith('NA_'):
+                    predictions[level] = ERROR_CODES['CASCADE_ERROR']
+                    continue
+
                 # Get examples for current level
                 if use_embedding:
                     examples_df = get_hierarchical_examples(
                         input_embedding, all_data, level, current_filter, embeddings, number_of_shots
                     )
                 else:
-                    # Random selection from entire dataset without filtering by hierarchy
                     if len(all_data) >= number_of_shots:
                         examples_df = all_data.sample(n=number_of_shots, random_state=42)
                     else:
@@ -787,7 +803,6 @@ async def process_image_hierarchical(api, i: int, number_of_shots: int,
                             }
                         })
                     
-                    # Add the label for this taxonomic level
                     examples.append({
                         "type": "text",
                         "text": f'{{"prediction": "{row["hierarchy"][level]}"}}'
@@ -800,30 +815,39 @@ async def process_image_hierarchical(api, i: int, number_of_shots: int,
                     **current_filter
                 )
                 
-                # Get prediction for current level
-                prediction = await api.get_image_information({
-                    "image": image_base64,
-                    "examples": examples,
-                    "prompt": prompt
-                })
-                
                 try:
-                    extracted_json = extract_json(prediction)
-                    parsed_prediction = extracted_json['prediction']
-                    if parsed_prediction in options:
-                        predictions[level] = parsed_prediction
-                        current_filter[level] = parsed_prediction
-                    else:
-                        print(f"\nInvalid prediction for {level} at {image_path}. Response: {prediction}")
-                        predictions[level] = 'NA'
-                        break  # Stop hierarchical prediction if invalid prediction
+                    # Get prediction for current level
+                    prediction = await api.get_image_information({
+                        "image": image_base64,
+                        "examples": examples,
+                        "prompt": prompt
+                    })
+                    
+                    try:
+                        extracted_json = extract_json(prediction)
+                        if extracted_json is None:
+                            predictions[level] = ERROR_CODES['JSON_PARSE']
+                            break
+                        
+                        parsed_prediction = extracted_json['prediction']
+                        if parsed_prediction in options:
+                            predictions[level] = parsed_prediction
+                            current_filter[level] = parsed_prediction
+                        else:
+                            print(f"\nInvalid prediction '{parsed_prediction}' for {level} at {image_path}")
+                            predictions[level] = ERROR_CODES['INVALID_PRED']
+                            break
+                    except Exception as e:
+                        print(f"\nError parsing prediction for {level} at {image_path}. Response: {prediction}\nError: {str(e)}")
+                        predictions[level] = ERROR_CODES['JSON_PARSE']
+                        break
                 except Exception as e:
-                    print(f"\nError parsing prediction for {level} at {image_path}. Response: {prediction}\nError: {str(e)}")
-                    predictions[level] = 'NA'
+                    print(f"\nAPI error for {level} at {image_path}. Error: {str(e)}")
+                    predictions[level] = ERROR_CODES['API_ERROR']
                     break
             except Exception as e:
-                print(f"\nAPI error for {level} at {image_path}. Error: {str(e)}")
-                predictions[level] = 'NA'
+                print(f"\nUnexpected error for {level} at {image_path}. Error: {str(e)}")
+                predictions[level] = ERROR_CODES['GENERAL_ERROR']
                 break
         
         # Store predictions
@@ -835,7 +859,7 @@ async def process_image_hierarchical(api, i: int, number_of_shots: int,
         print(f"\nError processing {image_path}. Error: {str(e)}")
         prefix = "Embedding" if use_embedding else "Random"
         for level in ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']:
-            all_data_results.at[i, f"{prefix} {level} {number_of_shots}"] = 'NA'
+            all_data_results.at[i, f"{prefix} {level} {number_of_shots}"] = ERROR_CODES['GENERAL_ERROR']
             all_data_results.at[i, f"{prefix} Example Paths {level} {number_of_shots}"] = 'NA'
             all_data_results.at[i, f"{prefix} Example Categories {level} {number_of_shots}"] = 'NA'
     finally:
