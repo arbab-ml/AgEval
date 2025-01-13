@@ -6,25 +6,6 @@ import pickle
 
 TAXONOMIC_LEVELS = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
 SHOTS_TO_PROCESS = [1, 8]  # Process both 1-shot and 8-shot results
-CACHE_DIR = 'cache'
-EMBEDDING_CACHE_FILE = os.path.join(CACHE_DIR, 'embedding_cache.pkl')
-
-def load_embedding_cache():
-    if os.path.exists(EMBEDDING_CACHE_FILE):
-        try:
-            with open(EMBEDDING_CACHE_FILE, 'rb') as f:
-                return pickle.load(f)
-        except Exception as e:
-            print(f"Error loading embedding cache: {e}")
-    return {}
-
-def save_embedding_cache(cache):
-    os.makedirs(CACHE_DIR, exist_ok=True)
-    try:
-        with open(EMBEDDING_CACHE_FILE, 'wb') as f:
-            pickle.dump(cache, f)
-    except Exception as e:
-        print(f"Error saving embedding cache: {e}")
 
 def calculate_f1(df, shots, method, level):
     # Filter for evaluated rows
@@ -84,25 +65,14 @@ def calculate_avg_same_category(df, shots, method, level):
     
     return np.mean(matches) * 100
 
-def process_model_csvs(results_folder, embedding_cache=None):
+def process_model_csvs(results_folder):
     results = {shots: [] for shots in SHOTS_TO_PROCESS}
     
-    target_file = os.path.join(results_folder, "GPT-4o-mini", "vit", "BioTrove-Balanced_219species_10samples_eval2pct.csv")
+    target_file = os.path.join(results_folder, "GPT-4o-mini", "vit", "BioTrove-Balanced_219species_10samples_eval0pct.csv")
     
     if os.path.exists(target_file):
         try:
             df = pd.read_csv(target_file)
-            
-            # Cache embeddings for each image path if not already cached
-            if embedding_cache is not None:
-                for idx, row in df.iterrows():
-                    image_path = row.get('image_path')
-                    if image_path and image_path not in embedding_cache:
-                        # Here you would compute the embedding
-                        # embedding = compute_embedding(image_path)
-                        # embedding_cache[image_path] = embedding
-                        pass
-            
             dataset_name = os.path.splitext(os.path.basename(target_file))[0]
             
             for shots in SHOTS_TO_PROCESS:
@@ -184,18 +154,8 @@ if __name__ == "__main__":
     results_folder = 'results-hierarchical'
     analysis_folder = 'results-hierarchical-analysis'
     os.makedirs(analysis_folder, exist_ok=True)
-    os.makedirs(CACHE_DIR, exist_ok=True)
 
-    # Load embedding cache
-    embedding_cache = load_embedding_cache()
-    if embedding_cache:
-        print(f"Loaded {len(embedding_cache)} cached embeddings")
-
-    results_dict = process_model_csvs(results_folder, embedding_cache)
-    
-    # Save embedding cache
-    save_embedding_cache(embedding_cache)
-    print(f"Saved {len(embedding_cache)} embeddings to cache")
+    results_dict = process_model_csvs(results_folder)
     
     # Convert results to DataFrames
     result_table_dict = {}

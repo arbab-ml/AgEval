@@ -507,9 +507,8 @@ async def main(evaluation_percentage=100):
             shots = dataset["shots"]
             
             all_data, expected_classes, output_file_name = loader(total_samples_to_check)
-            # Append evaluation percentage to output file name
             output_file_name = f"{output_file_name}_eval{int(evaluation_percentage)}pct"
-            print_section_header(f"Dataset: {output_file_name}")
+            print(f"\nDataset: {output_file_name}")
             
             # Sample indices for evaluation
             num_samples = len(all_data)
@@ -518,7 +517,7 @@ async def main(evaluation_percentage=100):
             print(f"Evaluating {num_to_evaluate} samples ({evaluation_percentage}% of {num_samples} total samples)")
             
             for encoder in AVAILABLE_ENCODERS:
-                print_section_header(f"Encoder: {encoder}")
+                print(f"\nEncoder: {encoder}")
                 embeddings = precompute_embeddings(all_data, encoder)
                 
                 for vendor_model in all_vendors_models:
@@ -526,7 +525,7 @@ async def main(evaluation_percentage=100):
                     model = vendor_model["model"]
                     model_name = vendor_model["model_name"]
                     
-                    print_section_header(f"Model: {model_name}")
+                    print(f"\nModel: {model_name}")
                     
                     if vendor == "openai":
                         api = GPTAPI(api_key=os.getenv("OPENAI_API_KEY"), model=model)
@@ -547,25 +546,18 @@ async def main(evaluation_percentage=100):
                     all_data_results.loc[evaluation_indices, 'evaluated'] = True
                     
                     for number_of_shots in shots:
-                        print_subsection_header(f"Running with {number_of_shots} shots")
+                        print(f"\nRunning with {number_of_shots} shots")
                         await process_images_for_shots(api, number_of_shots, all_data_results, all_data, embeddings, encoder, evaluation_indices)
                         
-                        print_section_header("Accuracies by Taxonomic Level")
+                        print("\nAccuracies:")
                         for level in ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']:
-                            print_subsection_header(f"{level.capitalize()} Level")
-                            
                             embedding_col = f"Embedding {level} {number_of_shots}"
-                            if embedding_col in all_data_results.columns:
-                                print("\nEmbedding-based selection:")
-                                embedding_acc = calculate_accuracy(all_data_results, embedding_col)
-                            
                             random_col = f"Random {level} {number_of_shots}"
-                            if random_col in all_data_results.columns:
-                                print("\nRandom selection:")
-                                random_acc = calculate_accuracy(all_data_results, random_col)
                             
-                            # Add a big separator after each level's complete results
-                            print_separator("*", 100)
+                            if embedding_col in all_data_results.columns:
+                                calculate_accuracy(all_data_results, embedding_col)
+                            if random_col in all_data_results.columns:
+                                calculate_accuracy(all_data_results, random_col)
                     
                     # Save results
                     os.makedirs(os.path.join("results-hierarchical", model_name, encoder), exist_ok=True)
@@ -578,19 +570,6 @@ async def main(evaluation_percentage=100):
         save_cache()
 
 # Update the calculate_accuracy function
-def print_separator(char="=", length=80):
-    print(f"\n{char * length}")
-
-def print_section_header(title):
-    print_separator()
-    print(f"\n{title.center(80)}")
-    print_separator()
-
-def print_subsection_header(title):
-    print(f"\n{'-' * 40}")
-    print(f"{title}")
-    print(f"{'-' * 40}")
-
 def calculate_accuracy(all_data_results: pd.DataFrame, column_name: str) -> float:
     """
     Calculate accuracy for a specific prediction column.
@@ -607,7 +586,6 @@ def calculate_accuracy(all_data_results: pd.DataFrame, column_name: str) -> floa
         valid_predictions = all_data_results[all_data_results[column_name] != 'NA'].copy()
         
         if len(valid_predictions) == 0:
-            print(f"\nNo valid predictions for {column_name}")
             return 0.0
         
         true_labels = valid_predictions['hierarchy'].apply(lambda x: str(x[level]))
@@ -617,29 +595,13 @@ def calculate_accuracy(all_data_results: pd.DataFrame, column_name: str) -> floa
         total = len(valid_predictions)
         accuracy = correct / total if total > 0 else 0.0
         
-        # Print formatted statistics
-        print_subsection_header(f"Statistics for {column_name}")
-        print(f"│ Total samples:       {total}")
-        print(f"│ Correct predictions: {correct}")
-        print(f"│ Accuracy:           {accuracy:.4f}")
-        
-        # Print distribution statistics
-        print_subsection_header("Prediction Distribution")
-        unique_labels = sorted(set(true_labels) | set(predictions))
-        max_label_length = max(len(str(label)) for label in unique_labels)
-        
-        print(f"{'Label'.ljust(max_label_length)} | True Count | Predicted Count")
-        print(f"{'-' * max_label_length}-+-----------+----------------")
-        
-        for label in unique_labels:
-            true_count = sum(true_labels == label)
-            pred_count = sum(predictions == label)
-            print(f"{str(label).ljust(max_label_length)} | {str(true_count).center(9)} | {str(pred_count).center(14)}")
+        # Print minimal statistics
+        print(f"{level.capitalize()}: {accuracy:.4f} ({correct}/{total})")
         
         return accuracy
         
     except Exception as e:
-        print(f"\nError calculating accuracy for {column_name}: {str(e)}")
+        print(f"Error calculating accuracy for {column_name}: {str(e)}")
         return 0.0
 
 # Add these imports at the top
