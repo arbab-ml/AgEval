@@ -19,7 +19,6 @@ vit_model = ViTModel.from_pretrained(VIT_MODEL_NAME)
 # Global cache for embeddings
 EMBEDDING_CACHE = {}
 CACHE_FILE = "embedding_cache.pkl"
-SAVE_FREQUENCY = 10  # Save cache every N embeddings
 
 def load_cache():
     """Load embedding cache from disk if it exists."""
@@ -38,6 +37,7 @@ def save_cache():
     try:
         with open(CACHE_FILE, 'wb') as f:
             pickle.dump(EMBEDDING_CACHE, f)
+        print(f"Saved {len(EMBEDDING_CACHE)} embeddings to cache")
     except Exception as e:
         print(f"Error saving cache: {e}")
 
@@ -84,14 +84,9 @@ def get_image_embedding(image_path: str, model_type: str = "vit") -> Union[List[
                 # Normalize the combined features
                 normalized_features = F.normalize(combined_features, p=2, dim=1)
                 
-                # Cache the result
+                # Cache the result before returning
                 embedding = normalized_features.squeeze().tolist()
                 EMBEDDING_CACHE[cache_key] = embedding
-                
-                # Save cache periodically
-                if len(EMBEDDING_CACHE) % SAVE_FREQUENCY == 0:
-                    save_cache()
-                    
                 return embedding
     
     except Exception as e:
