@@ -158,7 +158,7 @@ class GPTAPI:
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.api_key}"
         }
-        self.rate_limiter = RateLimiter(max_requests=100, time_window=5) # old was 20
+        self.rate_limiter = RateLimiter(max_requests=1000, time_window=5)
 
     async def get_image_information(self, inputs: dict) -> str:
         await self.rate_limiter.wait()

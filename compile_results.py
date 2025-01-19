@@ -92,7 +92,7 @@ def calculate_avg_same_category(df, shots, method, level):
 def process_model_csvs(results_folder):
     results = {shots: [] for shots in SHOTS_TO_PROCESS}
     
-    target_file = os.path.join(results_folder, "GPT-4o-mini", "vit", "BioTrove-Balanced_219species_10samples_eval0pct.csv")
+    target_file = os.path.join(results_folder, "GPT-4o-mini", "vit", "BioTrove-Balanced_219species_10samples_eval3pct.csv")
     
     if os.path.exists(target_file):
         try:
