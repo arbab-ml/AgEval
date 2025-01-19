@@ -25,8 +25,32 @@ def calculate_f1(df, shots, method, level):
         'NA_GENERAL': 'General Errors',
         'NA_CASCADE': 'Cascading Errors from Higher Levels'
     }
-    error_counts = {error_code: len(predictions[predictions == error_code]) 
-                   for error_code in error_types.keys()}
+    
+    # Count direct errors at this level
+    error_counts = {error_code: 0 for error_code in error_types.keys()}
+    
+    # Check for cascading errors from higher levels
+    taxonomic_order = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
+    current_level_idx = taxonomic_order.index(level)
+    
+    for idx in df.index:
+        # Check higher levels for errors that would cascade
+        has_cascade_error = False
+        for higher_level in taxonomic_order[:current_level_idx]:
+            higher_pred = df.at[idx, f'{method} {higher_level} {shots}']
+            if str(higher_pred).startswith('NA_'):
+                has_cascade_error = True
+                break
+        
+        if has_cascade_error:
+            error_counts['NA_CASCADE'] += 1
+        else:
+            # Only count direct errors if there's no cascade
+            pred = predictions[idx]
+            if str(pred).startswith('NA_'):
+                error_type = str(pred)
+                if error_type in error_counts:
+                    error_counts[error_type] += 1
     
     # Filter out error codes for F1 calculation
     valid_mask = ~predictions.isin(error_types.keys())
@@ -68,7 +92,7 @@ def calculate_avg_same_category(df, shots, method, level):
 def process_model_csvs(results_folder):
     results = {shots: [] for shots in SHOTS_TO_PROCESS}
     
-    target_file = os.path.join(results_folder, "GPT-4o-mini", "vit", "BioTrove-Balanced_219species_10samples_eval2pct.csv")
+    target_file = os.path.join(results_folder, "GPT-4o-mini", "vit", "BioTrove-Balanced_219species_10samples_eval0pct.csv")
     
     if os.path.exists(target_file):
         try:
@@ -192,7 +216,7 @@ if __name__ == "__main__":
     for metric in ['F1', 'Avg_Same_Category']:
         output_file = os.path.join(analysis_folder, f'hierarchical_{metric.lower()}_results.txt')
         with open(output_file, 'w') as f:
-            f.write(f"Results for BioTrove-Balanced_219species_10samples_eval2pct.csv\n")
+            # f.write(f"Results for BioTrove-Balanced_219species_10samples_eval2pct.csv\n")
             f.write("=" * 100 + "\n")
             
             for shots, level_tables in result_table_dict.items():

@@ -330,14 +330,24 @@ class GeminiAPI:
                     raise Exception(f"Unexpected API response format: {result}")
 
 class ProgressBar:
-    def __init__(self, total):
-        self.pbar = tqdm(total=total, desc="Processing images")
+    def __init__(self, total, n_taxonomic_levels=7):
+        self.total_requests = total * n_taxonomic_levels  # Each image needs requests for each taxonomic level
+        self.sent_pbar = tqdm(total=self.total_requests, desc="Requests sent", position=0)
+        self.received_pbar = tqdm(total=self.total_requests, desc="Responses received", position=1)
+        self._sent_lock = asyncio.Lock()
+        self._received_lock = asyncio.Lock()
 
-    def update(self):
-        self.pbar.update(1)
+    async def update_sent(self):
+        async with self._sent_lock:
+            self.sent_pbar.update(1)
+
+    async def update_received(self):
+        async with self._received_lock:
+            self.received_pbar.update(1)
 
     def close(self):
-        self.pbar.close()
+        self.sent_pbar.close()
+        self.received_pbar.close()
 
 ################################################################################################################################################################
 
@@ -720,34 +730,32 @@ async def process_image_hierarchical(api, i: int, number_of_shots: int,
         if image_base64 is None:
             raise ValueError(f"Failed to load image: {image_path}")
         
-        # Get image embedding
-        if use_embedding:
-            input_embedding = get_image_embedding(image_path, model_type=encoder)
-            if isinstance(input_embedding, dict) and "error" in input_embedding:
-                raise ValueError(f"Failed to compute embedding: {input_embedding['error']}")
-        
         # Initialize results
         predictions = {}
         current_filter = {}
         
         # Get taxonomic levels from data attributes
         taxonomic_levels = all_data.attrs.get('taxonomic_levels', {})
-        
+
         # Predict each taxonomic level
         for level in ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']:
             try:
+                # Update sent progress before API call
+                await progress_bar.update_sent()
+
                 # If previous level failed, propagate the error
                 prev_level = {'kingdom': None, 'phylum': 'kingdom', 'class': 'phylum', 
                             'order': 'class', 'family': 'order', 'genus': 'family', 
                             'species': 'genus'}[level]
                 if prev_level and predictions.get(prev_level, '').startswith('NA_'):
                     predictions[level] = ERROR_CODES['CASCADE_ERROR']
+                    await progress_bar.update_received()
                     continue
 
                 # Get examples for current level
                 if use_embedding:
                     examples_df = get_hierarchical_examples(
-                        input_embedding, all_data, level, current_filter, embeddings, number_of_shots
+                        get_image_embedding(image_path, model_type=encoder), all_data, level, current_filter, embeddings, number_of_shots
                     )
                 else:
                     if len(all_data) >= number_of_shots:
@@ -837,16 +845,21 @@ async def process_image_hierarchical(api, i: int, number_of_shots: int,
                     print(f"\nAPI error for {level} at {image_path}. Error: {str(e)}")
                     predictions[level] = ERROR_CODES['API_ERROR']
                     break
+
+                # Update received progress after processing response
+                await progress_bar.update_received()
+
             except Exception as e:
                 print(f"\nUnexpected error for {level} at {image_path}. Error: {str(e)}")
                 predictions[level] = ERROR_CODES['GENERAL_ERROR']
+                await progress_bar.update_received()
                 break
         
         # Store predictions
         prefix = "Embedding" if use_embedding else "Random"
         for level, prediction in predictions.items():
             all_data_results.at[i, f"{prefix} {level} {number_of_shots}"] = prediction
-        
+
     except Exception as e:
         print(f"\nError processing {image_path}. Error: {str(e)}")
         prefix = "Embedding" if use_embedding else "Random"
@@ -854,31 +867,40 @@ async def process_image_hierarchical(api, i: int, number_of_shots: int,
             all_data_results.at[i, f"{prefix} {level} {number_of_shots}"] = ERROR_CODES['GENERAL_ERROR']
             all_data_results.at[i, f"{prefix} Example Paths {level} {number_of_shots}"] = 'NA'
             all_data_results.at[i, f"{prefix} Example Categories {level} {number_of_shots}"] = 'NA'
-    finally:
-        progress_bar.update()
+            await progress_bar.update_received()
 
-# Update the process_images_for_shots function
 async def process_images_for_shots(api, number_of_shots, all_data_results, all_data, embeddings, encoder, evaluation_indices=None):
     # If evaluation_indices is None, use all indices
     indices_to_evaluate = evaluation_indices if evaluation_indices is not None else range(len(all_data))
-    progress_bar = ProgressBar(len(indices_to_evaluate) * 2)
-    tasks = []
-    for i in indices_to_evaluate:
-        task_embedding = asyncio.ensure_future(
-            process_image_hierarchical(
-                api, i, number_of_shots, all_data_results, all_data,
-                progress_bar, embeddings, use_embedding=True, encoder=encoder
-            )
-        )
-        task_random = asyncio.ensure_future(
-            process_image_hierarchical(
-                api, i, number_of_shots, all_data_results, all_data,
-                progress_bar, embeddings, use_embedding=False, encoder=encoder
-            )
-        )
-        tasks.extend([task_embedding, task_random])
     
-    await asyncio.gather(*tasks)
+    # Create progress bar with correct total (images * methods * taxonomic_levels)
+    n_methods = 2  # Embedding and Random
+    progress_bar = ProgressBar(len(indices_to_evaluate) * n_methods)
+    
+    # Process in smaller batches to avoid overwhelming the API
+    batch_size = 5
+    for batch_start in range(0, len(indices_to_evaluate), batch_size):
+        batch_indices = indices_to_evaluate[batch_start:batch_start + batch_size]
+        batch_tasks = []
+        
+        for i in batch_indices:
+            task_embedding = asyncio.create_task(
+                process_image_hierarchical(
+                    api, i, number_of_shots, all_data_results, all_data,
+                    progress_bar, embeddings, use_embedding=True, encoder=encoder
+                )
+            )
+            task_random = asyncio.create_task(
+                process_image_hierarchical(
+                    api, i, number_of_shots, all_data_results, all_data,
+                    progress_bar, embeddings, use_embedding=False, encoder=encoder
+                )
+            )
+            batch_tasks.extend([task_embedding, task_random])
+        
+        # Wait for batch to complete before processing next batch
+        await asyncio.gather(*batch_tasks)
+    
     progress_bar.close()
 
 if __name__ == "__main__":
