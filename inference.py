@@ -723,6 +723,10 @@ async def process_image_hierarchical(api, i: int, number_of_shots: int,
                                    encoder: str = "vit") -> None:
     """
     Process an image using hierarchical classification.
+    
+    This function processes each taxonomic level sequentially. For embedding mode, if an error 
+    occurs at any level, processing stops for that image. For random mode, processing continues 
+    to the next level even after an error, since example selection doesn't depend on previous predictions.
     """
     try:
         image_path = all_data[0][i]
@@ -743,14 +747,15 @@ async def process_image_hierarchical(api, i: int, number_of_shots: int,
                 # Update sent progress before API call
                 await progress_bar.update_sent()
 
-                # If previous level failed, propagate the error
-                prev_level = {'kingdom': None, 'phylum': 'kingdom', 'class': 'phylum', 
-                            'order': 'class', 'family': 'order', 'genus': 'family', 
-                            'species': 'genus'}[level]
-                if prev_level and predictions.get(prev_level, '').startswith('NA_'):
-                    predictions[level] = ERROR_CODES['CASCADE_ERROR']
-                    await progress_bar.update_received()
-                    continue
+                # For embedding mode, check if previous level had an error
+                if use_embedding:
+                    prev_level = {'kingdom': None, 'phylum': 'kingdom', 'class': 'phylum', 
+                                'order': 'class', 'family': 'order', 'genus': 'family', 
+                                'species': 'genus'}[level]
+                    if prev_level and predictions.get(prev_level, '').startswith('NA_'):
+                        # Skip this level since we need valid previous predictions for embedding mode
+                        await progress_bar.update_received()
+                        continue
 
                 # Get examples for current level
                 if use_embedding:
@@ -827,7 +832,12 @@ async def process_image_hierarchical(api, i: int, number_of_shots: int,
                         extracted_json = extract_json(prediction)
                         if extracted_json is None:
                             predictions[level] = ERROR_CODES['JSON_PARSE']
-                            break
+                            # For embedding mode, stop at first error
+                            # For random mode, continue to next level
+                            if use_embedding:
+                                break
+                            else:
+                                continue
                         
                         parsed_prediction = extracted_json['prediction']
                         if parsed_prediction in options:
@@ -836,15 +846,30 @@ async def process_image_hierarchical(api, i: int, number_of_shots: int,
                         else:
                             print(f"\nInvalid prediction '{parsed_prediction}' for {level} at {image_path}")
                             predictions[level] = ERROR_CODES['INVALID_PRED']
-                            break
+                            # For embedding mode, stop at first error
+                            # For random mode, continue to next level
+                            if use_embedding:
+                                break
+                            else:
+                                continue
                     except Exception as e:
                         print(f"\nError parsing prediction for {level} at {image_path}. Response: {prediction}\nError: {str(e)}")
                         predictions[level] = ERROR_CODES['JSON_PARSE']
-                        break
+                        # For embedding mode, stop at first error
+                        # For random mode, continue to next level
+                        if use_embedding:
+                            break
+                        else:
+                            continue
                 except Exception as e:
                     print(f"\nAPI error for {level} at {image_path}. Error: {str(e)}")
                     predictions[level] = ERROR_CODES['API_ERROR']
-                    break
+                    # For embedding mode, stop at first error
+                    # For random mode, continue to next level
+                    if use_embedding:
+                        break
+                    else:
+                        continue
 
                 # Update received progress after processing response
                 await progress_bar.update_received()
@@ -853,7 +878,12 @@ async def process_image_hierarchical(api, i: int, number_of_shots: int,
                 print(f"\nUnexpected error for {level} at {image_path}. Error: {str(e)}")
                 predictions[level] = ERROR_CODES['GENERAL_ERROR']
                 await progress_bar.update_received()
-                break
+                # For embedding mode, stop at first error
+                # For random mode, continue to next level
+                if use_embedding:
+                    break
+                else:
+                    continue
         
         # Store predictions
         prefix = "Embedding" if use_embedding else "Random"

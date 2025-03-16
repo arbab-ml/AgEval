@@ -8,6 +8,24 @@ TAXONOMIC_LEVELS = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 's
 SHOTS_TO_PROCESS = [0, 1, 8]  # Process both 1-shot and 8-shot results
 
 def calculate_f1(df, shots, method, level):
+    """
+    Calculate F1 score for a specific taxonomic level and count different types of errors.
+    
+    This function identifies cascade errors during analysis:
+    - If any higher taxonomic level has an error, it's considered a cascade error
+    - This approach allows inference.py to be simpler, with no explicit cascade error marking
+    - For embedding mode, inference.py skips lower levels after errors
+    - For random mode, inference.py continues to predict lower levels
+    
+    Args:
+        df: DataFrame containing predictions and true labels
+        shots: Number of shots (examples) used
+        method: 'Embedding' or 'Random'
+        level: Taxonomic level to evaluate
+        
+    Returns:
+        F1 score and counts of different error types
+    """
     # Filter for evaluated rows
     if 'evaluated' in df.columns:
         df = df[df['evaluated']]
@@ -43,6 +61,7 @@ def calculate_f1(df, shots, method, level):
                 break
         
         if has_cascade_error:
+            # Count as cascade error, even if there's a direct prediction or error
             error_counts['NA_CASCADE'] += 1
         else:
             # Only count direct errors if there's no cascade
@@ -92,7 +111,7 @@ def calculate_avg_same_category(df, shots, method, level):
 def process_model_csvs(results_folder):
     results = {shots: [] for shots in SHOTS_TO_PROCESS}
     
-    target_file = os.path.join(results_folder, "GPT-4o-mini", "vit", "BioTrove-Balanced_219species_10samples_eval3pct.csv")
+    target_file = os.path.join(results_folder, "GPT-4o-mini", "vit", "BioTrove-Balanced_219species_10samples_eval0pct.csv")
     
     if os.path.exists(target_file):
         try:
@@ -206,7 +225,7 @@ if __name__ == "__main__":
     with open(os.path.join(analysis_folder, 'hierarchical_result_table_dict.pkl'), 'wb') as f:
         pickle.dump(result_table_dict, f)
 
-    print(f"\nResults for BioTrove-Balanced_219species_10samples_eval2pct.csv")
+    # print(f"\nResults for BioTrove-Balanced_219species_10samples_eval2pct.csv")
     print("=" * 100)
     
     # Print formatted results
