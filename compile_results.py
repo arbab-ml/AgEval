@@ -5,7 +5,7 @@ from sklearn.metrics import f1_score
 import pickle
 
 TAXONOMIC_LEVELS = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
-SHOTS_TO_PROCESS = [1, 8]  # Process both 1-shot and 8-shot results
+SHOTS_TO_PROCESS = [0, 1, 8]  # Process both 1-shot and 8-shot results
 
 def calculate_f1(df, shots, method, level):
     # Filter for evaluated rows
