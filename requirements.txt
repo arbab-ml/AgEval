@@ -8,3 +8,8 @@ Pillow==10.4.0
 Requests==2.32.3
 scikit_learn==1.5.1
 tqdm==4.66.4
+plotly==5.18.0
+pandas>=2.0.0
+numpy>=1.24.0
+kaleido  # For static image export
+jupyter  # For notebook support if needed 
