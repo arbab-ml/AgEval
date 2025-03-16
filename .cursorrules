@@ -90,3 +90,14 @@ When given raw log of results, Remember the true scores are only in embedding (c
 
 Very important rule for writing code:
 Whenever writing code, focus on the depth and note width of things to do. And only focus on core functionality. Do not make it more complex than it needs to be. 
+
+For visualization code, always use this: 
+plt.rcParams.update({
+    'font.family': 'Times New Roman',
+    'font.size': 9,
+    'axes.labelsize': 9,
+    'axes.titlesize': 10,
+    'xtick.labelsize': 8,
+    'ytick.labelsize': 8,
+    'legend.fontsize': 8,
+})
