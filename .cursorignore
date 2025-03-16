@@ -6,6 +6,7 @@
 *.out
 *.toc
 *.bbl
+*.pkl
 *.blg
 *.fls
 *.fdb_latexmk
