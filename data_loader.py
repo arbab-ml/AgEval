@@ -956,7 +956,7 @@ def load_and_prepare_data_InsectCount(total_samples_to_check):
     print(f"Label range: {shuffled_data[1].min()} to {shuffled_data[1].max()}")
     return shuffled_data, [shuffled_data[1].min(), shuffled_data[1].max()], "InsectCount"
 
-def load_and_prepare_data_BioTrove(total_samples_to_check):
+def load_and_prepare_data_BioTrove(total_samples_to_check, subset=None):
     """
     Loads and prepares the BioTrove dataset for inference using hierarchical classification.
     
@@ -966,7 +966,10 @@ def load_and_prepare_data_BioTrove(total_samples_to_check):
     Returns:
         tuple: (DataFrame with file paths and labels, list of classes, dataset name)
     """
-    base_directory = "./biotrove-data"
+    if subset is None:
+        base_directory = "./processed_data/BioTrove-Balanced"
+    else:
+        base_directory = f"./processed_data/{subset}_group_filtered"
     metadata_path = os.path.join(base_directory, "balanced_metadata.csv")
     images_dir = os.path.join(base_directory, "images")
 
@@ -1012,7 +1015,6 @@ def load_and_prepare_data_BioTrove(total_samples_to_check):
     
     # Calculate samples per class
     samples_per_class = int(total_samples_to_check / len(expected_classes))
-    
     # Use a fixed random state for deterministic sampling
     random_state = 42
     
@@ -1041,7 +1043,7 @@ def load_and_prepare_data_BioTrove(total_samples_to_check):
     # Store taxonomic levels in the sampled data
     sampled_data.attrs['taxonomic_levels'] = taxonomic_levels
     
-    return shuffle(sampled_data, random_state=random_state).reset_index(drop=True), expected_classes, "BioTrove"
+    return shuffle(sampled_data, random_state=random_state).reset_index(drop=True), expected_classes, "BioTrove", samples_per_class
 
 def load_and_prepare_data_BioTrove_balanced_subset(total_species=300, samples_per_species=10, random_state=42):
     """
@@ -1058,7 +1060,7 @@ def load_and_prepare_data_BioTrove_balanced_subset(total_species=300, samples_pe
     """
     # First load the balanced dataset (300 species, 10 samples each)
     # Use the same random_state for consistency
-    data, classes, dataset_name = load_and_prepare_data_BioTrove(total_samples_to_check=3000)
+    data, classes, dataset_name, _ = load_and_prepare_data_BioTrove(total_samples_to_check=3000)
     
     if data is None:
         return None, None, None
@@ -1112,5 +1114,69 @@ def load_and_prepare_data_BioTrove_balanced_subset(total_species=300, samples_pe
     
     # Create output file name with species count and samples per species
     output_file_name = f"BioTrove-Balanced_{total_species}species_{samples_per_species}samples"
+    
+    return subset_data, selected_species, output_file_name
+
+
+def load_and_prepare_data_BioTrove_subset(total_species=300, total_samples_to_check=3000, samples_per_species=None, random_state=42, subset='balanced'):
+    # First load the balanced dataset (300 species, 10 samples each)
+    # Use the same random_state for consistency
+    data, classes, dataset_name, samples_per_class = load_and_prepare_data_BioTrove(total_samples_to_check=total_samples_to_check, subset=subset)
+    
+    if data is None:
+        return None, None, None
+    
+    if samples_per_species is not None:
+        samples_per_species = samples_per_class
+    
+    # Ensure parameters don't exceed the available data
+    total_species = min(total_species, 300) #need to check this 300 parameter
+    samples_per_species = min(samples_per_species, 10)
+    
+    # Sort data by species and photo_id for deterministic ordering
+    data = data.sort_values(by=[1, 0], ascending=[True, True]).reset_index(drop=True)
+    
+    # Get all unique species in a deterministic order
+    all_species = sorted(data[1].unique())
+    
+    # Filter species that have enough samples
+    species_counts = data[1].value_counts()
+    valid_species = species_counts[species_counts >= samples_per_species].index.tolist()
+    valid_species.sort()  # Keep deterministic ordering
+    
+    # Take only the first total_species species from valid ones
+    selected_species = valid_species[:total_species]
+    
+    if len(selected_species) < total_species:
+        print(f"\nWarning: Only found {len(selected_species)} species with {samples_per_species} or more samples.")
+        print(f"Proceeding with available species.")
+    
+    # Create subset with specified samples per species
+    subset_data = pd.DataFrame(columns=data.columns)
+    for species in selected_species:
+        species_data = data[data[1] == species]
+        # Sample deterministically using the random_state
+        species_subset = species_data.sample(n=samples_per_species, random_state=random_state)
+        subset_data = pd.concat([subset_data, species_subset], ignore_index=True)
+    
+    # Shuffle the final dataset with the same random_state
+    subset_data = shuffle(subset_data, random_state=random_state).reset_index(drop=True)
+    
+    print(f"\nBalanced subset statistics:")
+    print(f"Total species: {len(selected_species)}")
+    print(f"Samples per species: {samples_per_species}")
+    print(f"Total samples: {len(subset_data)}")
+    
+    # Get unique values for each taxonomic level in the subset
+    taxonomic_levels = {}
+    for level in ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']:
+        taxonomic_levels[level] = sorted(set([h[level] for h in subset_data['hierarchy']]))
+        print(f"\nUnique {level}s in subset: {len(taxonomic_levels[level])}")
+    
+    # Store taxonomic levels in the subset data
+    subset_data.attrs['taxonomic_levels'] = taxonomic_levels
+    
+    # Create output file name with species count and samples per species
+    output_file_name = f"BioTrove-{subset}_{total_species}species_{samples_per_species}samples"
     
     return subset_data, selected_species, output_file_name

@@ -17,3 +17,6 @@ biotrove-data
 biotrove-data-backup-simple/*
 writing/*
 writing/
+STAGE_BioTrove_data/
+processed_data
+results-hierarchical

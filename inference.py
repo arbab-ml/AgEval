@@ -22,7 +22,7 @@ import nest_asyncio
 from tqdm import tqdm
 import re
 from data_loader import load_and_prepare_data_SBRD, load_and_prepare_data_DurumWheat, load_and_prepare_data_soybean_seeds, load_and_prepare_data_mango_leaf, load_and_prepare_data_DeepWeeds, load_and_prepare_data_IP02, load_and_prepare_data_bean_leaf, load_and_prepare_data_YellowRust, load_and_prepare_data_FUSARIUM22, load_and_prepare_data_InsectCount, load_and_prepare_data_DiseaseQuantify, load_and_prepare_data_IDC, load_and_prepare_data_Soybean_PNAS, load_and_prepare_data_Soybean_Dangerous_Insects
-from data_loader import load_and_prepare_data_BioTrove, load_and_prepare_data_BioTrove_balanced_subset
+from data_loader import load_and_prepare_data_BioTrove, load_and_prepare_data_BioTrove_balanced_subset, load_and_prepare_data_BioTrove_subset
 import pickle
 nest_asyncio.apply()
 global vision_prompt
@@ -103,10 +103,28 @@ datasets = [
         "samples": None,  # Not used for balanced subset
         "shots": universal_shots,
         "vision_prompt": universal_prompt
-    },
+    }
 ]
 
+subset = None
 
+if subset is not None:
+    datasets = [  
+        {
+            "loader": lambda samples: load_and_prepare_data_BioTrove_subset(
+                total_species=219,  # Use 10 species; max 219
+                samples_per_species=10,  # 2 samples per species; max 10
+                random_state=42,  # For reproducibility
+                subset=subset,
+                total_samples_to_check=6000
+            ),
+            "samples": None,  # Not used for balanced subset
+            "shots": universal_shots,
+            "vision_prompt": universal_prompt
+        }
+    ]
+
+ 
 
 vision_prompt = ""
 def extract_json(s):
@@ -518,7 +536,6 @@ async def main(evaluation_percentage=100):
             
             all_data, expected_classes, output_file_name = loader(total_samples_to_check)
             output_file_name = f"{output_file_name}_eval{int(evaluation_percentage)}pct"
-            print(f"\nDataset: {output_file_name}")
             
             # Sample indices for evaluation
             num_samples = len(all_data)
