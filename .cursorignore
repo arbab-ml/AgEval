@@ -11,9 +11,10 @@
 *.fls
 *.fdb_latexmk
 *.pdf   
-*.ipynb (exclude all the notebook files)
-# writing folder
+*.ipynb
+# writing folder - exclude all except specific tex file
 writing/*
+!writing/677da2e667bc14b45df7d4ae/neurips_2024.tex
 Analysis-Bullseye-IntraTask.py
 Analysis-Bullseye-IntraTask.ipynb
 anecdotal-assisted-few-shot-local.py

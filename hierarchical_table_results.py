@@ -16,13 +16,11 @@ def prepare_hierarchical_data(result_table_dict, shots):
     for level in TAXONOMIC_LEVELS:
         level_results = result_table_dict[shots][level]
         
-        # Get the average row for this level
-        avg_row = level_results.loc[('Average', 'All Datasets')]
-        
-        # Extract baseline (Random) and STAGE results
-        baseline = avg_row['F1']['Random']['vit']
-        stage_val = avg_row['F1']['Embedding']['vit']
-        same_examples = avg_row['Avg_Same_Category']['Embedding']['vit']
+        # Calculate average values directly from the DataFrame
+        # Instead of trying to access a pre-computed 'Average' row
+        baseline = level_results['F1']['Random']['vit'].mean()
+        stage_val = level_results['F1']['Embedding']['vit'].mean()
+        same_examples = level_results['Avg_Same_Category']['Embedding']['vit'].mean()
         
         delta = stage_val - baseline
         

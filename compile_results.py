@@ -5,7 +5,7 @@ from sklearn.metrics import f1_score
 import pickle
 
 TAXONOMIC_LEVELS = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
-SHOTS_TO_PROCESS = [0, 1, 8]  # Process both 1-shot and 8-shot results
+SHOTS_TO_PROCESS = [ 1, 8]  # Process both 1-shot and 8-shot results
 
 def calculate_f1(df, shots, method, level):
     """
@@ -111,7 +111,7 @@ def calculate_avg_same_category(df, shots, method, level):
 def process_model_csvs(results_folder):
     results = {shots: [] for shots in SHOTS_TO_PROCESS}
     
-    target_file = os.path.join(results_folder, "GPT-4o-mini", "vit", "BioTrove-Balanced_219species_10samples_eval0pct.csv")
+    target_file = os.path.join(results_folder, "GPT-4o-mini", "vit", "BioTrove-Balanced_219species_10samples_eval10pct.csv")
     
     if os.path.exists(target_file):
         try:
